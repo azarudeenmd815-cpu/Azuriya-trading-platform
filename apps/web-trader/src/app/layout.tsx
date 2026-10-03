@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import { Providers } from "@/components/providers";
 import { getSiteOrigin, isPublicIndexingEnabled } from "@/lib/seo";
 import { marketingThemeBootstrap } from "@/components/marketing/marketing-theme-config";
 import { MarketingThemeSync } from "@/components/marketing/marketing-theme";
 import "./globals.css";
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk", display: "swap" });
+const euclid = localFont({ src: [{ path: "./fonts/EuclidSquare-Regular.woff2", weight: "400", style: "normal" }, { path: "./fonts/EuclidSquare-Medium.woff2", weight: "500", style: "normal" }, { path: "./fonts/EuclidSquare-Bold.woff2", weight: "700", style: "normal" }], variable: "--font-euclid", display: "swap" });
 export const metadata: Metadata = {
   title: "Azuriya | Free brokerage & prop firm solutions for influencers",
   description:
@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={spaceGrotesk.variable}
+      className={euclid.variable}
       data-marketing-theme="dark"
       suppressHydrationWarning
     >
