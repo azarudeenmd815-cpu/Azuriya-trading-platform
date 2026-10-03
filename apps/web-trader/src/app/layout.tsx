@@ -5,7 +5,7 @@ import { getSiteOrigin, isPublicIndexingEnabled } from "@/lib/seo";
 import { marketingThemeBootstrap } from "@/components/marketing/marketing-theme-config";
 import { MarketingThemeSync } from "@/components/marketing/marketing-theme";
 import "./globals.css";
-const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
 export const metadata: Metadata = {
   title: "Azuriya | Free brokerage & prop firm solutions for influencers",
   description:
@@ -28,7 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={sora.variable}
+      className={manrope.variable}
       data-marketing-theme="dark"
       suppressHydrationWarning
     >
