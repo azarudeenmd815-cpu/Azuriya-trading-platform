@@ -5,12 +5,7 @@ import { getSiteOrigin, isPublicIndexingEnabled } from "@/lib/seo";
 import { marketingThemeBootstrap } from "@/components/marketing/marketing-theme-config";
 import { MarketingThemeSync } from "@/components/marketing/marketing-theme";
 import "./globals.css";
-const instrumentSans = localFont({
-  src: "../../node_modules/@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2",
-  variable: "--font-instrument",
-  weight: "400 700",
-  display: "swap",
-});
+const sora = Sora({ subsets: [latin], variable: --font-sora, display: swap });
 export const metadata: Metadata = {
   title: "Azuriya | Free brokerage & prop firm solutions for influencers",
   description:
@@ -33,7 +28,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={instrumentSans.variable}
+      className={sora.variable}
       data-marketing-theme="dark"
       suppressHydrationWarning
     >
