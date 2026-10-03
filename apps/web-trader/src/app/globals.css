@@ -13,7 +13,7 @@ body {
   color: var(--text);
 }
 body {
-  font-family: var(--font-euclid), Arial, Helvetica, sans-serif;
+  font-family: var(--font-plus-jakarta), Arial, Helvetica, sans-serif;
   font-size: 13px;
   -webkit-font-smoothing: antialiased;
 }
