@@ -1,0 +1,264 @@
+/* Landing-only refinements; the working terminal and broker applications keep their styles. */
+html[data-marketing-theme="light"] .az-marketing.az-landing-page {
+  --az-muted: #48566d;
+  --sp-muted: #48566d;
+  --subtle: #48566d;
+  --az-surface: #f1f4fa;
+  --az-raised: #e8eef8;
+  --az-line: #ccd7e8;
+}
+
+html[data-marketing-theme="dark"] .az-marketing.az-landing-page {
+  --az-muted: #b8becd;
+  --sp-muted: #b8becd;
+  --subtle: #b8becd;
+}
+
+html[data-marketing-theme]
+  .az-marketing.az-landing-page
+  :is(
+    .az-hero-copy p,
+    .az-section-intro > p,
+    .az-section-copy > p,
+    .ab-section-heading > p,
+    .az-feature-card > p,
+    .az-final-cta > p,
+    .sf-brand p,
+    .sf-disclosures p,
+    .az-faq-intro > p,
+    .pc-intro > p,
+    .ln-intro > p,
+    .ig-intro > p
+  ):not(:where(.az-demo-shell *)) {
+  color: var(--az-muted);
+}
+
+.az-marketing.az-landing-page .az-brand-mark:not(:where(.az-demo-shell *)) {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  transform: none;
+  background: url("/brand/azuriya-mark-blue.png") center / contain no-repeat;
+}
+
+.az-marketing.az-landing-page .az-brand-mark:not(:where(.az-demo-shell *)) svg {
+  display: none;
+}
+
+html[data-marketing-theme]
+  .az-marketing.az-landing-page
+  :is(.ln-hub-mark, .pc-architecture-hub-mark, .ig-router > span) {
+  background: url("/brand/azuriya-mark-blue.png") center / contain no-repeat;
+  box-shadow: none;
+}
+
+.az-marketing.az-landing-page
+  :is(.ln-hub-mark, .pc-architecture-hub-mark, .ig-router > span)
+  > svg {
+  visibility: hidden;
+}
+
+.az-marketing.az-landing-page
+  .az-brand-compact
+  .az-brand-mark:not(:where(.az-demo-shell *)) {
+  width: 36px;
+  height: 36px;
+  flex-basis: 36px;
+}
+
+/* Tablet navigation uses the full width instead of compressing every panel beside a rail. */
+@media (max-width: 1100px) {
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-dashboard {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-dash-sidebar {
+    padding: 10px;
+    border-right: 0;
+    border-bottom: 1px solid var(--dash-border);
+    min-width: 0;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    :is(
+      .az-dash-sidebar > .az-brand,
+      .az-workspace,
+      .az-nav-heading,
+      .az-demo-settings
+    ) {
+    display: none;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-dash-sidebar
+    nav {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-dash-sidebar
+    nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-dash-sidebar
+    nav
+    button {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 44px;
+    padding: 10px 13px;
+    white-space: nowrap;
+    font-size: 13px;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .dc-nav-item {
+    flex: 0 0 auto;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-dash-main {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-dash-middle {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-dash-content {
+    padding: 20px 14px 0;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-dash-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-dash-heading
+    h2 {
+    font-size: 24px;
+    line-height: 1.25;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-dash-heading
+    p {
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-team-filter
+    select {
+    max-width: none;
+    min-height: 44px;
+    font-size: 13px;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-panel-heading {
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-panel-heading
+    h3 {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .az-marketing.az-landing-page .az-demo-shell[data-dashboard-theme] .az-stat {
+    min-height: 150px;
+    padding: 18px;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-stat
+    > div {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-stat
+    > strong {
+    font-size: 28px;
+    line-height: 1.25;
+    margin-top: 12px;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-stat.is-money
+    > strong {
+    font-size: 26px;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-stat-change {
+    flex-wrap: wrap;
+    row-gap: 3px;
+    padding-right: 65px;
+  }
+
+  .az-marketing.az-landing-page
+    .az-demo-shell[data-dashboard-theme]
+    .az-stat
+    .dv-sparkline {
+    width: 56px;
+    right: 16px;
+    bottom: 18px;
+  }
+}
+
+@media (max-width: 479px) {
+  .az-marketing.az-landing-page .az-demo-shell[data-dashboard-theme] .az-stats {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .az-marketing.az-landing-page .az-demo-shell[data-dashboard-theme] .az-stat {
+    min-height: 136px;
+  }
+}

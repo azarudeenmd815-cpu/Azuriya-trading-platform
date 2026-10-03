@@ -1,0 +1,14 @@
+"use client";
+import { useState } from "react";
+import { FloppyDisk, X } from "@phosphor-icons/react";
+import { useCommand } from "@/lib/admin-queries";
+import { errorMessage } from "@/lib/api";
+import { validateFields, type Field } from "@/lib/profile-schema";
+import { FieldGrid } from "./form-fields";
+export function ResourceEditor<T extends object>({title,path,source,fields,creating=false,onClose,onSaved,children,transform,canWrite=true}:{title:string;path:string;source:T;fields:readonly Field[];creating?:boolean;onClose?:()=>void;onSaved?:(record:T)=>void;children?:(draft:T,change:(patch:Partial<T>)=>void)=>React.ReactNode;transform?:(draft:T,reason:string)=>unknown;canWrite?:boolean}) {
+ const [draft,setDraft]=useState<T>(()=>structuredClone(source)),[reason,setReason]=useState(""),[errors,setErrors]=useState<Record<string,string>>({}),[saved,setSaved]=useState(false);
+ const mutation=useCommand<T>(path,creating?"POST":"PATCH");
+ const change=(patch:Partial<T>)=>{setDraft(value=>({...value,...patch}));setSaved(false);};
+ return <section className="panel"><div className="panel-heading"><div><h3>{title}</h3><p>{creating?"Create a canonical record":"Edit the current server record"}</p></div>{onClose&&<button className="text-tool" aria-label="Close editor" onClick={onClose}><X size={18}/></button>}</div><form onSubmit={e=>{e.preventDefault();const invalid=validateFields(fields,draft);setErrors(invalid);if(Object.keys(invalid).length||!canWrite)return;const data=draft as Record<string,unknown>;const {id,tenant_id,created_at,updated_at,...body}=data;void id;void tenant_id;void created_at;void updated_at;mutation.mutate({body:transform?transform(draft,reason):{...body,reason}},{onSuccess:record=>{setSaved(true);setDraft(record);onSaved?.(record);}});}}><FieldGrid fields={fields} value={draft} onChange={patch=>change(patch as Partial<T>)} errors={errors} disabled={!canWrite||mutation.isPending}/>{children?.(draft,change)}{canWrite&&<div className="form-section"><label>Reason for change<textarea value={reason} onChange={e=>setReason(e.target.value)} required minLength={3} maxLength={1000} placeholder="Describe the operational reason."/></label></div>}{mutation.isError&&<p className="error" role="alert">{errorMessage(mutation.error)}</p>}{saved&&<p className="success" role="status">Saved to the server. Canonical records have refreshed.</p>}<div className="form-footer"><span>{!canWrite?"Read access · Changes require an authorized operator":saved?"Saved":mutation.isPending?"Saving…":"Changes are validated and audited on the server."}</span>{canWrite&&<div>{onClose&&<button className="secondary" type="button" onClick={onClose}>Cancel</button>}<button className="primary" disabled={mutation.isPending}><FloppyDisk size={16}/>{creating?"Create record":"Save changes"}</button></div>}</div></form></section>;
+}
+

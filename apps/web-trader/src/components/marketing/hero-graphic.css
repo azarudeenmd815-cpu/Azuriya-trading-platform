@@ -1,0 +1,366 @@
+.ab-hero.az-hero {
+  padding-top: 46px;
+}
+.ab-hero .az-hero-grid {
+  grid-template-columns: 1.04fr 1fr;
+  gap: 24px;
+  align-items: center;
+}
+.ab-hero-editorial {
+  min-width: 0;
+  padding-block: 20px;
+}
+.ab-hero-editorial .az-hero-eyebrow {
+  margin-bottom: 25px;
+}
+.ab-hero h1 {
+  font-size: clamp(40px, 4.25vw, 58px);
+  line-height: 1.09;
+}
+.ab-hero .az-hero-copy {
+  margin-top: 23px;
+}
+.ab-hero .az-hero-copy p {
+  max-width: 480px;
+  font-size: 15px;
+  line-height: 1.8;
+}
+.ab-hero .az-hero-actions {
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+}
+.ab-hero .az-hero-capabilities {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e4e9f1;
+  justify-content: space-between;
+  gap: 15px;
+}
+.ab-hero + .az-audience {
+  margin-top: 0;
+  padding-top: 22px;
+}
+.hg-scene {
+  min-width: 0;
+  width: 100%;
+  aspect-ratio: 1.2;
+  position: relative;
+  isolation: isolate;
+}
+.hg-art {
+  position: absolute;
+  inset: -7% -4% -2%;
+  z-index: 0;
+}
+.hg-art img {
+  object-fit: contain;
+}
+.hg-liquidity-card,
+.hg-platform-card,
+.hg-community-card {
+  position: absolute;
+  z-index: 1;
+  background: #fffffff5;
+  border: 1px solid #dce4f0;
+  box-shadow:
+    0 10px 30px #24437713,
+    0 2px 5px #24437708;
+  display: flex;
+  align-items: center;
+}
+.hg-liquidity-card {
+  top: 8%;
+  right: 1%;
+  border-radius: 10px;
+  gap: 10px;
+  padding: 12px 15px;
+}
+.hg-card-icon {
+  display: grid;
+  place-items: center;
+  color: #2859c5;
+  background: #edf3ff;
+  width: 35px;
+  height: 35px;
+  border-radius: 8px;
+}
+.hg-liquidity-card > span:last-child {
+  display: grid;
+  gap: 3px;
+}
+.hg-liquidity-card small {
+  font-size: 10px;
+  letter-spacing: 1.1px;
+  color: #64748b;
+}
+.hg-liquidity-card strong {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 550;
+  color: #172235;
+}
+.hg-liquidity-card strong svg {
+  color: #2859c5;
+}
+.hg-platform-card {
+  bottom: 11%;
+  left: 0;
+  gap: 13px;
+  padding: 14px 16px;
+  border-radius: 10px;
+}
+.hg-platform-logos {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding-right: 12px;
+  border-right: 1px solid #e4e9f1;
+}
+.hg-platform-logos img {
+  object-fit: contain;
+  border-radius: 4px;
+}
+.hg-platform-card > span {
+  display: grid;
+  gap: 4px;
+}
+.hg-platform-card strong {
+  font-size: 11px;
+  font-weight: 550;
+}
+.hg-platform-card small {
+  font-size: 11px;
+  color: #64748b;
+}
+.hg-community-card {
+  bottom: 0;
+  right: 9%;
+  gap: 8px;
+  padding: 9px 13px;
+  border-radius: 7px;
+  font-size: 11px;
+  color: #56657a;
+  box-shadow: 0 5px 16px #2443770a;
+}
+.hg-community-card svg {
+  color: #2859c5;
+}
+@media (min-width: 1500px) {
+  .ab-hero h1 {
+    font-size: 58px;
+  }
+}
+@media (max-width: 1199px) {
+  .ab-hero .az-hero-grid {
+    grid-template-columns: 1.06fr 1fr;
+    gap: 12px;
+  }
+  .ab-hero .az-hero-actions {
+    flex-direction: row;
+    gap: 12px;
+  }
+  .az-explore {
+    font-size: 12px;
+  }
+  .hg-liquidity-card {
+    right: 0;
+    top: 5%;
+  }
+  .hg-platform-card {
+    left: 2%;
+    padding: 12px;
+    gap: 9px;
+  }
+  .hg-platform-logos {
+    gap: 4px;
+    padding-right: 8px;
+  }
+  .hg-platform-logos img {
+    width: 22px;
+    height: 22px;
+  }
+}
+@media (max-width: 1023px) {
+  .ab-hero .az-hero-grid {
+    grid-template-columns: 1.07fr 1fr;
+    gap: 15px;
+  }
+  .ab-hero h1 {
+    font-size: clamp(35px, 4.9vw, 49px);
+  }
+  .ab-hero .az-hero-copy p {
+    font-size: 14px;
+  }
+  .ab-hero .az-hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 9px;
+  }
+  .hg-scene {
+    aspect-ratio: 0.88;
+  }
+  .hg-art {
+    inset: -2% -10%;
+  }
+  .hg-liquidity-card {
+    top: 10%;
+    padding: 10px;
+    gap: 8px;
+  }
+  .hg-card-icon {
+    width: 29px;
+    height: 29px;
+  }
+  .hg-liquidity-card small {
+    font-size: 9px;
+  }
+  .hg-liquidity-card strong {
+    font-size: 11px;
+  }
+  .hg-platform-card {
+    bottom: 13%;
+    left: 0;
+    padding: 10px;
+  }
+  .hg-platform-card strong {
+    font-size: 10px;
+  }
+  .hg-platform-card small {
+    font-size: 10px;
+  }
+  .hg-platform-logos {
+    display: none;
+  }
+  .hg-community-card {
+    bottom: 5%;
+    right: 3%;
+    font-size: 10px;
+  }
+  .ab-hero .az-hero-capabilities {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 20px;
+  }
+}
+@media (max-width: 767px) {
+  .ab-hero.az-hero {
+    padding-top: 28px;
+  }
+  .ab-hero .az-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .ab-hero-editorial {
+    padding-bottom: 0;
+  }
+  .ab-hero h1 {
+    font-size: clamp(34px, 8.65vw, 49px);
+  }
+  .ab-hero .az-hero-copy {
+    margin-top: 20px;
+  }
+  .ab-hero .az-hero-copy p {
+    font-size: 15px;
+    max-width: 480px;
+  }
+  .ab-hero .az-hero-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+  }
+  .hg-scene {
+    aspect-ratio: 1.13;
+    max-width: 510px;
+    margin: 20px auto 0;
+  }
+  .hg-art {
+    inset: -10% -5% -5%;
+  }
+  .hg-liquidity-card {
+    top: 6%;
+    right: 0;
+    padding: 10px 12px;
+  }
+  .hg-liquidity-card small {
+    font-size: 9px;
+  }
+  .hg-liquidity-card strong {
+    font-size: 12px;
+  }
+  .hg-platform-card {
+    bottom: 10%;
+    padding: 10px 12px;
+  }
+  .hg-platform-card strong {
+    font-size: 10px;
+  }
+  .hg-platform-card small {
+    font-size: 10px;
+  }
+  .hg-platform-logos {
+    display: flex;
+  }
+  .hg-platform-logos img {
+    width: 20px;
+    height: 20px;
+  }
+  .hg-community-card {
+    bottom: -1%;
+    right: 2%;
+    font-size: 10px;
+  }
+  .ab-hero .az-hero-capabilities {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    row-gap: 14px;
+    column-gap: 8px;
+    margin-top: 27px;
+    margin-bottom: 0;
+    padding-bottom: 22px;
+  }
+  .ab-hero .az-hero-capabilities > span {
+    font-size: 10px;
+    gap: 6px;
+    min-width: 0;
+  }
+  .ab-hero .az-hero-capabilities svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+}
+@media (max-width: 374px) {
+  .ab-hero h1 {
+    font-size: 30px;
+  }
+  .hg-liquidity-card {
+    padding: 9px;
+    top: 1%;
+  }
+  .hg-card-icon {
+    width: 27px;
+    height: 27px;
+  }
+  .hg-liquidity-card strong {
+    font-size: 10px;
+  }
+  .hg-platform-logos {
+    display: none;
+  }
+  .hg-platform-card {
+    padding: 9px 11px;
+    bottom: 8%;
+  }
+  .hg-community-card {
+    font-size: 9px;
+    bottom: -3%;
+    padding: 7px 9px;
+  }
+  .ab-hero .az-hero-capabilities > span {
+    font-size: 9px;
+  }
+}

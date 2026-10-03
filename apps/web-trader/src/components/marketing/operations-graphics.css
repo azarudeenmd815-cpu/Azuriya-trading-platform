@@ -1,0 +1,524 @@
+.og-operations .ab-operation-grid {
+  grid-template-columns: 1.08fr 1fr;
+  gap: 25px;
+}
+.og-operations .ab-operation-card {
+  background: #f5f8fd;
+  box-shadow: 0 13px 36px -26px #2859c52e;
+}
+.og-operations .ab-operation-copy {
+  padding-bottom: 26px;
+}
+.og-operations .ab-funding-preview,
+.og-operations .ab-chat-preview {
+  border-radius: 12px;
+  box-shadow: 0 8px 26px -20px #2859c533;
+}
+.og-operations .ab-preview-heading {
+  min-height: 57px;
+  background: #fff;
+}
+.og-platform-mark {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #dce5f3;
+  border-radius: 11px;
+  background: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 9px #294f8109;
+}
+.og-platform-mark > img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+.og-operations .og-funding-network {
+  position: relative;
+  padding: 10px 18px 15px;
+  background: linear-gradient(180deg, #f2f6fe, #fff);
+  border-bottom: 1px solid #e5ebf5;
+  isolation: isolate;
+}
+.og-operations .og-funding-diagram {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  position: relative;
+  height: 160px;
+}
+.og-operations .og-funding-tracks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 160px;
+  z-index: 0;
+  pointer-events: none;
+}
+.og-operations .og-payment-rails,
+.og-operations .og-funding-accounts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding-top: 26px;
+  position: relative;
+  z-index: 1;
+}
+.og-operations .og-payment-rails > span,
+.og-operations .og-funding-accounts > .og-platform-mark {
+  width: 40px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: #fff;
+  border: 1px solid #d7e2f3;
+  color: #2859c5;
+  border-radius: 9px;
+  box-shadow: 0 5px 13px #294f810c;
+  flex-shrink: 0;
+}
+.og-operations .og-funding-accounts img {
+  width: 27px;
+  height: 27px;
+}
+.og-operations .og-payment-rails > small,
+.og-operations .og-funding-accounts > small {
+  position: absolute;
+  top: 132px;
+  font-size: 10px;
+  color: #56657a;
+  text-align: center;
+  white-space: nowrap;
+}
+.og-operations .og-funding-hub {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 39px;
+  position: relative;
+  z-index: 1;
+}
+.og-operations .og-wallet-mark {
+  width: 64px;
+  height: 64px;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background: #2859c5;
+  color: #fff;
+  border: 1px solid #204faf;
+  box-shadow:
+    0 10px 22px -11px #2859c57a,
+    inset 0 1px 0 #7f9fe3;
+}
+.og-operations .og-funding-hub > strong {
+  font-size: 12px;
+  font-weight: 550;
+  color: #172235;
+  margin-top: 6px;
+}
+.og-operations .og-funding-hub > small {
+  font-size: 9px;
+  color: #64748b;
+  white-space: nowrap;
+}
+.og-operations .og-funding-legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 6px;
+  color: #56657a;
+  font-size: 9px;
+}
+.og-operations .og-funding-legend > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.og-operations .og-funding-legend svg {
+  color: #2859c5;
+}
+.og-operations .ab-funding-row {
+  padding-block: 17px;
+}
+.og-operations .ab-funding-icon {
+  width: 33px;
+  height: 33px;
+  border-radius: 9px;
+}
+.og-operations .ab-funding-person,
+.og-operations .ab-funding-amount {
+  font-size: 12px;
+}
+.og-operations .ab-funding-status {
+  font-size: 10px;
+}
+.og-operations .ab-preview-note {
+  background: #f9fbfe;
+  min-height: 43px;
+  font-size: 10px;
+}
+.og-operations .og-community-presence {
+  background: linear-gradient(110deg, #edf3ff, #f9fbff);
+  min-height: 146px;
+  padding: 22px 22px;
+  display: flex;
+  align-items: center;
+  gap: 21px;
+  border-bottom: 1px solid #e4ebf7;
+}
+.og-operations .og-member-orbit {
+  width: 107px;
+  height: 107px;
+  flex-shrink: 0;
+  border: 1px solid #cddcf5;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  background: #f4f8ff;
+}
+.og-operations .og-community-symbol {
+  color: #2859c5;
+}
+.og-operations .og-orbit-member {
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  background: #fff;
+  border: 1px solid #cad9f3;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  color: #6181ba;
+  box-shadow: 0 4px 14px #2859c50d;
+}
+.og-operations .og-orbit-first {
+  top: -4px;
+  left: 8px;
+  transform: rotate(-8deg);
+}
+.og-operations .og-orbit-second {
+  top: 15px;
+  right: -10px;
+  color: #2859c5;
+  transform: rotate(8deg);
+}
+.og-operations .og-orbit-third {
+  bottom: -5px;
+  left: 15px;
+  color: #3d619f;
+  transform: rotate(-4deg);
+}
+.og-operations .og-community-presence > div:last-child {
+  min-width: 0;
+}
+.og-operations .og-community-presence strong {
+  font-size: 17px;
+  line-height: 1.35;
+  letter-spacing: -0.4px;
+  font-weight: 550;
+  color: #172235;
+  display: block;
+  max-width: 170px;
+}
+.og-operations .og-presence-line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 14px;
+  font-size: 10px;
+  color: #56657a;
+}
+.og-operations .og-avatar-stack {
+  display: flex;
+  padding-left: 4px;
+}
+.og-operations .og-avatar-stack > span {
+  width: 27px;
+  height: 27px;
+  margin-left: -4px;
+  border: 2px solid #f2f6ff;
+  background: #d5e2f9;
+  color: #335a9d;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 8px;
+  font-weight: 600;
+}
+.og-operations .og-avatar-stack > span:nth-child(2) {
+  background: #e4ecfb;
+}
+.og-operations .og-avatar-stack > span:nth-child(3) {
+  background: #bed1f3;
+}
+.og-operations .og-avatar-stack > span:last-child {
+  background: #fff;
+  border-color: #dce5f6;
+  font-weight: 500;
+}
+.og-operations .og-community-channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  padding: 16px 17px 9px;
+}
+.og-operations .og-community-channels > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #64748b;
+  font-size: 10px;
+}
+.og-operations .og-community-channels > span:nth-child(2) {
+  color: #2859c5;
+}
+.og-operations .ab-chat-message {
+  padding-top: 17px;
+}
+.og-operations .ab-chat-message .az-avatar {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dce5f3;
+}
+.og-operations .ab-chat-message > div > span {
+  background: #f5f8fe;
+  border-color: #e0e8f7;
+  font-size: 12px;
+}
+.og-operations .ab-chat-message:nth-of-type(5) > div > span {
+  background: #fff;
+}
+.og-operations .ab-chat-compose {
+  background: #f9fbfe;
+  margin-top: 21px;
+  font-size: 11px;
+}
+.og-administration .ab-admin-preview {
+  box-shadow: 0 18px 45px -28px #2859c53d;
+  border-radius: 15px;
+}
+.og-administration .ab-preview-heading {
+  background: #fff;
+  font-size: 13px;
+}
+.og-administration .og-backend-network {
+  padding: 25px 24px 23px;
+  background: linear-gradient(180deg, #f3f7fe, #f9fbff);
+  border-bottom: 1px solid #e4ebf7;
+}
+.og-administration .og-backend-platforms {
+  --og-backend-gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--og-backend-gap);
+  position: relative;
+}
+.og-administration .og-backend-platforms > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: #526780;
+  position: relative;
+}
+.og-administration .og-platform-mark {
+  width: 54px;
+  height: 54px;
+  border-radius: 13px;
+  box-shadow: 0 6px 16px -7px #2859c528;
+}
+.og-administration .og-backend-tracks {
+  display: block;
+  height: 60px;
+  width: calc(75% + 7.5px);
+  margin-inline: auto;
+  margin-top: 8px;
+  overflow: visible;
+}
+.og-administration .og-admin-hub {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: max-content;
+  max-width: 100%;
+  margin-inline: auto;
+  padding: 13px 17px;
+  border-radius: 10px;
+  border: 1px solid #c4d5f1;
+  background: #fff;
+  box-shadow: 0 7px 18px -10px #2859c537;
+  color: #2859c5;
+  font-size: 13px;
+  font-weight: 550;
+}
+.og-administration .og-admin-hub > svg {
+  flex-shrink: 0;
+}
+.og-administration .og-admin-hub > svg:last-child {
+  margin-left: 14px;
+  color: #6c86b6;
+}
+.og-administration .ab-admin-owner {
+  padding-block: 20px 18px;
+}
+.og-administration .ab-admin-settings > div:nth-child(2),
+.og-administration .ab-admin-settings > div:nth-child(3) {
+  background: #f7faff;
+  margin-inline: -9px;
+  padding-inline: 9px;
+}
+.og-administration .ab-admin-settings > div:nth-child(2) dd,
+.og-administration .ab-admin-settings > div:nth-child(3) dd {
+  font-size: 17px;
+  color: #2859c5;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.3px;
+}
+.og-administration .ab-admin-settings > div:nth-child(3) dd small {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+.og-administration .ab-admin-bottom {
+  font-size: 11px;
+}
+@media (max-width: 1023px) and (min-width: 768px) {
+  .og-operations .og-community-presence {
+    padding-inline: 17px;
+    gap: 14px;
+  }
+  .og-operations .og-member-orbit {
+    width: 83px;
+    height: 83px;
+  }
+  .og-operations .og-orbit-member {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+  .og-operations .og-orbit-member > svg {
+    width: 26px;
+    height: 26px;
+  }
+  .og-operations .og-community-presence strong {
+    font-size: 15px;
+  }
+  .og-operations .og-funding-network {
+    padding-inline: 10px;
+  }
+  .og-operations .og-payment-rails > span,
+  .og-operations .og-funding-accounts > .og-platform-mark {
+    width: 33px;
+  }
+  .og-operations .og-payment-rails > small,
+  .og-operations .og-funding-accounts > small {
+    font-size: 9px;
+  }
+}
+@media (max-width: 767px) {
+  .og-operations .ab-operation-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .og-operations .og-community-presence {
+    padding-inline: 21px;
+    gap: 24px;
+  }
+  .og-operations .og-member-orbit {
+    width: 91px;
+    height: 91px;
+  }
+  .og-operations .og-community-presence strong {
+    font-size: 16px;
+  }
+  .og-operations .og-community-presence .og-orbit-member {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+  .og-operations .og-community-presence .og-orbit-member > svg {
+    width: 28px;
+    height: 28px;
+  }
+  .og-administration .og-backend-network {
+    padding-inline: 17px;
+  }
+  .og-administration .og-backend-platforms {
+    --og-backend-gap: 5px;
+  }
+  .og-administration .og-backend-tracks {
+    width: calc(75% + 3.75px);
+  }
+  .og-administration .og-platform-mark {
+    width: 47px;
+    height: 47px;
+    border-radius: 11px;
+  }
+  .og-administration .og-admin-hub {
+    font-size: 12px;
+    padding-inline: 13px;
+  }
+  .og-administration .og-admin-hub > svg:last-child {
+    margin-left: 4px;
+  }
+}
+@media (max-width: 374px) {
+  .og-operations .og-funding-network {
+    padding-inline: 8px;
+  }
+  .og-operations .og-payment-rails > span,
+  .og-operations .og-funding-accounts > .og-platform-mark {
+    width: 30px;
+    height: 38px;
+    border-radius: 8px;
+  }
+  .og-operations .og-funding-accounts img {
+    width: 24px;
+    height: 24px;
+  }
+  .og-operations .og-payment-rails > small,
+  .og-operations .og-funding-accounts > small {
+    font-size: 8px;
+  }
+  .og-operations .og-funding-hub > strong {
+    font-size: 11px;
+  }
+  .og-operations .og-funding-hub > small {
+    font-size: 8px;
+  }
+  .og-operations .og-community-presence {
+    padding-inline: 14px;
+    gap: 17px;
+  }
+  .og-operations .og-member-orbit {
+    width: 78px;
+    height: 78px;
+  }
+  .og-operations .og-community-presence strong {
+    font-size: 15px;
+  }
+  .og-operations .og-presence-line {
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .og-operations .og-community-symbol {
+    width: 35px;
+    height: 35px;
+  }
+  .og-administration .og-backend-platforms > div {
+    font-size: 9px;
+  }
+  .og-administration .og-platform-mark {
+    width: 42px;
+    height: 44px;
+  }
+  .og-administration .og-platform-mark img {
+    width: 28px;
+    height: 28px;
+  }
+}

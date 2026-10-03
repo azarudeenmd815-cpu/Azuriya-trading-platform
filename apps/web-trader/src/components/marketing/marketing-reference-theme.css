@@ -1,0 +1,641 @@
+/* Reference type scale is shared by both visitor themes; the root keeps Instrument Sans for text. */
+html[data-marketing-theme]
+  .az-marketing
+  :is(.ab-hero h1, .sp-hero h1, .md-hero h1) {
+  font-size: clamp(36px, 4.1vw, 56px);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+}
+
+html[data-marketing-theme] .az-marketing .sp-hero-split h1 {
+  font-size: clamp(34px, 3.6vw, 48px);
+}
+
+html[data-marketing-theme]
+  .az-marketing
+  :is(
+    .az-section-intro h2,
+    .az-section-copy h2,
+    .ab-section-heading h2,
+    .mdh-editorial h2,
+    .md-section-intro h2,
+    .md-providers h2,
+    .md-reference-heading h2,
+    .az-final-cta h2,
+    .md-final-cta h2
+  ) {
+  font-size: clamp(29px, 3.2vw, 40px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.18;
+}
+
+html[data-marketing-theme]
+  .az-marketing
+  :is(
+    .sp-content-section h2,
+    .sp-next-steps > h2,
+    .sp-faq h2,
+    .sp-related h2,
+    .sp-inquiry h2
+  ) {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+html[data-marketing-theme]
+  .az-marketing
+  :is(.ab-hero-editorial > p, .az-hero-copy p, .sp-lead, .md-hero-copy p) {
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+html[data-marketing-theme]
+  .az-marketing
+  :is(.az-hero-eyebrow, .az-eyebrow, .sp-eyebrow, .md-eyebrow) {
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+html[data-marketing-theme]
+  .az-marketing
+  :is(
+    .az-button,
+    .sp-directory-entry h3,
+    .sp-related strong,
+    .sp-next-steps h3,
+    .sf-intro h2
+  ) {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Dark surfaces use the sampled screenshot palette. */
+html[data-marketing-theme="dark"] .az-marketing {
+  --text: #ffffff;
+  --surface-raised: #191a21;
+  --line: #303238;
+  --subtle: #9b9da6;
+  --accent: #9aafff;
+  --accent-solid: #3869fc;
+  --az-bg: #0f1014;
+  --az-surface: #191a21;
+  --az-raised: #303238;
+  --az-line: #303238;
+  --az-muted: #9b9da6;
+  --az-blue: #9aafff;
+  --az-green: #36d69d;
+  --az-red: #fd606c;
+  --az-lavender: #e3defd;
+  --az-text: #ffffff;
+  --sp-ink: #ffffff;
+  --sp-muted: #9b9da6;
+  --sp-line: #303238;
+  background: #0f1014;
+  color: #ffffff;
+  color-scheme: dark;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .az-header {
+  background: #0f1014f2;
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-brand {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-brand-mark, .az-brand-period) {
+  color: #3869fc;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-desktop-nav a, .az-login) {
+  color: #c7c8cf;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-desktop-nav a:hover, .az-login:hover, .az-mobile-nav a:hover) {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-desktop-nav, .az-mobile-nav)
+  a[aria-current="page"] {
+  color: #9aafff;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-menu-toggle {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #0f1014;
+  border-radius: 50%;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-mobile-nav {
+  background: #191a21;
+  border-color: #303238;
+  box-shadow: none;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-mobile-nav a {
+  color: #ffffff;
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-button {
+  border-radius: 999px;
+  background: #3869fc;
+  border-color: #3869fc;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-button:hover {
+  background: #2e5df0;
+  box-shadow: none;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-button-secondary {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #0f1014 !important;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-button-secondary:hover {
+  background: #e3defd;
+  border-color: #e3defd;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-explore {
+  color: #ffffff !important;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-text-link {
+  color: #9aafff !important;
+}
+html[data-marketing-theme="dark"] .az-marketing :focus-visible {
+  outline-color: #9aafff;
+}
+html[data-marketing-theme="dark"] .az-marketing ::selection {
+  background: #3869fc;
+  color: #fff;
+}
+html[data-marketing-theme="dark"] .az-marketing .ab-routing-banner {
+  background: #303238;
+  border-color: #303238;
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"] .az-marketing .ab-routing-banner strong {
+  color: #9aafff;
+}
+html[data-marketing-theme="dark"] .az-marketing .ab-routing-banner a {
+  color: #c7c8cf;
+}
+html[data-marketing-theme="dark"] .az-marketing .ab-routing-banner a:hover {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-hero-eyebrow, .az-eyebrow, .sp-eyebrow, .az-eyebrow-line) {
+  color: #9aafff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-hero-copy p, .az-hero-description, .ab-hero-editorial > p) {
+  color: #c7c8cf;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-hero-capabilities > span, .az-audience > div > span) {
+  color: #c7c8cf;
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-hero-capabilities svg, .az-audience svg) {
+  color: #9aafff;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-audience {
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-audience > p {
+  color: #9b9da6;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-audience strong {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"] .az-marketing .ab-hero h1 > span {
+  color: var(--accent-solid);
+}
+html[data-marketing-theme="dark"] .az-marketing .ab-hero .az-hero-capabilities {
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing.sp-page
+  .az-demo-shell
+  .sp-community-preview.az-dashboard {
+  display: block;
+  padding: 0;
+  grid-template-columns: none;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .az-section-intro > p,
+    .az-section-copy > p,
+    .az-check-list,
+    .ab-section-heading p,
+    .az-preview-footnote
+  ) {
+  color: #9b9da6;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-check-list li {
+  color: #c7c8cf;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-check-list svg {
+  color: #9aafff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .ab-section-heading h2 > span,
+    .az-section-copy h2 > span,
+    .az-section-intro h2 > span
+  ) {
+  color: #9b9da6;
+}
+html[data-marketing-theme="dark"] .az-marketing .atc-conditions {
+  background: #191a21;
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"] .az-marketing .atc-grid > div {
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.atc-grid dt, .atc-grid dd span, .atc-grid .atc-detail, .atc-note) {
+  color: #c7c8cf;
+}
+html[data-marketing-theme="dark"] .az-marketing .atc-grid dd {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.atc-heading a, .atc-grid dt svg, .atc-grid .atc-routing) {
+  color: #9aafff;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-faq details {
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-faq summary {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-faq details p {
+  color: #9b9da6;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-final-cta {
+  background: #191a21;
+  border: 1px solid #303238;
+  border-radius: 24px;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-final-cta h2 {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-final-cta h2 > span, .az-final-cta p, .az-final-cta small) {
+  color: #c7c8cf;
+}
+
+/* Shared reading pages, directories and inquiry controls. */
+html[data-marketing-theme="dark"] .az-marketing.sp-page {
+  background: #0f1014;
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .sp-document-meta,
+    .sp-draft-note,
+    .sp-next-steps,
+    .sp-directory-empty,
+    .sp-operator,
+    .sp-inquiry,
+    .sp-product-graphic
+  ) {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 22px;
+  box-shadow: none;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .sp-graphic-top,
+    .sp-graphic-rows > div,
+    .sp-contents a,
+    .sp-operator dl > div,
+    .sp-inquiry-draft
+  ) {
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.sp-graphic-heading > span, .sp-graphic-nodes span) {
+  background: #303238;
+  border-color: #303238;
+  color: #9aafff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.sp-graphic-nodes > div, .sp-graphic-rows) {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 14px;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .sp-graphic-top > span:last-child,
+    .sp-graphic-heading small,
+    .sp-graphic-rows span,
+    .sp-graphic-bottom,
+    .sp-contents > span,
+    .sp-contents a,
+    .sp-draft-note,
+    .sp-section-number,
+    .sp-content-section li,
+    .sp-directory-toolbar > span,
+    .sp-directory-entry p,
+    .sp-entry-path,
+    .sp-directory-empty p,
+    .sp-operator p,
+    .sp-operator dt,
+    .sp-inquiry-note p,
+    .sp-form-caption,
+    .sp-not-found p
+  ) {
+  color: #9b9da6;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .sp-document-meta strong,
+    .sp-section-links a,
+    .sp-next-steps li > span,
+    .sp-faq summary span,
+    .sp-related svg,
+    .sp-entry-category,
+    .sp-directory-entry h3 svg,
+    .sp-sources a,
+    .sp-inquiry-feedback
+  ) {
+  color: #9aafff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.sp-related a, .sp-directory-entry) {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 18px;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.sp-related a:hover, .sp-directory-entry:hover) {
+  background: #303238;
+  border-color: #3869fc;
+}
+html[data-marketing-theme="dark"] .az-marketing .sp-related a > span {
+  color: #9b9da6;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .sp-search,
+    .sp-directory-filters button,
+    .sp-inquiry-form input,
+    .sp-inquiry-form select,
+    .sp-inquiry-form textarea,
+    .sp-inquiry-draft button,
+    .sp-inquiry-draft pre
+  ) {
+  background: #303238;
+  border-color: #303238;
+  color: #ffffff;
+  border-radius: 12px;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .sp-search input,
+    .sp-search button,
+    .sp-operator dd,
+    .sp-inquiry-form label
+  ) {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.sp-search, .sp-directory-filters button) {
+  border-radius: 999px;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .sp-directory-filters
+  button[aria-pressed="true"] {
+  background: #3869fc;
+  border-color: #3869fc;
+  color: #fff;
+}
+
+/* Original native editorial graphics share the product palette. */
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ai-featured, .ai-card, .ai-reading-path, .ai-article-cover) {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 20px;
+}
+html[data-marketing-theme="dark"] .az-marketing .ai-reading-path-grid {
+  border: 0;
+  gap: 16px;
+}
+html[data-marketing-theme="dark"] .az-marketing .ai-reading-path {
+  border: 1px solid #303238;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .ai-filters,
+    .ai-reading-path li,
+    .ai-card > .ai-graphic,
+    .ai-cover-link,
+    .ai-empty,
+    .ai-article-byline
+  ) {
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .ai-featured p,
+    .ai-featured-action small,
+    .ai-reading-path > p,
+    .ai-reading-path li,
+    .ai-path-heading > span,
+    .ai-result-count,
+    .ai-card-copy p,
+    .ai-reading-time,
+    .ai-empty,
+    .ai-home-heading p,
+    .ai-article-meta,
+    .ai-article-byline
+  ) {
+  color: #9b9da6;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ai-path-heading h3, .ai-empty h3, .ai-article-byline strong) {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .ai-featured-action,
+    .ai-category,
+    .ai-card h3 a svg,
+    .ai-article-meta a,
+    .ai-article-byline a,
+    .ai-reading-path li a
+  ) {
+  color: #9aafff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ai-search, .ai-filters button, .ai-empty button) {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 999px;
+  color: #c7c8cf;
+}
+html[data-marketing-theme="dark"] .az-marketing .ai-search input {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ai-filters
+  button[aria-pressed="true"] {
+  background: #3869fc;
+  border-color: #3869fc;
+  color: #fff;
+}
+html[data-marketing-theme="dark"] .az-marketing .ai-article-cover figcaption {
+  background: #191a21;
+  color: #9b9da6;
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ai-graphic
+  rect[fill="#f3f7fd"] {
+  fill: #1a1c22;
+}
+html[data-marketing-theme="dark"] .az-marketing .ai-graphic rect[fill="white"],
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ai-graphic
+  rect[fill="#fafcfe"] {
+  fill: #303238;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ai-graphic
+  text[fill="#1c2b44"] {
+  fill: #ffffff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ai-graphic
+  text[fill="#60728d"],
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ai-graphic
+  text[fill="#6f819b"] {
+  fill: #9b9da6;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ai-graphic
+  rect[fill="#eaf1ff"] {
+  fill: #263658;
+}
+html[data-marketing-theme="dark"] .az-marketing .ai-graphic rect[stroke],
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ai-graphic
+  path[stroke="#e3eaf4"] {
+  stroke: #303238;
+}
+
+/* Legal footer and its native privacy dialog use the same surface hierarchy. */
+html[data-marketing-theme="dark"] .az-marketing .sf-footer {
+  background: #191a21;
+  color: #ffffff;
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .sf-intro,
+    .sf-disclosures,
+    .sf-bottom,
+    .sf-privacy-dialog > header,
+    .sf-privacy-row
+  ) {
+  border-color: #303238;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .sf-kicker,
+    .sf-brand-row p,
+    .sf-link-grid a,
+    .sf-disclosure-copy p,
+    .sf-bottom,
+    .sf-privacy-body p,
+    .sf-privacy-row small,
+    .sf-privacy-dialog > header > button
+  ) {
+  color: #9b9da6;
+}
+html[data-marketing-theme="dark"] .az-marketing .sf-disclosure-copy strong {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .sf-brand-row > a:last-child,
+    .sf-disclosures svg,
+    .sf-setting-state,
+    .sf-privacy-note a,
+    .sf-privacy-row > svg
+  ) {
+  color: #9aafff;
+}
+html[data-marketing-theme="dark"] .az-marketing .sf-footer a:hover {
+  color: #ffffff;
+}
+html[data-marketing-theme="dark"] .az-marketing .sf-privacy-dialog {
+  background: #191a21;
+  color: #ffffff;
+  border-color: #303238;
+  border-radius: 24px;
+  box-shadow: none;
+}
+html[data-marketing-theme="dark"] .az-marketing .sf-privacy-dialog::backdrop {
+  background: #08090db3;
+}
+html[data-marketing-theme="dark"] .az-marketing .af-motion-control {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #0f1014;
+  border-radius: 999px;
+}
+html[data-marketing-theme="dark"] .az-marketing .af-motion-control:hover {
+  background: #e3defd;
+  color: #0f1014;
+}

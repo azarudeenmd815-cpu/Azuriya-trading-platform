@@ -1,0 +1,177 @@
+.mdh-section {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 54px;
+  align-items: center;
+  padding: 48px;
+  background: #f5f8fd;
+  border: 1px solid #dce5f2;
+  border-radius: 16px;
+  margin-block: 36px 80px;
+}
+.mdh-editorial {
+  min-width: 0;
+}
+.mdh-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 10px;
+  font-weight: 550;
+  letter-spacing: 1.2px;
+  color: #425c81;
+  margin-bottom: 20px;
+}
+.mdh-label img {
+  object-fit: contain;
+}
+.mdh-editorial h2 {
+  font-size: clamp(30px, 3vw, 41px);
+  letter-spacing: -0.04em;
+  line-height: 1.13;
+}
+.mdh-editorial h2 span {
+  color: #2859c5;
+}
+.mdh-editorial > p {
+  color: #56657a;
+  font-size: 14px;
+  line-height: 1.8;
+  max-width: 395px;
+  margin-top: 18px;
+}
+.mdh-devices {
+  display: flex;
+  gap: 22px;
+  margin-top: 22px;
+}
+.mdh-devices span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #385476;
+}
+.mdh-benefits {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+  margin: 21px 0 24px;
+}
+.mdh-benefits li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: #56657a;
+}
+.mdh-benefits svg {
+  color: #2859c5;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.az-marketing a.mdh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+  font-size: 14px;
+  font-weight: 550;
+  color: #2859c5;
+  min-height: 44px;
+  border-bottom: 1px solid #c5d3ec;
+  transition: gap 180ms ease;
+}
+.az-marketing a.mdh-link:hover {
+  gap: 30px;
+}
+.mdh-editorial > small {
+  display: block;
+  color: #61728b;
+  font-size: 11px;
+  margin-top: 13px;
+}
+.mdh-product {
+  min-width: 0;
+}
+.mdh-product-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 10px;
+  color: #61728b;
+}
+.mdh-product-top > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  letter-spacing: 0.8px;
+}
+.mdh-product-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #2859c5;
+}
+.az-marketing a.mdh-hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #2859c5;
+  font-size: 12px;
+  min-height: 44px;
+  margin-top: 8px;
+}
+.mdh-hero-link img {
+  object-fit: contain;
+  flex-shrink: 0;
+}
+@media (max-width: 1199px) {
+  .mdh-section {
+    gap: 30px;
+    padding: 34px;
+  }
+}
+@media (max-width: 1023px) {
+  .mdh-section {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 36px;
+  }
+  .mdh-editorial > p {
+    max-width: 550px;
+  }
+  .mdh-product {
+    width: 100%;
+    max-width: 660px;
+  }
+}
+@media (max-width: 767px) {
+  .mdh-section {
+    padding: 26px 20px;
+    margin-block: 28px 60px;
+    gap: 26px;
+  }
+  .mdh-editorial h2 {
+    font-size: clamp(27px, 7vw, 39px);
+  }
+  .mdh-devices {
+    flex-wrap: wrap;
+    gap: 12px 20px;
+  }
+  .mdh-product-top {
+    align-items: flex-start;
+    font-size: 9px;
+  }
+  .mdh-product-top > span:last-child {
+    max-width: 65px;
+    text-align: right;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .az-marketing a.mdh-link {
+    transition: none;
+  }
+}

@@ -1,0 +1,685 @@
+.az-dashboard .db-view {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+  margin-top: 18px;
+  color: #172235;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.az-dashboard .db-panel {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid #e1e6ee;
+  border-radius: 8px;
+  background: #fff;
+}
+.az-dashboard .db-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.az-dashboard .db-panel-heading h3 {
+  margin: 0;
+  color: #172235;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+.az-dashboard .db-panel select,
+.az-dashboard .db-review-button {
+  max-width: 100%;
+  min-height: 44px;
+  padding: 9px 11px;
+  border: 1px solid #d6dde8;
+  border-radius: 6px;
+  background: #fff;
+  color: #172235;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.az-dashboard .db-panel select {
+  cursor: pointer;
+}
+.az-dashboard .db-panel select:focus-visible,
+.az-dashboard .db-control-tabs button:focus-visible,
+.az-dashboard .db-review-button:focus-visible {
+  outline: 2px solid #2859c5;
+  outline-offset: 3px;
+}
+.az-dashboard .db-zone-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #56657a;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.az-dashboard .db-route-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 15px;
+  color: #56657a;
+  font-size: 12px;
+}
+.az-dashboard .db-route-legend > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.az-dashboard .db-route-legend > span:last-child {
+  margin-left: auto;
+  color: #287b5a;
+}
+.az-dashboard .db-dot,
+.az-dashboard .db-draft-state > span,
+.az-dashboard .db-order-status > span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #2859c5;
+  flex-shrink: 0;
+}
+.az-dashboard .db-route-graph {
+  position: relative;
+  display: grid;
+  grid-template-columns: 23% 19% 23%;
+  justify-content: space-between;
+  align-items: center;
+  height: 260px;
+  margin-top: 10px;
+}
+.az-dashboard .db-route-tracks {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.az-dashboard .db-tracks-mobile {
+  display: none;
+}
+.az-dashboard .db-route-column {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 16px;
+}
+.az-dashboard .db-node {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 74px;
+  padding: 10px;
+  border: 1px solid #dce3ed;
+  border-radius: 6px;
+  background: #fff;
+}
+.az-dashboard .db-node > div {
+  min-width: 0;
+}
+.az-dashboard .db-node strong {
+  display: block;
+  color: #172235;
+  font-size: 13px;
+  font-weight: 550;
+  line-height: 1.4;
+}
+.az-dashboard .db-node small {
+  display: block;
+  margin-top: 3px;
+  color: #56657a;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.az-dashboard .db-engine-node {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 15px 9px;
+  border: 1px solid #b8cbed;
+  border-radius: 8px;
+  background: #f4f7fc;
+  text-align: center;
+}
+.az-dashboard .db-engine-icon {
+  display: grid;
+  place-items: center;
+  color: #2859c5;
+}
+.az-dashboard .db-engine-node > strong {
+  color: #172235;
+  font-size: 13px;
+  font-weight: 600;
+}
+.az-dashboard .db-engine-node > small {
+  color: #56657a;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.az-dashboard .db-engine-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #227357;
+  font-size: 12px;
+}
+.az-dashboard .db-provider-rank {
+  color: #56657a;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+.az-dashboard .db-provider-0 {
+  border-color: #b9d2c4;
+}
+.az-dashboard .db-providers .db-node > svg {
+  margin-left: auto;
+  color: #24845f;
+  flex-shrink: 0;
+}
+.az-dashboard .db-route-bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid #edf0f5;
+  color: #56657a;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.az-dashboard .db-route-bottom > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.az-dashboard .db-route-bottom svg {
+  flex-shrink: 0;
+  color: #28815e;
+}
+.az-dashboard .db-route-bottom > span:last-child {
+  white-space: nowrap;
+}
+.az-dashboard .db-market-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 16px;
+}
+.az-dashboard .db-depth-labels {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr 1fr;
+  gap: 5px;
+  margin: 20px 0 12px;
+  color: #56657a;
+  font-size: 12px;
+}
+.az-dashboard .db-depth-labels > span:nth-child(2) {
+  text-align: center;
+}
+.az-dashboard .db-depth-labels > span:last-child {
+  text-align: right;
+}
+.az-dashboard .db-book {
+  display: grid;
+  gap: 5px;
+}
+.az-dashboard .db-book-row {
+  display: grid;
+  grid-template-columns: 1fr 1.6fr 1fr;
+  min-height: 32px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.az-dashboard .db-book-volume {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  overflow: hidden;
+}
+.az-dashboard .db-book-volume i {
+  position: absolute;
+  inset-block: 0;
+  border-radius: 2px;
+}
+.az-dashboard .db-book-volume b {
+  position: relative;
+  z-index: 1;
+  font-weight: 500;
+}
+.az-dashboard .db-bid {
+  color: #226549;
+}
+.az-dashboard .db-bid i {
+  right: 0;
+  background: #dff1e9;
+}
+.az-dashboard .db-ask {
+  justify-content: flex-end;
+  color: #9c4654;
+}
+.az-dashboard .db-ask i {
+  left: 0;
+  background: #fae6e8;
+}
+.az-dashboard .db-book-prices {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 6px;
+  padding: 5px;
+  background: #f8f9fc;
+}
+.az-dashboard .db-book-prices b {
+  font-weight: 500;
+}
+.az-dashboard .db-book-prices b:first-child {
+  color: #267758;
+}
+.az-dashboard .db-book-prices b:last-child {
+  color: #aa5860;
+}
+.az-dashboard .db-depth-footer,
+.az-dashboard .db-blotter-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 15px;
+  color: #56657a;
+  font-size: 12px;
+}
+.az-dashboard .db-route-health .db-panel-heading > svg {
+  color: #56657a;
+}
+.az-dashboard .db-control-chain {
+  display: grid;
+  margin-top: 12px;
+}
+.az-dashboard .db-control-chain > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #edf0f5;
+}
+.az-dashboard .db-control-chain > div > span {
+  color: #56657a;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.az-dashboard .db-control-chain strong {
+  color: #172235;
+  font-size: 12px;
+  font-weight: 500;
+}
+.az-dashboard .db-control-chain svg {
+  margin-left: auto;
+  color: #28815e;
+  flex-shrink: 0;
+}
+.az-dashboard .db-panel-footnote {
+  margin: 12px 0 0;
+  color: #56657a;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.az-dashboard .db-draft-state {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #56657a;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.az-dashboard .db-draft-state.is-dirty {
+  color: #8a691e;
+}
+.az-dashboard .db-draft-state.is-dirty > span {
+  background: #bc8a2c;
+}
+.az-dashboard .db-control-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 16px;
+  border-bottom: 1px solid #dce3ed;
+}
+.az-dashboard .db-control-tabs button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 46px;
+  padding: 9px 7px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: #56657a;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.az-dashboard .db-control-tabs button[aria-selected="true"] {
+  border-bottom-color: #2859c5;
+  color: #2859c5;
+}
+.az-dashboard .db-control-tabs button:hover {
+  background: #f8f9fc;
+  color: #2859c5;
+}
+.az-dashboard .db-control-tabs svg {
+  flex-shrink: 0;
+}
+.az-dashboard .db-category-note {
+  margin: 17px 0 16px;
+  color: #56657a;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.az-dashboard .db-setting-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 20px;
+}
+.az-dashboard .db-setting {
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  min-width: 0;
+}
+.az-dashboard .db-setting > span {
+  color: #172235;
+  font-size: 12px;
+  font-weight: 550;
+}
+.az-dashboard .db-setting select {
+  width: 100%;
+  background: #fff;
+}
+.az-dashboard .db-setting small {
+  color: #56657a;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.az-dashboard .db-config-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #edf0f5;
+}
+.az-dashboard .db-config-footer > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #56657a;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.az-dashboard .db-config-footer > span > svg {
+  flex-shrink: 0;
+}
+.az-dashboard .db-review-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-color: #2859c5;
+  background: #2859c5;
+  color: #fff;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.az-dashboard .db-review-button:hover {
+  background: #234ead;
+}
+.az-dashboard .db-review {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #dce3ed;
+}
+.az-dashboard .db-review > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.az-dashboard .db-review h4 {
+  margin: 0;
+  color: #172235;
+  font-size: 15px;
+  font-weight: 600;
+}
+.az-dashboard .db-review > div > span {
+  color: #56657a;
+  font-size: 12px;
+}
+.az-dashboard .db-review dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 24px;
+  margin: 15px 0 0;
+}
+.az-dashboard .db-review dl > div {
+  min-width: 0;
+  padding: 10px 0;
+  border-top: 1px solid #edf0f5;
+}
+.az-dashboard .db-review dt {
+  color: #56657a;
+  font-size: 12px;
+}
+.az-dashboard .db-review dd {
+  margin: 4px 0 0;
+  color: #172235;
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.az-dashboard .db-review p {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 16px 0 0;
+  color: #28815e;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.az-dashboard .db-review p svg {
+  flex-shrink: 0;
+}
+.az-dashboard .db-table-scroll {
+  overflow-x: auto;
+  margin-top: 16px;
+}
+.az-dashboard .db-blotter table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+  color: #172235;
+  text-align: left;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.az-dashboard .db-blotter th {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e1e6ee;
+  background: #f8f9fc;
+  color: #56657a;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.az-dashboard .db-blotter td {
+  padding: 14px 10px;
+  border-bottom: 1px solid #edf0f5;
+  white-space: nowrap;
+}
+.az-dashboard .db-blotter td strong {
+  display: block;
+  color: #172235;
+  font-weight: 550;
+}
+.az-dashboard .db-blotter td small {
+  display: block;
+  margin-top: 3px;
+  font-size: 12px;
+}
+.az-dashboard .db-positive {
+  color: #28815e;
+}
+.az-dashboard .db-negative {
+  color: #994b56;
+}
+.az-dashboard .db-execution-id {
+  color: #42526b;
+}
+.az-dashboard .db-order-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #287a59;
+  font-size: 12px;
+}
+.az-dashboard .db-order-status > span {
+  background: #31916c;
+}
+.az-dashboard .db-order-status.is-review {
+  color: #815f23;
+}
+.az-dashboard .db-order-status.is-review > span {
+  background: #b58a3c;
+}
+@media (max-width: 1050px) {
+  .az-dashboard .db-node {
+    gap: 6px;
+    padding: 9px;
+  }
+  .az-dashboard .db-provider-rank {
+    display: none;
+  }
+  .az-dashboard .db-providers .db-node > svg {
+    display: none;
+  }
+  .az-dashboard .db-route-bottom {
+    flex-direction: column;
+    gap: 5px;
+  }
+  .az-dashboard .db-market-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 680px) {
+  .az-dashboard .db-panel {
+    padding: 15px;
+  }
+  .az-dashboard .db-routing > .db-panel-heading,
+  .az-dashboard .db-configuration > .db-panel-heading,
+  .az-dashboard .db-blotter > .db-panel-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .az-dashboard .db-zone-label {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .az-dashboard .db-route-legend {
+    gap: 8px 14px;
+  }
+  .az-dashboard .db-route-legend > span:last-child {
+    margin-left: 0;
+  }
+  .az-dashboard .db-route-graph {
+    grid-template-columns: 1fr;
+    grid-template-rows: 90px 80px 90px;
+    align-content: space-between;
+    height: 330px;
+    margin-top: 18px;
+  }
+  .az-dashboard .db-route-column {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .az-dashboard .db-node {
+    justify-content: center;
+    min-height: 90px;
+    padding: 8px 4px;
+    text-align: center;
+  }
+  .az-dashboard .db-node strong {
+    font-size: 12px;
+    overflow-wrap: anywhere;
+  }
+  .az-dashboard .db-node small {
+    font-size: 12px;
+  }
+  .az-dashboard .db-engine-node {
+    width: 64%;
+    margin: 0 auto;
+    padding: 10px 9px;
+    gap: 4px;
+  }
+  .az-dashboard .db-engine-icon {
+    display: none;
+  }
+  .az-dashboard .db-engine-node > strong {
+    font-size: 13px;
+  }
+  .az-dashboard .db-tracks-desktop {
+    display: none;
+  }
+  .az-dashboard .db-tracks-mobile {
+    display: block;
+  }
+  .az-dashboard .db-control-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .az-dashboard .db-control-tabs button {
+    min-height: 50px;
+    padding: 9px 5px;
+  }
+  .az-dashboard .db-setting-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .az-dashboard .db-config-footer {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .az-dashboard .db-review > div {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .az-dashboard .db-review dl {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 450px) {
+  .az-dashboard .db-depth-labels {
+    grid-template-columns: 1fr 1.6fr 1fr;
+  }
+  .az-dashboard .db-book-prices {
+    flex-direction: column;
+    gap: 3px;
+    padding: 6px 2px;
+  }
+  .az-dashboard .db-depth-footer,
+  .az-dashboard .db-blotter-footer {
+    flex-direction: column;
+    gap: 5px;
+  }
+  .az-dashboard .db-zone-label {
+    flex-wrap: wrap;
+  }
+  .az-dashboard .db-panel-heading > select {
+    width: 100%;
+  }
+}

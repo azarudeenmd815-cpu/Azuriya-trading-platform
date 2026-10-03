@@ -1,0 +1,79 @@
+.az-desktop-nav {
+  gap: 23px;
+  margin-left: 0;
+  white-space: nowrap;
+}
+@media (max-width: 1199px) {
+  .az-marketing .az-header .az-mobile-nav {
+    max-height: calc(100dvh - 80px);
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+  }
+}
+@media (max-width: 767px) {
+  .az-marketing .az-header .az-mobile-nav {
+    max-height: calc(100dvh - 72px);
+  }
+}
+@media (max-width: 479px) {
+  .az-marketing .az-header-inner {
+    gap: 8px;
+  }
+  .az-marketing .az-header-actions {
+    gap: 4px;
+  }
+  .az-marketing .az-header .az-brand {
+    font-size: 22px;
+    gap: 6px;
+  }
+  .az-marketing .az-header .az-brand-mark,
+  .az-marketing .az-header .az-brand-mark svg {
+    width: 24px;
+    height: 24px;
+  }
+  .az-marketing .az-header .az-button-small {
+    font-size: 11px;
+    padding-inline: 9px;
+    min-height: 44px;
+  }
+  .az-marketing .az-header .az-button-small > svg {
+    display: none;
+  }
+}
+.az-desktop-nav a[aria-current="page"],
+.az-mobile-nav a[aria-current="page"] {
+  color: #2859c5;
+  font-weight: 600;
+}
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .az-header .az-desktop-nav {
+    display: none;
+  }
+  .az-header .az-menu-toggle {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+  .az-header .az-mobile-nav {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 79px;
+    width: 100%;
+    padding: 12px 28px 22px;
+    background: #ffffff;
+    border-bottom: 1px solid #dce3ee;
+    box-shadow: 0 12px 24px #294f810d;
+  }
+  .az-header .az-mobile-nav a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 48px;
+    padding: 10px 4px;
+    color: #42526b;
+    font-size: 14px;
+  }
+}

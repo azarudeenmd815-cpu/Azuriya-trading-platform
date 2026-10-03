@@ -1,0 +1,81 @@
+.af-tracks {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+  fill: none;
+}
+
+.af-rail {
+  stroke: #abc1e7;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.af-packet {
+  stroke: #2859c5;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 7 93;
+  animation: af-travel 3.8s linear infinite;
+  animation-delay: var(--af-delay, 0s);
+}
+
+.af-packet-reverse {
+  animation-direction: reverse;
+}
+
+.af-motion-paused .af-packet,
+.af-motion-paused [data-copy-packet] {
+  animation-play-state: paused;
+}
+
+@keyframes af-travel {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.af-motion-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 9px 12px;
+  border: 1px solid #d4dfef;
+  border-radius: 8px;
+  background: #fff;
+  color: #3a527b;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.af-motion-control:hover {
+  background: #edf3ff;
+}
+.af-motion-control:focus-visible {
+  outline: 2px solid #2859c5;
+  outline-offset: 3px;
+}
+
+.af-motion-control > svg {
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .af-packet {
+    animation: none;
+    display: none;
+  }
+  .af-motion-control {
+    display: none;
+  }
+}

@@ -1,0 +1,22 @@
+# Deployment includes the public Next.js app and its shared workspace packages.
+.git
+.local
+.tools
+.env
+.env.*
+**/.env
+**/.env.*
+node_modules
+**/node_modules
+**/.next
+**/*.tsbuildinfo
+backend
+apps/broker-admin
+docs
+**/tests
+**/test-results
+**/playwright-report
+**/coverage
+**/*.log
+**/*.exe
+**/*.dump

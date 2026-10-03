@@ -1,0 +1,611 @@
+/* The light reference theme keeps the same rounded controls and product surfaces. */
+html[data-marketing-theme="light"] .az-marketing {
+  --text: #171820;
+  --surface-raised: #ffffff;
+  --line: #e1e2e7;
+  --subtle: #646671;
+  --accent: #2e5df0;
+  --accent-solid: #3869fc;
+  --az-bg: #ffffff;
+  --az-surface: #f8f8fa;
+  --az-raised: #f1f1f4;
+  --az-line: #e1e2e7;
+  --az-muted: #646671;
+  --az-blue: #2e5df0;
+  --az-green: #13794f;
+  --az-red: #ba3441;
+  --az-lavender: #e3defd;
+  --az-text: #171820;
+  --sp-ink: #171820;
+  --sp-muted: #646671;
+  --sp-line: #e1e2e7;
+  background: #ffffff;
+  color: #171820;
+  color-scheme: light;
+}
+
+html[data-marketing-theme="light"] .az-marketing .az-header {
+  background: #fffffff2;
+  border-color: #e1e2e7;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.az-brand-mark, .az-brand-period) {
+  color: #3869fc;
+}
+
+html[data-marketing-theme="light"] .az-marketing .az-button {
+  border-radius: 999px;
+  background: #3869fc;
+  border-color: #3869fc;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="light"] .az-marketing .az-button:hover {
+  background: #2e5df0;
+  border-color: #2e5df0;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="light"] .az-marketing .az-button-secondary {
+  background: #ffffff;
+  color: #171820 !important;
+  border-color: #e1e2e7;
+}
+
+html[data-marketing-theme="light"] .az-marketing .az-button-secondary:hover {
+  background: #f1f1f4;
+  border-color: #d8d9e1;
+}
+
+html[data-marketing-theme="light"] .az-marketing .az-menu-toggle {
+  border-radius: 50%;
+  background: #f1f1f4;
+  color: #171820;
+  border-color: #e1e2e7;
+}
+
+html[data-marketing-theme="light"] .az-marketing .az-mobile-nav {
+  border-radius: 20px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="light"] .az-marketing :focus-visible {
+  outline-color: #2e5df0;
+}
+
+html[data-marketing-theme="light"] .az-marketing ::selection {
+  background: #e3defd;
+  color: #171820;
+}
+
+/* Product illustrations keep their original artwork and track geometry. */
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.hg-liquidity-card, .hg-platform-card, .hg-community-card) {
+  border-radius: 20px;
+  background: #fffffff5;
+  border-color: #e1e2e7;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="light"] .az-marketing .hg-card-icon {
+  background: #eeecfa;
+  color: #2e5df0;
+  border-radius: 12px;
+}
+
+html[data-marketing-theme="light"] .az-marketing .hg-platform-logos img {
+  border-radius: 6px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .mdh-section,
+    .fw-walkthrough,
+    .ln-route,
+    .ln-directory,
+    .pc-architecture,
+    .pc-catalog,
+    .wg-copy.az-copy-visual,
+    .og-operations .ab-operation-card,
+    .og-administration .ab-admin-preview,
+    .ig-workspace,
+    .ig-source-viewer,
+    .az-risk-section,
+    .az-final-cta,
+    .md-wallet-controls,
+    .md-final-cta,
+    [data-revenue-calculator]
+  ) {
+  border-radius: 24px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .mdh-section,
+    .fw-walkthrough,
+    .og-operations .ab-operation-card,
+    .az-risk-section
+  ) {
+  background: #f5f5f7;
+  border-color: #e1e2e7;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.ln-route, .ln-directory, .pc-architecture) {
+  background: #f5f5f7;
+  border-color: #e1e2e7;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.ig-workspace, .ig-source-viewer, .md-wallet-controls) {
+  border-color: #d8d9e1;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.az-final-cta, .md-final-cta) {
+  background: #f5f5f7;
+  border: 1px solid #e1e2e7;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .fw-desktop,
+    .ab-funding-preview,
+    .ab-chat-preview,
+    .wg-copy .az-master-ticket,
+    .az-follower-tickets > .wg-follower,
+    .ig-view-selector > button,
+    .ig-zones > button,
+    .ig-router,
+    .az-feature,
+    .az-hierarchy-owner,
+    .az-hierarchy-teams > div,
+    .pd-account,
+    .pd-commission,
+    .az-risk-visual,
+    .md-reference-images a
+  ) {
+  border-radius: 20px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .ln-account-node,
+    .ln-provider-node,
+    .pc-architecture-platform,
+    .pc-architecture-service,
+    .ig-mini,
+    .ig-platform-stack > div,
+    .ig-zone-destination,
+    .ig-route-providers > span,
+    .ig-commercial-summary,
+    .ig-source-list article,
+    .ab-chat-message > div > span
+  ) {
+  border-radius: 16px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.ln-routing-hub, .pc-architecture-hub) {
+  border-radius: 22px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .ln-provider-grid > .ln-provider,
+    .ln-directory-explore,
+    .ig-aggregation-result,
+    .ig-commission-equation
+  ) {
+  border-radius: 18px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.ln-logo-crop, .ln-provider > .ln-logo-crop, .ln-reference-details) {
+  border-radius: 12px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.pc-logo, .pd-instrument, .hg-card-icon, .pc-architecture-hub-mark) {
+  border-radius: 12px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.wg-platform-logo, .og-platform-mark, .og-orbit-member) {
+  border-radius: 16px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .fw-payment-icon,
+    .fw-checkout-icon,
+    .fw-amount-display,
+    .fw-methods button,
+    .fw-mobile-summary
+  ) {
+  border-radius: 14px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .og-payment-rails > span,
+    .ig-group-mark,
+    .ig-native-heading > div,
+    .ig-router > span
+  ) {
+  border-radius: 12px;
+}
+
+/* Pills use the same shapes in both themes; native images stay on their own surfaces. */
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .fw-terminal-nav > strong,
+    .fw-preview-actions button,
+    .af-motion-control,
+    .ln-directory-count,
+    .pc-architecture-hub-tags span,
+    .az-copy-tabs button,
+    .wg-route-hub,
+    .az-copy-visual-footer > button,
+    .ab-chat-compose,
+    .ab-admin-tabs span,
+    .og-admin-hub,
+    .ab-admin-settings .ab-a-book-value,
+    .ig-section select,
+    .ig-native-heading button,
+    .ig-markup-control button,
+    .md-currency-options > span,
+    .md-reference-disclosure > summary
+  ) {
+  border-radius: 999px;
+}
+
+html[data-marketing-theme="light"] .az-marketing .az-copy-tabs button {
+  min-height: 44px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.fw-walkthrough-controls button > span, .md-flow-number) {
+  border-radius: 50%;
+}
+
+html[data-marketing-theme="light"] .az-marketing .md-flow-number {
+  background: #f1f1f4;
+}
+
+html[data-marketing-theme="light"] .az-marketing .md-final-cta-icon {
+  border-radius: 18px;
+}
+
+html[data-marketing-theme="light"] .az-marketing .pd-meter-rail {
+  border-radius: 999px;
+}
+
+/* The calculator uses a stable attribute so these shapes do not depend on CSS module hashes. */
+html[data-marketing-theme="light"] .az-marketing [data-revenue-calculator] {
+  background: #ffffff;
+  border-color: #d8d9e1;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:first-child {
+  background: #f5f5f7;
+  border-color: #e1e2e7;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  [data-revenue-calculator]
+  fieldset
+  label
+  > span {
+  border-radius: 999px;
+  background: #f8f8fa;
+  border-color: #e1e2e7;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  [data-revenue-calculator]
+  fieldset
+  input:checked
+  + span {
+  background: #eeecfa;
+  border-color: #2e5df0;
+  color: #2e5df0;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:nth-child(3) {
+  border-radius: 20px;
+  background: #eeecfa;
+  border-color: #d9d9ed;
+}
+
+/* Product and reading pages retain the same spacious hierarchy as the landing page. */
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .sp-product-graphic,
+    .sp-document-meta,
+    .sp-draft-note,
+    .sp-next-steps,
+    .sp-directory-empty,
+    .sp-operator,
+    .sp-inquiry,
+    .sf-privacy-dialog
+  ) {
+  border-radius: 22px;
+}
+
+html[data-marketing-theme="light"] .az-marketing .sp-product-graphic {
+  background: #f5f5f7;
+  border-color: #e1e2e7;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.sp-graphic-nodes > div, .sp-graphic-rows) {
+  border-radius: 14px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.sp-related a, .sp-directory-entry) {
+  border-radius: 18px;
+  border-color: #e1e2e7;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.sp-related a:hover, .sp-directory-entry:hover) {
+  background: #f8f8fa;
+  border-color: #d8d9e1;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .sp-search,
+    .sp-directory-filters button,
+    .ai-search,
+    .ai-filters button,
+    .ai-empty button
+  ) {
+  border-radius: 999px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.sp-directory-filters button, .ai-filters button) {
+  min-height: 44px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .sp-inquiry input,
+    .sp-inquiry select,
+    .sp-inquiry textarea,
+    .sp-inquiry-draft pre,
+    .sp-inquiry-draft button
+  ) {
+  border-radius: 12px;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.ai-featured, .ai-card, .ai-reading-path, .ai-article-cover) {
+  border-radius: 20px;
+}
+
+html[data-marketing-theme="light"] .az-marketing .sf-footer {
+  background: #f8f8fa;
+  border-color: #e1e2e7;
+  color: #171820;
+}
+
+html[data-marketing-theme="light"] .az-marketing .sf-privacy-dialog {
+  background: #ffffff;
+  color: #171820;
+  border-color: #e1e2e7;
+  box-shadow: none;
+}
+
+/* Flat silver surfaces and solid blue actions continue through the product previews. */
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .az-feature,
+    .pd-commission,
+    .md-wallet-header,
+    .fw-heading,
+    .fw-desktop-topbar,
+    .fw-terminal-nav,
+    .fw-terminal-footer,
+    .fw-mobile-summary,
+    .wg-copy.az-copy-visual,
+    .og-funding-network,
+    .og-community-presence,
+    .og-backend-network,
+    .ab-admin-bottom,
+    .ln-directory-explore,
+    .sp-document-meta,
+    .sp-draft-note,
+    .sp-next-steps,
+    .sp-directory-empty,
+    .sp-operator,
+    .sp-inquiry
+  ) {
+  background: #f5f5f7;
+  border-color: #e1e2e7;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .fw-preview-actions button,
+    .fw-mobile-flow > .fw-mobile-current > span,
+    .pc-architecture-hub-mark,
+    .ig-router > span
+  ) {
+  background: #3869fc;
+  border-color: #3869fc;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  .fw-preview-actions
+  button:hover {
+  background: #2e5df0;
+  border-color: #2e5df0;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(
+    .az-text-link,
+    .sp-eyebrow,
+    .sp-document-meta strong,
+    .sp-section-links a,
+    .sp-entry-category,
+    .sp-sources a,
+    .md-text-link,
+    .mdh-link,
+    .mdh-hero-link,
+    .sf-brand-row > a:last-child,
+    .sf-disclosures svg
+  ) {
+  color: #2e5df0;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.sp-directory-filters button, .ai-filters button)[aria-pressed="true"] {
+  background: #3869fc;
+  border-color: #3869fc;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="light"] .az-marketing .ab-hero h1 > span {
+  color: #3869fc;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  .wg-copy
+  .az-copy-tabs
+  button.is-active {
+  background: #3869fc;
+  border-color: #3869fc;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  [data-revenue-calculator]
+  fieldset
+  input:checked
+  + span {
+  background: #3869fc;
+  border-color: #3869fc;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:nth-child(3) {
+  background: #3869fc;
+  border-color: #3869fc;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:nth-child(3)
+  :is(div, span, output) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.ln-route, .pc-architecture, .og-funding-network, .og-backend-network)
+  .af-packet {
+  stroke: #3869fc;
+}
+
+html[data-marketing-theme="light"] .az-marketing .wg-copy .wg-route-packet {
+  background: #3869fc;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing
+  :is(.az-text-link, .md-text-link) {
+  color: #2e5df0 !important;
+}
+
+@media (max-width: 767px) {
+  html[data-marketing-theme="light"]
+    .az-marketing
+    :is(
+      .mdh-section,
+      .fw-walkthrough,
+      .ln-route,
+      .pc-architecture,
+      .wg-copy.az-copy-visual,
+      .og-operations .ab-operation-card,
+      .ig-workspace,
+      .sp-product-graphic,
+      .md-wallet-controls,
+      .az-final-cta,
+      .md-final-cta
+    ) {
+    border-radius: 20px;
+  }
+
+  html[data-marketing-theme="light"]
+    .az-marketing
+    :is(.hg-liquidity-card, .hg-platform-card, .hg-community-card) {
+    border-radius: 14px;
+  }
+
+  html[data-marketing-theme="light"]
+    .az-marketing
+    .md-reference-disclosure
+    > summary {
+    border-radius: 18px;
+  }
+}

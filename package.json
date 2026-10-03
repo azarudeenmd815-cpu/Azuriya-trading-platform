@@ -1,0 +1,22 @@
+{
+  "name": "azuriya-trading-platform",
+  "private": true,
+  "packageManager": "pnpm@10.32.1",
+  "scripts": {
+    "dev": "pnpm --filter @azuriya/web-trader dev",
+    "build": "pnpm -r --filter @azuriya/web-trader --filter @azuriya/broker-admin build",
+    "start": "pnpm --filter @azuriya/web-trader start",
+    "test": "pnpm -r --filter @azuriya/web-trader --filter @azuriya/broker-admin test",
+    "test:browser": "pnpm --filter @azuriya/web-trader test:browser",
+    "typecheck": "pnpm -r --filter @azuriya/web-trader --filter @azuriya/broker-admin typecheck",
+    "dev:admin": "pnpm --filter @azuriya/broker-admin dev",
+    "start:admin": "pnpm --filter @azuriya/broker-admin start",
+    "test:admin": "pnpm --filter @azuriya/broker-admin test",
+    "test:browser:admin": "pnpm --filter @azuriya/broker-admin test:browser",
+    "format": "prettier --write apps/web-trader apps/broker-admin packages package.json pnpm-workspace.yaml",
+    "format:check": "prettier --check apps/web-trader apps/broker-admin packages package.json pnpm-workspace.yaml"
+  },
+  "devDependencies": {
+    "prettier": "3.8.1"
+  }
+}

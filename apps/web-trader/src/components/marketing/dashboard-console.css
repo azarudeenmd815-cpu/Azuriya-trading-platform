@@ -1,0 +1,443 @@
+.az-demo-shell .dc-workspace-mount[hidden] {
+  display: none !important;
+}
+.az-demo-shell .az-dashboard {
+  grid-template-columns: 188px minmax(0, 1fr);
+  border-color: #dfe4ec;
+  border-radius: 8px;
+  color-scheme: light;
+}
+.az-demo-shell .az-dash-sidebar {
+  padding: 22px 12px;
+  background: #f8f9fb;
+  border-color: #e3e7ee;
+}
+.az-demo-shell .az-workspace {
+  border: 0;
+  padding: 8px 6px;
+  margin-bottom: 14px;
+  font-size: 12px;
+}
+.az-demo-shell .az-workspace small {
+  font-size: 11px;
+}
+.az-demo-shell .az-dash-sidebar nav {
+  gap: 3px;
+}
+.az-demo-shell .dc-nav-item {
+  min-width: 0;
+}
+.az-demo-shell .az-nav-heading {
+  display: block;
+  padding: 16px 10px 9px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.9px;
+  text-transform: uppercase;
+}
+.az-demo-shell .az-dash-sidebar nav button {
+  min-height: 42px;
+  font-size: 12px;
+  border-radius: 5px;
+  gap: 9px;
+}
+.az-demo-shell .az-demo-settings {
+  margin-top: 24px;
+  font-size: 12px;
+}
+.az-demo-shell .az-dash-topbar {
+  padding-inline: 24px;
+  border-color: #e3e7ee;
+  font-size: 12px;
+}
+.az-demo-shell .az-dash-topbar b {
+  font-weight: 550;
+}
+.az-demo-shell .az-dash-content {
+  min-height: 0;
+  padding: 24px 24px 0;
+}
+.az-demo-shell .az-dash-heading {
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+.az-demo-shell .az-dashboard .az-dash-heading h2 {
+  font-size: 26px;
+  letter-spacing: -0.7px;
+  font-weight: 600;
+}
+.az-demo-shell .az-dash-heading p {
+  font-size: 12px;
+  line-height: 1.5;
+  max-width: 560px;
+}
+.az-demo-shell .az-team-filter select {
+  min-height: 38px;
+  font-size: 12px;
+}
+.az-demo-shell .dd-environment-strip {
+  border: 0;
+  background: transparent;
+  padding: 0 0 14px;
+  font-size: 11px;
+  margin-bottom: 0;
+}
+.az-demo-shell .az-stats {
+  gap: 0;
+  border: 1px solid #dfe4ec;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.az-demo-shell .az-stat {
+  position: relative;
+  border: 0;
+  border-radius: 0;
+  padding: 16px;
+  min-height: 130px;
+}
+.az-demo-shell .az-stat + .az-stat {
+  border-left: 1px solid #e3e7ee;
+}
+.az-demo-shell .az-stat > div {
+  font-size: 12px;
+}
+.az-demo-shell .az-stat > strong {
+  font-size: clamp(22px, 2.1vw, 28px);
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 12px;
+}
+.az-demo-shell .az-stat-change {
+  font-size: 11px;
+  margin-top: 14px;
+}
+.az-demo-shell .az-stat-change em {
+  display: none;
+}
+.az-demo-shell .az-stat .dv-sparkline {
+  position: absolute;
+  right: 14px;
+  bottom: 15px;
+  width: 66px;
+  height: 23px;
+  margin: 0;
+}
+.az-demo-shell .dv-workspace-shortcuts {
+  gap: 0;
+  margin: 12px 0 0;
+  border-bottom: 1px solid #e3e7ee;
+}
+.az-demo-shell .dv-workspace-shortcuts button {
+  border: 0;
+  border-radius: 0;
+  min-height: 48px;
+  padding: 9px 10px;
+  background: transparent;
+}
+.az-demo-shell .dv-workspace-shortcuts button:hover {
+  background: #f8f9fb;
+}
+.az-demo-shell .dv-workspace-shortcuts strong {
+  font-size: 12px;
+  font-weight: 550;
+}
+.az-demo-shell .dv-workspace-shortcuts small {
+  display: none;
+}
+.az-demo-shell .dv-shortcut-icon {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+}
+.az-demo-shell .az-dash-middle {
+  gap: 16px;
+  margin-top: 24px;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  align-items: stretch;
+}
+.az-demo-shell [data-dashboard-view="Analytics"] .az-dash-middle {
+  grid-template-columns: 1fr;
+}
+.az-demo-shell .az-chart-panel,
+.az-demo-shell .az-engine {
+  padding: 20px;
+  border-color: #dfe4ec;
+  border-radius: 8px;
+}
+.az-demo-shell .az-panel-heading h3,
+.az-demo-shell .dd-panel-title h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: #172235;
+}
+.az-demo-shell .az-panel-heading > button,
+.az-demo-shell .dd-panel-title > button {
+  font-size: 12px;
+  min-height: 32px;
+}
+.az-demo-shell .az-chart-summary {
+  font-size: 11px;
+  margin-top: 16px;
+}
+.az-demo-shell .az-chart > svg {
+  height: 174px;
+}
+.az-demo-shell .dv-volume-breakdown {
+  margin-top: 15px;
+  padding-top: 14px;
+}
+.az-demo-shell .dv-volume-breakdown > div {
+  font-size: 11px;
+  grid-template-columns: 82px minmax(0, 1fr) 86px;
+}
+.az-demo-shell .az-engine-label,
+.az-demo-shell .az-master small,
+.az-demo-shell .az-engine-rule,
+.az-demo-shell .az-engine-control,
+.az-demo-shell .az-followers > span {
+  font-size: 11px;
+}
+.az-demo-shell .az-master > div {
+  font-size: 12px;
+}
+.az-demo-shell .az-engine-control {
+  min-height: 38px;
+}
+.az-demo-shell .dc-supporting-details {
+  min-width: 0;
+  border: 1px solid #dfe4ec;
+  border-radius: 8px;
+  background: #fff;
+}
+.az-demo-shell .dc-supporting-details > summary {
+  cursor: pointer;
+  padding: 15px 17px;
+  color: #26364d;
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 1.5;
+}
+.az-demo-shell .dc-supporting-details > summary span {
+  float: right;
+  font-size: 11px;
+  font-weight: 400;
+  color: #56657a;
+}
+.az-demo-shell .dc-supporting-details > summary:focus-visible {
+  outline: 2px solid #2859c5;
+  outline-offset: 3px;
+}
+.az-demo-shell .dc-supporting-details[open] > summary {
+  border-bottom: 1px solid #e3e7ee;
+}
+.az-demo-shell .dc-routing-detail {
+  margin-top: 20px;
+}
+.az-demo-shell .dc-routing-detail .dv-operations-visuals {
+  margin: 0;
+}
+.az-demo-shell .dc-routing-detail .dd-panel {
+  border: 0;
+}
+.az-demo-shell .dd-overview {
+  gap: 16px;
+}
+.az-demo-shell .dc-platform-detail .dd-panel,
+.az-demo-shell .dc-activity-detail .dd-panel {
+  border: 0;
+}
+.az-demo-shell .dd-view {
+  margin-top: 0;
+}
+.az-demo-shell .da-scope-details {
+  margin-bottom: 18px;
+}
+.az-demo-shell .da-control-plane {
+  padding: 20px;
+  border-bottom: 0;
+}
+.az-demo-shell .dd-toolbar label,
+.az-demo-shell .dd-toolbar select {
+  font-size: 12px;
+}
+.az-demo-shell .dd-toolbar select {
+  min-height: 44px;
+}
+.az-demo-shell .dd-admin-fees {
+  background: #f8f9fb;
+  border-color: #e3e7ee;
+  padding: 14px;
+}
+.az-demo-shell .dd-admin-fees > span {
+  font-size: 12px;
+}
+.az-demo-shell .dd-admin-fees b {
+  font-size: 20px;
+}
+.az-demo-shell .dd-panel {
+  padding: 20px;
+  border-color: #dfe4ec;
+  border-radius: 8px;
+}
+.az-demo-shell .dd-panel-note,
+.az-demo-shell .dd-muted,
+.az-demo-shell .dd-key-values > div,
+.az-demo-shell .dd-service-list strong,
+.az-demo-shell .dd-platform-balances strong,
+.az-demo-shell .dd-compact-list li > span {
+  font-size: 12px;
+}
+.az-demo-shell .dd-platform-balances small,
+.az-demo-shell .dd-compact-list small,
+.az-demo-shell .dd-service-list small,
+.az-demo-shell .dd-inline-note {
+  font-size: 11px;
+}
+.az-demo-shell .az-positions {
+  padding-top: 20px;
+  border-top: 1px solid #e3e7ee;
+}
+.az-demo-shell .az-dashboard th,
+.az-demo-shell .az-dashboard td {
+  padding: 12px 10px;
+  font-size: 12px;
+}
+.az-demo-shell .az-demo-detail {
+  min-height: 0;
+  margin-top: 0;
+  background: #fff;
+  padding: 20px;
+}
+.az-demo-shell .az-demo-detail > svg {
+  display: none;
+}
+.az-demo-shell .az-demo-detail h3 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+.az-demo-shell .az-dash-footer {
+  border-top: 1px solid #e3e7ee;
+  margin-top: 24px;
+  font-size: 11px;
+}
+@media (max-width: 1100px) {
+  .az-demo-shell .az-dashboard {
+    grid-template-columns: 165px minmax(0, 1fr);
+  }
+  .az-demo-shell .az-dash-content {
+    padding-inline: 18px;
+  }
+  .az-demo-shell .az-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .az-demo-shell .az-stat:nth-child(3) {
+    border-left: 0;
+  }
+  .az-demo-shell .az-stat:nth-child(n + 3) {
+    border-top: 1px solid #e3e7ee;
+  }
+  .az-demo-shell .az-dash-middle {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  }
+  .az-demo-shell .dd-overview {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 768px) {
+  .az-demo-shell .az-dashboard {
+    display: flex;
+  }
+  .az-demo-shell .az-dash-sidebar {
+    padding: 8px;
+  }
+  .az-demo-shell .az-workspace,
+  .az-demo-shell .az-nav-heading,
+  .az-demo-shell .az-demo-settings {
+    display: none;
+  }
+  .az-demo-shell .dc-nav-item {
+    flex-shrink: 0;
+  }
+  .az-demo-shell .az-dash-topbar {
+    padding-inline: 14px;
+  }
+  .az-demo-shell .az-dash-content {
+    padding: 20px 14px 0;
+  }
+  .az-demo-shell .az-dash-heading {
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .az-demo-shell .az-dashboard .az-dash-heading h2 {
+    font-size: 23px;
+  }
+  .az-demo-shell .az-dash-heading p {
+    max-width: 100%;
+    font-size: 12px;
+  }
+  .az-demo-shell .az-team-filter select {
+    min-height: 38px;
+  }
+  .az-demo-shell .dd-environment-strip {
+    display: none;
+  }
+  .az-demo-shell .az-stat {
+    min-height: 125px;
+    padding: 14px 12px;
+  }
+  .az-demo-shell .az-stat > strong {
+    font-size: clamp(20px, 4.6vw, 25px);
+  }
+  .az-demo-shell .az-stat .dv-sparkline {
+    width: 47px;
+    right: 10px;
+    bottom: 13px;
+  }
+  .az-demo-shell .dv-workspace-shortcuts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .az-demo-shell .dv-workspace-shortcuts button {
+    padding-inline: 4px;
+    gap: 4px;
+    min-height: 44px;
+  }
+  .az-demo-shell .dv-workspace-shortcuts button > svg,
+  .az-demo-shell .dv-shortcut-icon {
+    display: none;
+  }
+  .az-demo-shell .dv-workspace-shortcuts strong {
+    font-size: 11px;
+  }
+  .az-demo-shell .az-dash-middle {
+    grid-template-columns: 1fr;
+    margin-top: 20px;
+  }
+  .az-demo-shell .az-chart-panel,
+  .az-demo-shell .az-engine,
+  .az-demo-shell .dd-panel {
+    padding: 16px;
+  }
+  .az-demo-shell .dc-supporting-details > summary {
+    min-height: 44px;
+    padding: 14px;
+  }
+  .az-demo-shell .dc-supporting-details > summary span {
+    display: none;
+  }
+  .az-demo-shell .az-periods button,
+  .az-demo-shell .az-engine-control {
+    min-height: 44px;
+  }
+  .az-demo-shell .dv-volume-breakdown > div {
+    grid-template-columns: 78px minmax(0, 1fr) 74px;
+    gap: 5px;
+    font-size: 11px;
+  }
+  .az-demo-shell .az-dash-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+}

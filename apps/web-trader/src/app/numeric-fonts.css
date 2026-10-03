@@ -1,0 +1,51 @@
+/* Self-host Gotham only for numeric glyphs; page text keeps its existing font.
+   Asset source and checksums are recorded in public/fonts/gotham/SOURCE.md. */
+@font-face {
+  font-family: "Azuriya Gotham Numerals";
+  src: url("/fonts/gotham/gothamlight-webfont.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 300;
+  font-display: swap;
+  unicode-range:
+    U+0024-0025, U+002B-002E, U+0030-0039, U+00A3, U+00A5, U+20AC, U+2212;
+}
+
+@font-face {
+  font-family: "Azuriya Gotham Numerals";
+  src: url("/fonts/gotham/gothambook-webfont.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  unicode-range:
+    U+0024-0025, U+002B-002E, U+0030-0039, U+00A3, U+00A5, U+20AC, U+2212;
+}
+
+@font-face {
+  font-family: "Azuriya Gotham Numerals";
+  src: url("/fonts/gotham/gothammedium-webfont.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 500 600;
+  font-display: swap;
+  unicode-range:
+    U+0024-0025, U+002B-002E, U+0030-0039, U+00A3, U+00A5, U+20AC, U+2212;
+}
+
+@font-face {
+  font-family: "Azuriya Gotham Numerals";
+  src: url("/fonts/gotham/gothambold-webfont.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  unicode-range:
+    U+0024-0025, U+002B-002E, U+0030-0039, U+00A3, U+00A5, U+20AC, U+2212;
+}
+
+@font-face {
+  font-family: "Azuriya Gotham Numerals";
+  src: url("/fonts/gotham/gothamblack-webfont.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 800 900;
+  font-display: swap;
+  unicode-range:
+    U+0024-0025, U+002B-002E, U+0030-0039, U+00A3, U+00A5, U+20AC, U+2212;
+}

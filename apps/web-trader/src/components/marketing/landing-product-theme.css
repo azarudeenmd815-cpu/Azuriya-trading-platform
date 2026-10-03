@@ -1,0 +1,1785 @@
+/* Product illustrations retain their geometry and original brand artwork. */
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.hg-liquidity-card, .hg-platform-card, .hg-community-card) {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 20px;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .hg-card-icon {
+  background: #303238;
+  color: #9aafff;
+  border-radius: 12px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.hg-liquidity-card strong, .hg-platform-card strong) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.hg-liquidity-card small, .hg-platform-card small, .hg-community-card) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.hg-liquidity-card strong svg, .hg-community-card > svg) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .hg-platform-logos {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .hg-platform-logos img {
+  background: #ffffff;
+  border-radius: 6px;
+}
+
+/* Native MT5 funding highlight and interactive desktop/mobile walkthrough. */
+html[data-marketing-theme="dark"] .az-marketing .mdh-section {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 24px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.mdh-editorial h2, .fw-heading strong, .fw-payment-title h3) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.mdh-label, .mdh-devices span, .mdh-editorial h2 span) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .mdh-editorial > p,
+    .mdh-benefits li,
+    .mdh-editorial > small,
+    .mdh-product-top
+  ) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.mdh-benefits svg, a.mdh-link, a.mdh-hero-link) {
+  color: #9aafff;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .mdh-product-dot {
+  background: #3869fc;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-walkthrough {
+  color: #ffffff;
+  background: #1a1c22;
+  border-color: #303238;
+  border-radius: 24px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-heading {
+  color: var(--az-muted);
+  border-color: #303238;
+  background: #1a1c22;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-heading-divider {
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-desktop {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 20px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.fw-desktop-topbar, .fw-terminal-nav, .fw-terminal-footer) {
+  background: #1a1c22;
+  border-color: #303238;
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-terminal-nav > strong {
+  color: #e3defd;
+  background: #303238;
+  border-radius: 999px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.fw-payment-icon, .fw-checkout-icon) {
+  color: #9aafff;
+  background: #303238;
+  border-radius: 14px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.fw-amount-display, .fw-methods button) {
+  border-color: #303238;
+  background: #303238;
+  border-radius: 14px;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .fw-methods
+  button[aria-pressed="true"] {
+  background: #303238;
+  border-color: #3869fc;
+  color: #e3defd;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.fw-detail-row strong, .fw-methods strong, .fw-checkout-summary strong) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .fw-account-label,
+    .fw-nav-bottom,
+    .fw-payment-title > div > span,
+    .fw-field-label,
+    .fw-amount-display > span:last-child,
+    .fw-step-content p,
+    .fw-detail-row,
+    .fw-methods small,
+    .fw-preview-actions > span
+  ) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.fw-provider-step .fw-detail-row, .fw-preview-actions) {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-preview-actions button {
+  background: #3869fc;
+  border-color: #3869fc;
+  border-radius: 999px;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .fw-preview-actions
+  button:hover {
+  background: #2e5df0;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.fw-terminal-footer > span:first-child, .fw-mobile-topbar > svg) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-mobile {
+  color: #ffffff;
+  background: #1a1c22;
+  border-color: #090a0e;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-mobile-camera {
+  background: #090a0e;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-mobile-home {
+  background: #ffffff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-mobile-summary {
+  background: #303238;
+  border-radius: 14px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .fw-mobile-eyebrow,
+    .fw-mobile-amount small,
+    .fw-mobile-summary > span,
+    .fw-mobile-flow > div,
+    .fw-mobile-security p,
+    .fw-mobile-label
+  ) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-mobile-flow > div > span {
+  background: #303238;
+  color: var(--az-muted);
+  border-radius: 50%;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .fw-mobile-summary > strong svg,
+    .fw-mobile-flow > .fw-mobile-current,
+    .fw-mobile-security > svg
+  ) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .fw-mobile-flow
+  > .fw-mobile-current
+  > span {
+  background: #3869fc;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-mobile-security {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .fw-walkthrough-controls {
+  background: #1a1c22;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .fw-walkthrough-controls
+  button {
+  background: #1a1c22;
+  color: var(--az-muted);
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .fw-walkthrough-controls
+  button[aria-pressed="true"] {
+  background: #303238;
+  color: #e3defd;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .fw-walkthrough-controls
+  button
+  > span {
+  border-color: #303238;
+  border-radius: 50%;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .fw-walkthrough-controls
+  button[aria-pressed="true"]
+  > span {
+  background: #3869fc;
+  border-color: #3869fc;
+  color: #ffffff;
+}
+
+/* A-book network, provider directory and platform ecosystem. */
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ln-route, .ln-directory, .pc-architecture) {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 24px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .ln-routing-caption,
+    .ln-account-node strong,
+    .ln-provider-node strong,
+    .ln-directory-heading h3,
+    .pc-architecture-caption
+  ) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .ln-routing-caption > span:nth-child(2),
+    .ln-routing-label,
+    .ln-account-node > span > span,
+    .ln-provider-node > span > span,
+    .ln-routing-connector > span,
+    .ln-hub-subtitle,
+    .ln-hub-detail,
+    .ln-hub-model,
+    .ln-routing-legend > span,
+    .ln-directory-eyebrow,
+    .pc-architecture-caption > span:last-child,
+    .pc-architecture-label,
+    .pc-architecture-more,
+    .pc-architecture-footnote
+  ) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .ln-account-node,
+    .ln-provider-node,
+    .pc-architecture-platform,
+    .pc-architecture-service
+  ) {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 16px;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pc-architecture-platform img {
+  background: #ffffff;
+  border-radius: 6px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ln-account-node > img {
+  background: #ffffff;
+  border-radius: 6px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ln-route .af-motion-control {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 999px;
+  color: #e3defd;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ln-route
+  .af-motion-control:hover {
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ln-routing-hub, .pc-architecture-hub) {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 22px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ln-routing-hub > strong, .pc-architecture-hub > strong) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .pc-architecture-hub
+  > span:not(.pc-architecture-hub-mark) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pc-architecture-hub-mark {
+  background: #3869fc;
+  color: #ffffff;
+  border-color: #3869fc;
+  border-radius: 16px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pc-architecture-hub-tags span {
+  background: #303238;
+  color: #e3defd;
+  border-radius: 999px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ln-routing-legend, .pc-architecture-footnote) {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .ln-routing-legend svg,
+    .pc-architecture-service > svg,
+    .pc-architecture-footnote > svg
+  ) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ln-directory-count {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 999px;
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ln-provider-grid
+  > .ln-provider {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 18px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ln-provider-grid
+  > .ln-provider:hover {
+  border-color: #303238;
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ln-provider-name {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ln-logo-crop {
+  background: #ffffff;
+  border-radius: 10px;
+  outline: 1px solid #ffffff12;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ln-logo-crop[data-logo-surface="dark"] {
+  background: #1f1f1f;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ln-logo-crop[data-logo-surface="red"] {
+  background: #9b292a;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ln-logo-crop[data-logo-surface="teal"] {
+  background: #012626;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ln-provider-grid::after {
+  background: transparent;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ln-directory-explore {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 18px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ln-directory-explore > a, .ln-directory-explore > a > svg) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ln-reference-details {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 20px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ln-reference-image {
+  border-color: #303238;
+  border-radius: 12px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ln-reference-number {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pc-catalog {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pc-platform {
+  background: #191a21;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pc-platform:hover {
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pc-logo {
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pc-logo-dark {
+  background: #172235;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ln-route, .pc-architecture, .og-funding-network, .og-backend-network)
+  .af-rail {
+  stroke: #565861;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ln-route, .pc-architecture, .og-funding-network, .og-backend-network)
+  .af-packet {
+  stroke: #3869fc;
+}
+
+/* Master, copy engine and all follower tracks keep their existing geometry. */
+html[data-marketing-theme="dark"] .az-marketing .wg-copy.az-copy-visual {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 24px;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy
+  .az-copy-visual-header {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy
+  .az-copy-visual-header
+  svg {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .wg-copy .az-copy-tabs button {
+  color: var(--az-muted);
+  border-radius: 999px;
+  min-height: 44px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy
+  .az-copy-tabs
+  button.is-active {
+  background: #3869fc;
+  border-color: #3869fc;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy
+  :is(.az-master-ticket, .az-follower-tickets > .wg-follower) {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 20px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy
+  :is(
+    .az-master-ticket strong,
+    .wg-follower > strong,
+    .az-follower-tickets > div > span:not(.az-mini-avatar)
+  ) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy
+  :is(.az-master-ticket small, .wg-platform-name, .az-copy-visual-footer) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy
+  :is(.wg-platform-logo, .wg-master-logo) {
+  background: #ffffff;
+  border-color: #e2e8f2;
+  border-radius: 16px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy
+  :is(.wg-route-trunk, .wg-route-downlink) {
+  background: #565861;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .wg-copy .wg-route-branches {
+  border-color: #565861;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .wg-copy .wg-route-hub {
+  color: #ffffff;
+  background: #3869fc;
+  border-color: #3869fc;
+  border-radius: 999px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .wg-copy .wg-route-packet {
+  background: #3869fc;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy
+  .az-follower-tickets
+  small {
+  color: #36d69d;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .wg-copy .az-gain {
+  color: #36d69d;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy.wg-paused
+  .wg-route-hub {
+  background: #303238;
+  color: var(--az-muted);
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy.wg-paused
+  .wg-route-packet {
+  background: #9b9da6;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy.wg-paused
+  .wg-follower
+  small {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .wg-copy
+  .az-copy-visual-footer
+  > button {
+  background: #ffffff;
+  color: #0f1014;
+  border-color: #ffffff;
+  border-radius: 999px;
+}
+
+/* Funding, team communication and administration illustrations. */
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.og-operations .ab-operation-card, .og-administration .ab-admin-preview) {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 24px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ab-operation-copy h3, .ab-admin-owner strong) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ab-operation-copy > p, .ab-admin-owner small, .ab-admin-owner > svg) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .og-operations .ab-funding-preview,
+    .og-operations .ab-chat-preview,
+    .og-operations .ab-preview-heading,
+    .og-administration .ab-preview-heading
+  ) {
+  background: #1a1c22;
+  color: #ffffff;
+  border-color: #303238;
+  border-radius: 20px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .og-operations .ab-preview-heading,
+    .og-administration .ab-preview-heading
+  ) {
+  border-radius: 0;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.og-funding-network, .og-community-presence, .og-backend-network) {
+  background: #303238;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .og-payment-rails
+  > span {
+  background: #303238;
+  border-color: #303238;
+  color: #9aafff;
+  border-radius: 16px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .og-platform-mark {
+  background: #ffffff;
+  border-color: #e2e8f2;
+  border-radius: 16px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .og-funding-accounts
+  > .og-platform-mark {
+  background: #ffffff;
+  border-color: #e2e8f2;
+  border-radius: 16px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .og-operations .og-funding-hub > strong,
+    .og-operations .og-community-presence strong,
+    .ab-funding-person strong,
+    .ab-funding-amount strong,
+    .ab-chat-message p strong,
+    .ab-admin-settings dd
+  ) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .og-operations .og-payment-rails > small,
+    .og-operations .og-funding-accounts > small,
+    .og-operations .og-funding-hub > small,
+    .og-operations .og-funding-legend,
+    .ab-funding-person small,
+    .ab-funding-amount small,
+    .ab-chat-message p small,
+    .og-operations .og-presence-line,
+    .og-operations .og-community-channels > span,
+    .og-administration .og-backend-platforms > div,
+    .ab-admin-settings dt,
+    .ab-admin-settings dd small
+  ) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ab-funding-row {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ab-funding-icon {
+  background: #17382e;
+  color: #36d69d;
+  border-radius: 12px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ab-funding-icon.ab-outgoing {
+  background: #303238;
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ab-funding-status {
+  color: #36d69d;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ab-funding-status.ab-in-review {
+  color: #e8bd78;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.og-operations .ab-preview-note, .ab-admin-bottom) {
+  background: #303238;
+  border-color: #303238;
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ab-admin-bottom svg {
+  color: #36d69d;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .og-member-orbit {
+  background: #303238;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  :is(.og-community-symbol, .og-orbit-member) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .og-orbit-member {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 16px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .og-avatar-stack
+  > span {
+  background: #303238;
+  color: #ffffff;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .og-avatar-stack
+  > span:nth-child(2) {
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .og-avatar-stack
+  > span:nth-child(3) {
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .og-avatar-stack
+  > span:last-child {
+  background: #191a21;
+  color: var(--az-muted);
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .og-community-channels
+  > span:nth-child(2) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .ab-chat-message
+  > div
+  > span {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 16px;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .ab-chat-message:nth-of-type(5)
+  > div
+  > span {
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-operations
+  .ab-chat-compose {
+  background: #1a1c22;
+  border-color: #303238;
+  color: var(--az-muted);
+  border-radius: 999px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ab-admin-tabs span {
+  background: #303238;
+  border-color: #303238;
+  color: var(--az-muted);
+  border-radius: 999px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ab-admin-tabs
+  span:first-child {
+  background: #303238;
+  border-color: #303238;
+  color: #e3defd;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-administration
+  .og-admin-hub {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 999px;
+  color: #e3defd;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-administration
+  .og-admin-hub
+  > svg:last-child {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ab-admin-settings > div {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-administration
+  .ab-admin-settings
+  > :is(div:nth-child(2), div:nth-child(3)) {
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .og-administration
+  .ab-admin-settings
+  > :is(div:nth-child(2), div:nth-child(3))
+  dd {
+  color: #e3defd;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ab-admin-settings
+  .ab-a-book-value {
+  background: #17382e;
+  border-color: #24604c;
+  border-radius: 999px;
+  color: #36d69d;
+}
+
+/* Native infrastructure workspaces and unchanged source-image references. */
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ig-workspace, .ig-source-viewer) {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 24px;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ig-view-selector > button, .ig-zones > button) {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 20px;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .ig-view-selector > button[aria-pressed="true"],
+    .ig-zones > button[aria-pressed="true"]
+  ) {
+  background: #303238;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ig-mini, .ig-platform-stack > div, .ig-zone-destination) {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 16px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ig-mini > span {
+  background: #303238;
+  border-color: #303238;
+  color: #e3defd;
+  border-radius: 12px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ig-mini
+  :is(.ig-mini-core, .ig-mini-total) {
+  background: #303238;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ig-workspace-bar, .ig-workspace-footer) {
+  background: #303238;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ig-router {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 20px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ig-router > span {
+  background: #3869fc;
+  color: #ffffff;
+  border-radius: 14px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ig-section select, .ig-markup-control button, .ig-native-heading > div) {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 999px;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ig-native-heading button {
+  border-radius: 999px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .ig-native-heading button[aria-pressed="true"],
+    .ig-markup-control button[aria-pressed="true"]
+  ) {
+  background: #303238;
+  border-color: #303238;
+  color: #e3defd;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ig-route-providers > span {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 16px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .ig-route-providers
+  > .ig-provider-enabled {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.ig-aggregation-result, .ig-commission-equation) {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 18px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ig-commercial-summary {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 16px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ig-group-mark {
+  background: #303238;
+  border-color: #303238;
+  color: #e3defd;
+  border-radius: 16px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ig-source-list article {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 16px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ig-source-list button {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .ig-source-list button[aria-pressed="true"],
+    .ig-source-list button[aria-pressed="true"] > svg
+  ) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .ig-source-list a {
+  color: var(--az-muted);
+}
+
+/* Account snapshots, prop risk rails and the exact commission illustration. */
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-feature, .az-hierarchy-owner, .az-hierarchy-teams > div) {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 20px;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-hierarchy-owner, .az-hierarchy-teams > div) {
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-feature p, .az-hierarchy-owner small, .az-hierarchy-teams small) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .az-feature-copy > svg,
+    .az-accounts-feature > svg,
+    .az-feature-copy > a,
+    .az-hierarchy-owner > svg
+  ) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.pd-account, .pd-commission, .az-risk-visual) {
+  background: #303238;
+  border-color: #303238;
+  border-radius: 20px;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .pd-account-owner small,
+    .pd-account-platform > span,
+    .pd-account-balances small,
+    .pd-account-health small,
+    .pd-position-heading,
+    .pd-position small,
+    .pd-account-total > span,
+    .pd-account-footer,
+    .pd-risk-status small,
+    .pd-risk-status div > span,
+    .pd-risk-meter small,
+    .pd-meter-caption,
+    .pd-commission-heading,
+    .pd-commission-equation div > span,
+    .pd-commission-equation > span,
+    .pd-commission-legend,
+    .az-hierarchy-teams .pd-team-platforms
+  ) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .pd-account-platform,
+    .pd-account-health,
+    .pd-account-health > span + span,
+    .pd-position,
+    .pd-account-footer
+  ) {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.pd-account-status, .pd-position b, .pd-account-total strong) {
+  color: #36d69d;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pd-instrument {
+  background: #493d28;
+  color: #edca85;
+  border-radius: 12px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pd-instrument-fx {
+  background: #303238;
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pd-shield {
+  background: #303238;
+  border-color: #303238;
+  color: #9aafff;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pd-risk-status strong {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pd-risk-dot {
+  background: #36d69d;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pd-risk-meter > div {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pd-risk-meter strong {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .pd-meter-rail {
+  background: #303238;
+  border-radius: 999px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.pd-meter-rail > span, .pd-meter-caption i) {
+  background: #3869fc;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .pd-account-health svg,
+    .pd-commission-heading > span:last-child,
+    .pd-markup-value strong
+  ) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .pd-commission-bar > span:first-child,
+    .pd-commission-legend > span:first-child i
+  ) {
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .pd-commission-bar > span:last-child,
+    .pd-commission-legend > span:last-child i
+  ) {
+  background: #3869fc;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .az-risk-section {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 24px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-policy-row, .az-policy-footer) {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.az-policy-row > span, .az-policy-footer) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"] .az-marketing .az-policy-row strong {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .az-policy-row svg {
+  color: #36d69d;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .az-risk-visual-top > svg {
+  color: #9aafff;
+}
+
+/* Stable calculator markup avoids coupling this theme to CSS module hashes. */
+html[data-marketing-theme="dark"] .az-marketing [data-revenue-calculator] {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 24px;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:first-child {
+  background: #303238;
+  border-color: #303238;
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:first-child
+  h3 {
+  color: #c7c8cf;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  :is(p, legend) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  fieldset
+  legend {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  fieldset
+  label
+  > span {
+  background: #303238;
+  border-color: #303238;
+  color: var(--az-muted);
+  border-radius: 999px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  fieldset
+  label:hover
+  > span {
+  color: #ffffff;
+  border-color: #3869fc;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  fieldset
+  input:checked
+  + span {
+  background: #303238;
+  border-color: #3869fc;
+  color: #e3defd;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:nth-child(2)
+  > div:first-of-type
+  :is(span, svg) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:nth-child(2)
+  > div:first-of-type
+  strong {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:nth-child(2)
+  > div:first-of-type
+  > div:nth-child(3)
+  strong {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:nth-child(2)
+  > div:last-of-type {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:nth-child(2)
+  > div:last-of-type
+  :is(label, strong) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:nth-child(2)
+  > div:last-of-type
+  span {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  input[type="range"]::-webkit-slider-runnable-track {
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  input[type="range"]::-moz-range-track {
+  background: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  input[type="range"]::-webkit-slider-thumb {
+  background: #3869fc;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  input[type="range"]::-moz-range-thumb {
+  background: #3869fc;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:nth-child(3) {
+  background: #3869fc;
+  border-color: #3869fc;
+  border-radius: 20px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  > div:nth-child(3)
+  :is(div, span) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  [data-revenue-calculator]
+  output {
+  color: #ffffff;
+}
+
+/* Dedicated MT5 deposits page uses the same surface and control language. */
+html[data-marketing-theme="dark"] .az-marketing.md-page {
+  background: #0f1014;
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .md-hero h1,
+    .md-section-intro h2,
+    .md-providers h2,
+    .md-flow-list h3,
+    .md-wallet-controls h3,
+    .md-provider-links strong,
+    .md-reference-heading h2,
+    .md-faq-list summary,
+    .md-final-cta h2
+  ) {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .md-breadcrumb,
+    .md-breadcrumb a,
+    .md-hero-copy p,
+    .md-hero-benefits > span,
+    .md-section-intro > p,
+    .md-providers > div > p,
+    .md-flow-list p,
+    .md-control-points,
+    .md-wallet-header > span:last-child,
+    .md-wallet-controls p,
+    .md-wallet-rule,
+    .md-wallet-pair > div > span,
+    .md-provider-links span,
+    .md-reference-heading p,
+    .md-reference-caption,
+    .md-faq-list p,
+    .md-final-cta p
+  ) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .md-eyebrow,
+    .md-hero h1 span,
+    .md-hero-benefits svg,
+    .md-flow-list li > svg,
+    .md-control-points svg,
+    .md-wallet-header svg,
+    .md-wallet-group-label > svg,
+    .md-wallet-pair > div > svg,
+    .md-provider-links svg,
+    .md-reference-icon,
+    .md-reference-images svg,
+    .md-faq-list summary > svg
+  ) {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-text-link {
+  color: #9aafff !important;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-text-link:hover {
+  color: #e3defd !important;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(
+    .md-hero-benefits,
+    .md-flow-list li,
+    .md-providers,
+    .md-provider-links > a,
+    .md-reference,
+    .md-faq-list details
+  ) {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-flow-number {
+  background: #303238;
+  border-color: #303238;
+  color: #e3defd;
+  border-radius: 50%;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-control-band {
+  background: #1a1c22;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-wallet-controls {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 24px;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  :is(.md-wallet-header, .md-wallet-note) {
+  background: #303238;
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-wallet-note {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-wallet-group {
+  border-color: #303238;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-currency-options > span {
+  background: #303238;
+  border-color: #303238;
+  color: #e3defd;
+  border-radius: 999px;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .md-currency-options
+  > span:last-child {
+  background: #303238;
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-wallet-rule strong {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .md-provider-links
+  a:hover
+  strong {
+  color: #9aafff;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .md-reference-disclosure
+  > summary {
+  background: #303238;
+  border-color: #303238;
+  color: #ffffff;
+  border-radius: 999px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-reference-images a {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 20px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-reference-images a > span {
+  color: #ffffff;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-final-cta {
+  background: #191a21;
+  border-color: #303238;
+  border-radius: 24px;
+}
+
+html[data-marketing-theme="dark"] .az-marketing .md-final-cta-icon {
+  background: #303238;
+  border-color: #303238;
+  color: #9aafff;
+  border-radius: 18px;
+}
+
+/* Product labels and values follow the reference's clearer Arial weights. */
+html[data-marketing-theme]
+  .az-marketing
+  :is(
+    .ab-operation-copy h3,
+    .az-feature h3,
+    .md-flow-list h3,
+    .ln-directory-heading h3,
+    .fw-payment-title h3
+  ) {
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+html[data-marketing-theme]
+  .az-marketing
+  :is(
+    .pd-account-owner strong,
+    .pd-account-balances strong,
+    .pd-account-total strong,
+    .pd-commission-equation strong,
+    .wg-follower > strong,
+    .wg-follower > span,
+    .wg-master-identity > strong
+  ) {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+html[data-marketing-theme] .az-marketing [data-revenue-calculator] output {
+  font-size: clamp(34px, 3.8vw, 44px);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+
+@media (max-width: 767px) {
+  html[data-marketing-theme="dark"]
+    .az-marketing
+    :is(.mdh-section, .fw-walkthrough, .ln-route, .pc-architecture, .wg-copy) {
+    border-radius: 20px;
+  }
+
+  html[data-marketing-theme="dark"]
+    .az-marketing
+    :is(.hg-liquidity-card, .hg-platform-card, .hg-community-card) {
+    border-radius: 14px;
+  }
+
+  html[data-marketing-theme="dark"]
+    .az-marketing
+    .md-reference-disclosure
+    > summary {
+    border-radius: 18px;
+  }
+}

@@ -1,0 +1,101 @@
+.az-dashboard .az-chart.rg-community-volume {
+  padding: 18px 0 0;
+  color: var(--dash-muted, #56657a);
+}
+.az-dashboard .rg-sample-description {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  color: var(--dash-muted, #56657a);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.az-dashboard .rg-sample-description > span:last-child {
+  color: var(--dash-text, #172235);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.az-dashboard .az-chart.rg-community-volume > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 310px;
+  overflow: visible;
+}
+.az-dashboard .rg-volume-grid {
+  stroke: var(--dash-border, #dce3ee);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.az-dashboard .rg-volume-label,
+.az-dashboard .rg-volume-tick {
+  fill: var(--dash-muted, #56657a);
+  font-family: inherit;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.az-dashboard .rg-volume-current {
+  fill: var(--dash-blue, #3869fc);
+}
+.az-dashboard .rg-volume-comparison {
+  fill: #e3defd;
+}
+.az-dashboard .rg-volume-legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 17px;
+  margin-top: 15px;
+  color: var(--dash-muted, #56657a);
+  font-size: 11px;
+  line-height: 1.5;
+}
+.az-dashboard .rg-volume-legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.az-dashboard .rg-volume-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.az-dashboard .rg-current-key {
+  background: var(--dash-blue, #3869fc);
+}
+.az-dashboard .rg-comparison-key {
+  background: #e3defd;
+}
+.az-dashboard .rg-volume-legend > small {
+  margin-left: auto;
+  font-size: 11px;
+}
+.az-dashboard .rg-volume-note {
+  margin: 8px 0 0;
+  color: var(--dash-muted, #56657a);
+  font-size: 11px;
+  line-height: 1.5;
+}
+@media (max-width: 680px) {
+  .az-dashboard .rg-volume-label,
+  .az-dashboard .rg-volume-tick {
+    font-size: 20px;
+  }
+  .az-dashboard .rg-sample-description {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .az-dashboard .rg-volume-legend {
+    gap: 9px 12px;
+  }
+}
+@media (max-width: 380px) {
+  .az-dashboard .rg-volume-label,
+  .az-dashboard .rg-volume-tick {
+    font-size: 24px;
+  }
+}

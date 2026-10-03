@@ -1,0 +1,9 @@
+{
+  "name": "@azuriya/ui",
+  "version": "0.1.0",
+  "private": true,
+  "exports": {
+    "./tokens.css": "./src/tokens.css",
+    "./product-tokens.css": "./src/product-tokens.css"
+  }
+}

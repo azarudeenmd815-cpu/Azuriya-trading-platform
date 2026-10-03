@@ -1,0 +1,64 @@
+.az-marketing .az-theme-switch {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  flex: none;
+  border: 1px solid #dce3ee;
+  border-radius: 50%;
+  background: #f1f5fb;
+  color: #2859c5;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+.az-marketing .az-theme-switch:hover {
+  background: #e6eefc;
+  border-color: #9db6e8;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-theme-switch {
+  background: #252832;
+  border-color: #383c48;
+  color: #f3f5fa;
+}
+html[data-marketing-theme="dark"] .az-marketing .az-theme-switch:hover {
+  background: #303644;
+  border-color: #84a5f0;
+}
+@media (min-width: 1200px) {
+  .az-marketing .az-header-inner {
+    gap: 24px;
+  }
+  .az-marketing .az-header-actions {
+    gap: 14px;
+  }
+  .az-marketing .az-desktop-nav {
+    gap: 18px;
+  }
+}
+@media (max-width: 479px) {
+  .az-marketing .az-header-actions {
+    gap: 4px;
+  }
+  .az-marketing .az-header .az-menu-toggle {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+  }
+  .az-marketing .az-theme-switch {
+    width: 44px;
+    height: 44px;
+  }
+}
+@media (max-width: 359px) {
+  .az-marketing .az-header .az-button-small {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .az-marketing .az-theme-switch {
+    transition: none;
+  }
+}

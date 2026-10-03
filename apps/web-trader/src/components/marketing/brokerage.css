@@ -1,0 +1,490 @@
+.ab-routing-banner {
+  border-bottom: 1px solid #dce5f3;
+  background: #f1f5fd;
+}
+.ab-routing-banner > div {
+  min-height: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  font-size: 13px;
+}
+.ab-routing-banner span,
+.ab-routing-banner a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.ab-routing-banner strong {
+  color: #2859c5;
+  font-weight: 600;
+}
+.ab-routing-banner a {
+  font-size: 12px;
+  color: #52647c;
+}
+.ab-hero.az-hero {
+  padding-top: 66px;
+}
+.ab-hero .az-hero-grid {
+  grid-template-columns: 1.75fr 1fr;
+  gap: 60px;
+}
+.ab-hero h1 {
+  font-size: clamp(43px, 4.65vw, 66px);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+.ab-hero h1 > span {
+  color: #2859c5;
+}
+.ab-hero .az-hero-capabilities {
+  margin-top: 45px;
+  padding-bottom: 12px;
+}
+.atc-conditions + .az-audience {
+  padding-block: 32px;
+  margin-top: 20px;
+}
+.ab-section-heading {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  align-items: end;
+  gap: 64px;
+  margin-bottom: 36px;
+}
+.ab-section-heading h2 {
+  font-size: clamp(32px, 3.4vw, 46px);
+  line-height: 1.15;
+  letter-spacing: -0.04em;
+}
+.ab-section-heading h2 > span {
+  color: #56657a;
+}
+.ab-section-heading > p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #56657a;
+  max-width: 380px;
+  padding-bottom: 3px;
+}
+.ab-portal-section .az-demo-shell {
+  margin-top: 0;
+}
+.ab-operation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.ab-operation-card {
+  border: 1px solid #dce3ee;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f8fafd;
+}
+.ab-operation-copy {
+  padding: 30px 30px 24px;
+}
+.ab-operation-copy > svg {
+  color: #2859c5;
+  margin-bottom: 16px;
+}
+.ab-operation-copy h3 {
+  font-size: 25px;
+  line-height: 1.25;
+  letter-spacing: -0.7px;
+  margin-bottom: 12px;
+}
+.ab-operation-copy > p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #56657a;
+  max-width: 460px;
+}
+.ab-funding-preview,
+.ab-chat-preview {
+  margin: 0 20px 20px;
+  background: #fff;
+  border: 1px solid #dce3ee;
+  border-radius: 9px;
+  overflow: hidden;
+}
+.ab-preview-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-height: 55px;
+  padding: 16px 19px;
+  border-bottom: 1px solid #e4e9f1;
+  font-size: 13px;
+  font-weight: 550;
+}
+.ab-preview-heading > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.ab-preview-heading > span:first-child svg {
+  color: #2859c5;
+}
+.ab-preview-heading .az-preview-tag {
+  font-size: 9px;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.ab-funding-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  column-gap: 11px;
+  align-items: center;
+  padding: 15px 16px;
+  border-bottom: 1px solid #edf0f5;
+}
+.ab-funding-icon {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 7px;
+  color: #16724f;
+  background: #edf7f2;
+  grid-row: span 2;
+}
+.ab-funding-icon.ab-outgoing {
+  background: #f1f5fb;
+  color: #2859c5;
+}
+.ab-funding-person,
+.ab-funding-amount {
+  display: grid;
+  gap: 3px;
+  font-size: 12px;
+}
+.ab-funding-person strong,
+.ab-funding-amount strong {
+  font-weight: 500;
+}
+.ab-funding-person small,
+.ab-funding-amount small {
+  font-size: 10px;
+  color: #64748b;
+}
+.ab-funding-amount {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  grid-row: span 2;
+}
+.ab-funding-status {
+  color: #16724f;
+  font-size: 10px;
+  margin-top: 5px;
+}
+.ab-funding-status.ab-in-review {
+  color: #9a6e25;
+}
+.ab-preview-note {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  padding: 13px 16px;
+  color: #64748b;
+  font-size: 10px;
+}
+.ab-chat-message {
+  display: flex;
+  gap: 10px;
+  padding: 18px 17px 3px;
+}
+.ab-chat-message .az-avatar {
+  width: 29px;
+  height: 29px;
+  flex-shrink: 0;
+  margin-top: 3px;
+  font-size: 10px;
+}
+.ab-chat-message > div {
+  min-width: 0;
+}
+.ab-chat-message p {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+.ab-chat-message p strong {
+  font-weight: 550;
+}
+.ab-chat-message p small {
+  font-size: 9px;
+  color: #64748b;
+}
+.ab-chat-message > div > span {
+  display: block;
+  border: 1px solid #e4e9f1;
+  border-radius: 0 9px 9px 9px;
+  background: #f8fafd;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.75;
+}
+.ab-chat-compose {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 15px;
+  margin: 22px 14px 14px;
+  border: 1px solid #e4e9f1;
+  border-radius: 7px;
+  color: #64748b;
+  font-size: 10px;
+}
+.ab-chat-count {
+  margin-left: auto;
+  white-space: nowrap;
+  font-size: 9px;
+}
+.ab-admin-preview {
+  background: #fff;
+  border: 1px solid #dce3ee;
+  border-radius: 14px;
+  box-shadow: 0 12px 45px #2b4a7110;
+  overflow: hidden;
+}
+.ab-admin-owner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 22px;
+}
+.ab-admin-owner > div {
+  display: grid;
+  gap: 3px;
+  font-size: 14px;
+}
+.ab-admin-owner strong {
+  font-weight: 550;
+}
+.ab-admin-owner small {
+  font-size: 11px;
+  color: #64748b;
+}
+.ab-admin-owner > svg {
+  margin-left: auto;
+  color: #64748b;
+}
+.ab-admin-tabs {
+  display: flex;
+  gap: 7px;
+  padding: 0 22px 20px;
+}
+.ab-admin-tabs span {
+  border: 1px solid #dce3ee;
+  border-radius: 6px;
+  padding: 8px 11px;
+  font-size: 11px;
+}
+.ab-admin-tabs span:first-child {
+  background: #edf3ff;
+  border-color: #d4dff4;
+  color: #2859c5;
+}
+.ab-admin-settings {
+  margin: 0 22px;
+}
+.ab-admin-settings > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+  border-top: 1px solid #e4e9f1;
+}
+.ab-admin-settings dt {
+  font-size: 12px;
+  color: #56657a;
+}
+.ab-admin-settings dd {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 550;
+  text-align: right;
+}
+.ab-admin-settings dd small {
+  font-weight: 400;
+  color: #64748b;
+}
+.ab-admin-settings .ab-a-book-value {
+  color: #16724f;
+  background: #edf7f2;
+  border: 1px solid #d6ebdf;
+  padding: 3px 10px;
+  border-radius: 5px;
+}
+.ab-admin-bottom {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 20px 22px;
+  margin-top: 4px;
+  background: #f8fafd;
+  border-top: 1px solid #e4e9f1;
+  font-size: 11px;
+  color: #56657a;
+}
+.ab-admin-bottom svg {
+  color: #16724f;
+}
+@media (min-width: 1500px) {
+  .ab-hero h1 {
+    font-size: 70px;
+  }
+}
+@media (max-width: 1199px) {
+  .ab-hero .az-hero-grid {
+    gap: 36px;
+    grid-template-columns: 1.55fr 1fr;
+  }
+  .ab-hero .az-hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .az-desktop-nav {
+    gap: 22px;
+  }
+}
+@media (max-width: 1023px) {
+  .ab-section-heading {
+    gap: 32px;
+  }
+  .ab-operation-copy {
+    padding: 25px 24px 22px;
+  }
+  .ab-operation-copy h3 {
+    font-size: 23px;
+  }
+  .ab-funding-preview,
+  .ab-chat-preview {
+    margin-inline: 14px;
+  }
+  .ab-preview-heading {
+    padding-inline: 14px;
+  }
+  .ab-chat-count {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .ab-routing-banner > div {
+    min-height: 44px;
+    justify-content: center;
+    font-size: 12px;
+    gap: 8px;
+  }
+  .ab-routing-banner a {
+    display: none;
+  }
+  .ab-routing-banner > div > span {
+    gap: 6px;
+  }
+  .ab-routing-banner svg {
+    width: 15px;
+    height: 15px;
+  }
+  .ab-hero.az-hero {
+    padding-top: 42px;
+  }
+  .ab-hero .az-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+  .ab-hero h1 {
+    font-size: clamp(33px, 8.1vw, 48px);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+  .ab-hero .az-hero-capabilities {
+    margin-top: 30px;
+    padding-bottom: 0;
+    row-gap: 15px;
+  }
+  .atc-conditions + .az-audience {
+    padding-block: 25px;
+    margin-top: 20px;
+  }
+  .ab-section-heading {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+  .ab-section-heading h2 {
+    font-size: 32px;
+  }
+  .ab-section-heading > p {
+    font-size: 14px;
+    max-width: 100%;
+  }
+  .ab-operation-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .ab-operation-copy h3 {
+    font-size: 23px;
+  }
+  .ab-operation-copy > p {
+    font-size: 14px;
+  }
+  .ab-preview-heading {
+    font-size: 12px;
+  }
+  .ab-administration .az-section-copy h2 {
+    font-size: 33px;
+  }
+  .ab-admin-settings dt {
+    font-size: 11px;
+  }
+  .ab-admin-settings dd {
+    font-size: 12px;
+  }
+  .ab-admin-tabs {
+    padding-inline: 16px;
+  }
+  .ab-admin-settings {
+    margin-inline: 16px;
+  }
+  .ab-admin-owner {
+    padding: 20px 16px;
+  }
+  .ab-admin-bottom {
+    padding-inline: 16px;
+    font-size: 10px;
+  }
+}
+@media (max-width: 374px) {
+  .ab-hero h1 {
+    font-size: 30px;
+  }
+  .ab-routing-banner > div {
+    font-size: 11px;
+  }
+  .ab-section-heading h2 {
+    font-size: 29px;
+  }
+  .ab-funding-person {
+    font-size: 11px;
+  }
+  .ab-funding-person small {
+    font-size: 9px;
+  }
+  .ab-preview-heading {
+    gap: 6px;
+  }
+  .ab-admin-tabs span {
+    font-size: 10px;
+    padding-inline: 8px;
+  }
+}

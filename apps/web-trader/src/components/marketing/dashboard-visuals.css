@@ -1,0 +1,422 @@
+.az-dashboard .dv-workspace-shortcuts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+.az-dashboard .dv-workspace-shortcuts button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 64px;
+  padding: 10px 12px;
+  border: 1px solid var(--az-line);
+  border-radius: 8px;
+  text-align: left;
+  background: #fff;
+}
+.az-dashboard .dv-workspace-shortcuts button:hover {
+  background: #f3f7ff;
+  border-color: #a9bee9;
+}
+.az-dashboard .dv-shortcut-icon {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  color: var(--az-blue);
+  background: #edf3ff;
+  border-radius: 8px;
+}
+.az-dashboard .dv-workspace-shortcuts strong {
+  display: block;
+  color: var(--az-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+.az-dashboard .dv-workspace-shortcuts small {
+  display: block;
+  color: var(--az-muted);
+  font-size: 10px;
+  margin-top: 3px;
+  line-height: 1.4;
+}
+.az-dashboard .dv-workspace-shortcuts button > svg {
+  flex-shrink: 0;
+  margin-left: auto;
+  color: var(--az-blue);
+}
+.az-dashboard .dv-sparkline {
+  width: 100%;
+  height: 34px;
+  display: block;
+  margin-top: 10px;
+  overflow: visible;
+}
+.az-dashboard .dv-spark-area {
+  fill: #edf3ff;
+}
+.az-dashboard .dv-spark-line {
+  fill: none;
+  stroke: #5b80d6;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.az-dashboard .dv-volume-breakdown {
+  padding-top: 16px;
+  margin-top: 18px;
+  border-top: 1px solid #e8edf6;
+  display: grid;
+  gap: 10px;
+}
+.az-dashboard .dv-volume-breakdown > div {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr) 90px;
+  gap: 9px;
+  align-items: center;
+  color: var(--az-muted);
+  font-size: 10px;
+}
+.az-dashboard .dv-volume-breakdown strong {
+  font-weight: 550;
+  text-align: right;
+  color: var(--az-text);
+  font-variant-numeric: tabular-nums;
+}
+.az-dashboard .dv-volume-breakdown small {
+  font-size: 9px;
+  color: var(--az-muted);
+  font-weight: 400;
+}
+.az-dashboard .dv-volume-rail {
+  height: 6px;
+  border-radius: 3px;
+  background: #eef2f8;
+  overflow: hidden;
+}
+.az-dashboard .dv-volume-rail i {
+  display: block;
+  width: var(--dv-bar);
+  height: 100%;
+  background: #8aa9e8;
+  border-radius: 3px;
+}
+.az-dashboard .dv-copy-network {
+  position: relative;
+  height: 170px;
+  margin: 12px 0 8px;
+}
+.az-dashboard .dv-copy-hub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 37px;
+  min-width: 123px;
+  padding: 0 9px;
+  color: var(--az-blue);
+  background: #edf3ff;
+  border: 1px solid #c5d6f7;
+  border-radius: 8px;
+  font-size: 10px;
+}
+.az-dashboard .dv-copy-hub strong {
+  font-weight: 550;
+}
+.az-dashboard .dv-copy-destinations {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.az-dashboard .dv-copy-destinations > span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.az-dashboard .dv-copy-destinations img {
+  object-fit: contain;
+  border: 1px solid #dce3ee;
+  border-radius: 6px;
+  padding: 4px;
+  background: #fff;
+  width: 34px;
+  height: 34px;
+}
+.az-dashboard .dv-copy-destinations small {
+  font-size: 9px;
+  color: var(--az-muted);
+}
+.az-dashboard .dv-operations-visuals {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 14px;
+  margin-top: 18px;
+}
+.az-dashboard .dv-context-label {
+  display: inline-flex;
+  font-size: 10px;
+  color: var(--az-blue);
+  background: #edf3ff;
+  border: 1px solid #dae5fb;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.az-dashboard .dv-routing-map {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  margin: 20px 0 12px;
+}
+.az-dashboard .dv-map-platforms,
+.az-dashboard .dv-map-providers {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 20%;
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+}
+.az-dashboard .dv-map-platforms {
+  left: 0;
+}
+.az-dashboard .dv-map-providers {
+  right: 0;
+}
+.az-dashboard .dv-map-platforms > span,
+.az-dashboard .dv-map-providers > span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 42px;
+  padding: 5px;
+  background: #fff;
+  border: 1px solid #dce3ee;
+  border-radius: 6px;
+}
+.az-dashboard .dv-map-platforms strong,
+.az-dashboard .dv-map-providers strong {
+  font-size: 9px;
+  font-weight: 550;
+  line-height: 1.4;
+}
+.az-dashboard .dv-map-platforms img {
+  object-fit: contain;
+  flex-shrink: 0;
+}
+.az-dashboard .dv-map-providers svg {
+  flex-shrink: 0;
+  color: #58759d;
+}
+.az-dashboard .dv-map-router {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 26%;
+  min-height: 128px;
+  border: 1px solid #bbcef0;
+  border-radius: 10px;
+  background: #f2f6ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 5px;
+  text-align: center;
+  gap: 6px;
+}
+.az-dashboard .dv-router-symbol {
+  color: var(--az-blue);
+}
+.az-dashboard .dv-map-router strong {
+  font-size: 11px;
+  font-weight: 600;
+}
+.az-dashboard .dv-map-router small {
+  font-size: 9px;
+  color: var(--az-muted);
+}
+.az-dashboard .dv-map-router > span:last-child {
+  font-size: 8px;
+  color: var(--az-blue);
+}
+.az-dashboard .dv-route-footer {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  padding-top: 10px;
+  border-top: 1px solid #edf1f7;
+  font-size: 10px;
+  color: var(--az-muted);
+  line-height: 1.5;
+}
+.az-dashboard .dv-route-footer svg {
+  flex-shrink: 0;
+  color: var(--az-blue);
+  margin-top: 1px;
+}
+.az-dashboard .dv-allocation {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 8px auto 10px;
+}
+.az-dashboard .dv-allocation svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.az-dashboard .dv-allocation circle {
+  fill: none;
+  stroke-width: 11;
+}
+.az-dashboard .dv-ring-base {
+  stroke: #edf1f7;
+}
+.az-dashboard .dv-ring-blue {
+  stroke: #376bd7;
+}
+.az-dashboard .dv-ring-steel {
+  stroke: #8ea9cc;
+}
+.az-dashboard .dv-ring-gold {
+  stroke: #d6b57b;
+}
+.az-dashboard .dv-allocation figcaption {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.az-dashboard .dv-allocation figcaption strong {
+  font-size: 22px;
+  font-weight: 550;
+  letter-spacing: -0.6px;
+}
+.az-dashboard .dv-allocation figcaption span {
+  font-size: 10px;
+  color: var(--az-muted);
+}
+.az-dashboard .dv-allocation-legend {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.az-dashboard .dv-allocation-legend li {
+  display: grid;
+  grid-template-columns: 5px 1fr auto 40px;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 0;
+  font-size: 10px;
+}
+.az-dashboard .dv-allocation-legend i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+.az-dashboard .dv-allocation-legend strong {
+  font-weight: 550;
+  font-variant-numeric: tabular-nums;
+}
+.az-dashboard .dv-allocation-legend small {
+  font-size: 9px;
+  text-align: right;
+  color: var(--az-muted);
+}
+.az-dashboard .dv-dot-blue {
+  background: #376bd7;
+}
+.az-dashboard .dv-dot-steel {
+  background: #8ea9cc;
+}
+.az-dashboard .dv-dot-gold {
+  background: #d6b57b;
+}
+@media (max-width: 1023px) {
+  .az-dashboard .dv-operations-visuals {
+    grid-template-columns: 1fr;
+  }
+  .az-dashboard .dv-allocation-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    column-gap: 14px;
+  }
+  .az-dashboard .dv-allocation-panel .dd-panel-title,
+  .az-dashboard .dv-allocation-panel .dd-panel-note {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 767px) {
+  .az-dashboard .dv-workspace-shortcuts {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .az-dashboard .dv-workspace-shortcuts button {
+    min-height: 54px;
+  }
+  .az-dashboard .dv-workspace-shortcuts strong {
+    font-size: 12px;
+  }
+  .az-dashboard .dv-workspace-shortcuts small {
+    font-size: 11px;
+  }
+  .az-dashboard .dv-sparkline {
+    height: 28px;
+  }
+}
+@media (max-width: 389px) {
+  .az-dashboard .dv-volume-breakdown > div {
+    grid-template-columns: 63px minmax(0, 1fr) 76px;
+    gap: 6px;
+    font-size: 9px;
+  }
+  .az-dashboard .dv-routing-map {
+    height: 190px;
+  }
+  .az-dashboard .dv-map-platforms,
+  .az-dashboard .dv-map-providers {
+    width: 23%;
+  }
+  .az-dashboard .dv-map-platforms > span,
+  .az-dashboard .dv-map-providers > span {
+    flex-direction: column;
+    min-height: 47px;
+    gap: 2px;
+    padding: 3px;
+    text-align: center;
+  }
+  .az-dashboard .dv-map-platforms strong,
+  .az-dashboard .dv-map-providers strong {
+    font-size: 8px;
+  }
+  .az-dashboard .dv-map-router {
+    width: 30%;
+  }
+  .az-dashboard .dv-map-router strong {
+    font-size: 10px;
+  }
+  .az-dashboard .dv-map-router small {
+    font-size: 8px;
+  }
+  .az-dashboard .dv-allocation-panel {
+    grid-template-columns: 1fr;
+  }
+}

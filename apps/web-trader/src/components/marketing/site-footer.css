@@ -1,0 +1,339 @@
+.sf-footer {
+  background: #f8fafd;
+  color: #172235;
+  border-top: 1px solid #dce3ee;
+  margin-top: 100px;
+  font-family: inherit;
+}
+.sf-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 44px 0;
+  border-bottom: 1px solid #dce3ee;
+}
+.sf-kicker {
+  display: block;
+  color: #56657a;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+.az-marketing .sf-intro h2 {
+  font-size: 28px;
+  letter-spacing: -0.8px;
+  line-height: 1.25;
+  margin: 0;
+  max-width: 620px;
+}
+.sf-intro .az-button {
+  white-space: nowrap;
+  flex: none;
+}
+.sf-brand-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 32px;
+  align-items: center;
+  padding: 42px 0 28px;
+}
+.sf-brand-row p {
+  color: #56657a;
+  font-size: 14px;
+  line-height: 1.7;
+  margin: 0;
+}
+.sf-brand-row > a:last-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #2859c5;
+  min-height: 44px;
+}
+.sf-link-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1.2fr 1fr 0.85fr 1.1fr;
+  gap: 28px;
+  padding: 20px 0 40px;
+}
+.sf-link-grid nav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.az-marketing .sf-link-grid h3 {
+  font-size: 13px;
+  font-weight: 650;
+  margin: 0 0 14px;
+  letter-spacing: 0;
+}
+.sf-link-grid a {
+  color: #56657a;
+  font-size: 13px;
+  line-height: 1.45;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+}
+.sf-footer a:hover {
+  color: #2859c5;
+}
+.sf-footer a:focus-visible,
+.sf-footer button:focus-visible,
+.sf-footer input:focus-visible {
+  outline: 2px solid #2859c5;
+  outline-offset: 4px;
+}
+.sf-disclosures {
+  border-top: 1px solid #dce3ee;
+  padding: 30px 0;
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 40px;
+}
+.sf-disclosures > div:first-child {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.sf-disclosures svg {
+  flex: none;
+  color: #2859c5;
+  margin-top: 2px;
+}
+.az-marketing .sf-disclosures h3 {
+  font-size: 13px;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 190px;
+}
+.sf-disclosure-copy p {
+  color: #56657a;
+  font-size: 12px;
+  line-height: 1.75;
+  margin: 0 0 12px;
+  max-width: none;
+}
+.sf-disclosure-copy p:last-child {
+  margin: 0;
+}
+.sf-disclosure-copy strong {
+  color: #344259;
+  font-weight: 600;
+}
+.sf-disclosure-copy a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.sf-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 20px 0 26px;
+  border-top: 1px solid #dce3ee;
+  color: #56657a;
+  font-size: 12px;
+}
+.sf-bottom > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: 24px;
+}
+.sf-bottom a,
+.sf-preferences-trigger {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+.sf-preferences-trigger {
+  font: inherit;
+  color: inherit;
+  background: none;
+  padding: 0;
+  border: 0;
+  cursor: pointer;
+}
+.sf-language {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.sf-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+.sf-privacy-dialog {
+  width: min(620px, calc(100% - 32px));
+  max-height: 85dvh;
+  padding: 0;
+  margin: auto;
+  border: 1px solid #dce3ee;
+  border-radius: 14px;
+  background: #fff;
+  color: #172235;
+  box-shadow: 0 20px 70px #17223526;
+  overflow: auto;
+  font-family: inherit;
+}
+.sf-privacy-dialog::backdrop {
+  background: #17223566;
+}
+.sf-privacy-dialog > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+  border-bottom: 1px solid #dce3ee;
+  padding: 12px 20px;
+}
+.sf-privacy-dialog > header > span {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 650;
+  min-width: 0;
+}
+.sf-privacy-dialog > header > button {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: #56657a;
+}
+.sf-privacy-body {
+  padding: 24px;
+}
+.sf-privacy-body p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #56657a;
+  margin: 0 0 18px;
+}
+.sf-privacy-row {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  gap: 12px;
+  padding: 20px 0;
+  border-bottom: 1px solid #e7edf5;
+}
+.sf-privacy-row > svg {
+  color: #2859c5;
+}
+.sf-privacy-row strong,
+.sf-privacy-row small {
+  display: block;
+}
+.sf-privacy-row strong {
+  font-size: 14px;
+}
+.sf-privacy-row small {
+  font-size: 12px;
+  color: #56657a;
+  line-height: 1.6;
+  margin-top: 5px;
+}
+.sf-setting-state {
+  grid-column: 2;
+  font-size: 11px;
+  color: #2859c5;
+}
+.sf-remember {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 60px;
+  padding: 14px 0;
+  cursor: pointer;
+  font-size: 13px;
+}
+.sf-remember input {
+  accent-color: #2859c5;
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.sf-privacy-body .sf-privacy-note {
+  font-size: 12px;
+}
+.sf-privacy-note a {
+  color: #2859c5;
+  text-decoration: underline;
+}
+@media (max-width: 900px) {
+  .sf-brand-row {
+    grid-template-columns: 1fr 1fr;
+  }
+  .sf-brand-row > a:last-child {
+    grid-column: 1/-1;
+  }
+  .sf-link-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 32px 24px;
+  }
+  .sf-disclosures {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .az-marketing .sf-disclosures h3 {
+    max-width: none;
+  }
+}
+@media (max-width: 600px) {
+  .sf-footer {
+    margin-top: 64px;
+  }
+  .sf-intro {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 32px 0;
+    gap: 22px;
+  }
+  .az-marketing .sf-intro h2 {
+    font-size: 24px;
+  }
+  .sf-brand-row {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding-top: 30px;
+  }
+  .sf-link-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 30px 20px;
+    padding-top: 12px;
+  }
+  .sf-link-grid a {
+    min-height: 44px;
+    font-size: 12px;
+  }
+  .sf-link-grid nav:last-child {
+    grid-column: 1/-1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 20px;
+  }
+  .sf-link-grid nav:last-child h3 {
+    grid-column: 1/-1;
+  }
+  .sf-bottom {
+    align-items: flex-start;
+  }
+  .sf-bottom > div {
+    column-gap: 20px;
+  }
+  .sf-privacy-body {
+    padding: 20px;
+  }
+}

@@ -1,0 +1,264 @@
+.risk-preview {
+  margin: 14px 0;
+  border-top: 1px solid var(--border, #253040);
+  padding-top: 12px;
+  font-size: 11px;
+}
+.preview-heading {
+  display: flex;
+  justify-content: space-between;
+  color: #aebfd2;
+  margin-bottom: 10px;
+}
+.preview-heading small {
+  color: #7b8da4;
+}
+.risk-preview dl {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+}
+.risk-preview dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+.risk-preview dt {
+  color: #8da0b8;
+}
+.risk-preview dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  color: #e0ebf7;
+}
+.risk-preview dd small {
+  color: #8da0b8;
+}
+.risk-preview dd.positive {
+  color: #36c3a4;
+}
+.risk-preview dd.negative {
+  color: #fa7787;
+}
+.protection-summary {
+  display: grid;
+  gap: 4px;
+  padding-top: 10px;
+  color: #8da0b8;
+  font-variant-numeric: tabular-nums;
+}
+.inline-warning {
+  font-size: 11px;
+  color: #e6be76;
+  margin: 7px 0;
+}
+.sizing-tabs,
+.input-mode-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 12px 0 8px;
+}
+.sizing-tabs button,
+.input-mode-tabs button {
+  flex: 1;
+  background: #0d131c;
+  color: #91a6bf;
+  border: 1px solid #253144;
+  padding: 7px 5px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+.sizing-tabs button.active,
+.input-mode-tabs button.active {
+  background: #22314a;
+  border-color: #4b668c;
+  color: #eff6ff;
+}
+.ticket-form-v2 .ticket-label {
+  margin-top: 10px;
+}
+.ticket-form-v2 .protection-toggle {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+.ticket-form-v2 .order-disclaimer {
+  line-height: 1.5;
+}
+.ticket-form-v2 .protection-fields {
+  margin-top: 8px;
+}
+.ticket-form-v2 .submit-order {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+}
+.order-ticket {
+  overflow: auto;
+  min-height: 0;
+}
+.quick-close-presets {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0;
+}
+.quick-close-presets button {
+  flex: 1;
+  padding: 8px 3px;
+  background: #141e2b;
+  border: 1px solid #30415a;
+  color: #d2e0ef;
+  border-radius: 4px;
+  font-size: 11px;
+}
+.quick-close-presets button.active {
+  background: #294261;
+  border-color: #5c8cbe;
+}
+.close-preview {
+  display: grid;
+  gap: 7px;
+  padding: 13px;
+  background: #101b29;
+  border: 1px solid #293d56;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-size: 12px;
+}
+.close-preview > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+}
+.trade-dialog {
+  max-height: 90dvh;
+  overflow: auto;
+  width: min(480px, calc(100vw - 24px));
+}
+.trade-dialog form {
+  display: grid;
+  gap: 10px;
+}
+.trade-dialog input,
+.trade-dialog select {
+  min-height: 36px;
+}
+.trade-dialog .dialog-protections {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.position-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  font-size: 12px;
+  margin: 16px 0;
+}
+.position-detail-grid dt {
+  color: #8297b0;
+  margin-bottom: 4px;
+}
+.position-detail-grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+}
+.detail-fills {
+  max-height: 190px;
+  overflow: auto;
+}
+.detail-fills table {
+  width: 100%;
+  font-size: 11px;
+}
+.detail-fills th,
+.detail-fills td {
+  text-align: left;
+  padding: 8px;
+}
+.position-name-button {
+  display: block;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font-weight: 600;
+}
+.position-name-button small {
+  display: block;
+  font-weight: 400;
+}
+.row-actions .table-button {
+  white-space: nowrap;
+}
+.protection-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 0;
+}
+.protection-toolbar small {
+  color: #8a9db5;
+}
+.account-activity-filter {
+  font-size: 10px;
+  color: #8499b1;
+}
+.dialog button:focus-visible,
+.order-ticket button:focus-visible,
+.order-ticket input:focus-visible {
+  outline: 2px solid #80b4fb;
+  outline-offset: 2px;
+}
+@media (max-height: 800px) and (min-width: 901px) {
+  .ticket-market {
+    padding-top: 14px;
+    padding-bottom: 12px;
+  }
+  .trade-sides {
+    margin-top: 0;
+  }
+  .trade-sides button {
+    padding: 8px;
+  }
+  .ticket-form-v2 .ticket-label {
+    margin-top: 8px;
+  }
+  .risk-preview {
+    margin: 10px 0;
+  }
+  .risk-preview dl {
+    gap: 5px;
+  }
+  .ticket-form-v2 .protection-toggle {
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+  .ticket-form-v2 .order-disclaimer {
+    font-size: 10px;
+  }
+  .order-ticket .panel-title {
+    min-height: 42px;
+  }
+}
+@media (max-width: 600px) {
+  .trade-dialog .dialog-protections {
+    grid-template-columns: 1fr;
+  }
+  .position-detail-grid {
+    gap: 12px;
+  }
+  .risk-preview dl {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 16px;
+  }
+  .risk-preview dl > div {
+    flex-direction: column;
+    gap: 3px;
+  }
+  .row-actions {
+    gap: 5px;
+  }
+}

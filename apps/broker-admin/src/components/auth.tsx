@@ -1,0 +1,11 @@
+"use client";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ArrowRight, ShieldCheck, Triangle } from "@phosphor-icons/react";
+import { api, errorMessage } from "@/lib/api";
+export function Auth({error}:{error?:string}) {
+ const client=useQueryClient(); const [email,setEmail]=useState(""),[password,setPassword]=useState("");
+ const login=useMutation({mutationFn:()=>api("/auth/login",{method:"POST",body:JSON.stringify({email,password})}),onSuccess:()=>client.invalidateQueries()});
+ return <main className="auth"><section className="auth-context"><div className="brand"><Triangle weight="fill" size={32}/>azuriya<span>.</span></div><span className="eyebrow">BROKER OPERATIONS</span><h1>Every account.<br/>Every decision.<br/><em>One clear view.</em></h1><p>Configure trading terms, monitor exposure and manage client accounts through the native operations workspace.</p><div className="auth-lines" aria-hidden="true"><i/><i/><i/><i/><i/></div><div className="environment-note"><ShieldCheck size={20}/><span>Native simulated execution<br/><small>Server validated · Tenant scoped · Audited</small></span></div></section><section className="auth-form"><span className="eyebrow">AZURIYA BROKER OS</span><h2>Sign in to operations</h2><p>Use your authorized tenant account.</p><form onSubmit={e=>{e.preventDefault();login.mutate();}}><label>Email address<input type="email" value={email} onChange={e=>setEmail(e.target.value)} required autoComplete="username" maxLength={254}/></label><label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} required autoComplete="current-password" maxLength={128}/></label>{(error||login.isError)&&<p role="alert" className="error">{login.isError?errorMessage(login.error):error}</p>}<button className="primary" disabled={login.isPending}>{login.isPending?"Signing in…":"Open broker workspace"}<ArrowRight size={18}/></button></form><div className="auth-hint"><ShieldCheck size={18}/><p>All account funds and execution in this environment are simulated.</p></div><a href={process.env.NEXT_PUBLIC_TRADER_URL||"http://localhost:3000/terminal"}>Open trader terminal</a></section></main>;
+}
+

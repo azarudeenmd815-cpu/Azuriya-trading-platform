@@ -1,0 +1,1790 @@
+/* Shared product layout. The HTML preference supplies colors before React hydrates. */
+.az-marketing .az-demo-shell[data-dashboard-theme] {
+  --dash-main: #fff;
+  --dash-card: #f7f8fb;
+  --dash-raised: #eef0f5;
+  --dash-border: #dfe2e9;
+  --dash-text: #172235;
+  --dash-muted: #56657a;
+  --dash-blue: #3869fc;
+  --dash-link: #2e5df0;
+  --dash-mint: #16724f;
+  --dash-red: #b23f54;
+  --dash-amber: #8b6321;
+  --dash-purple: #6853a1;
+  --dash-sidebar: #f7f8fb;
+  --dash-shell: #eef0f5;
+  --dash-scheme: light;
+  --dash-shadow: #203e6818;
+  --dash-backdrop: #08090db8;
+  --dash-on-blue: #fff;
+  --dash-tool-surface: #fff;
+  --dash-tool-text: #14151c;
+  --dash-tool-hover: #dce7ff;
+  --dash-chart-line: #3869fc;
+  --dash-chart-comparison: #e3defd;
+  --dash-on-blue-muted: #fff;
+  --dash-blue-surface: color-mix(
+    in srgb,
+    var(--dash-blue) 12%,
+    var(--dash-card)
+  );
+  --dash-blue-border: color-mix(
+    in srgb,
+    var(--dash-blue) 36%,
+    var(--dash-border)
+  );
+  --dash-green-surface: color-mix(
+    in srgb,
+    var(--dash-mint) 12%,
+    var(--dash-card)
+  );
+  --dash-green-border: color-mix(
+    in srgb,
+    var(--dash-mint) 30%,
+    var(--dash-border)
+  );
+  --dash-red-surface: color-mix(in srgb, var(--dash-red) 12%, var(--dash-card));
+  --dash-red-border: color-mix(
+    in srgb,
+    var(--dash-red) 30%,
+    var(--dash-border)
+  );
+  --dash-amber-surface: color-mix(
+    in srgb,
+    var(--dash-amber) 12%,
+    var(--dash-card)
+  );
+  --dash-amber-border: color-mix(
+    in srgb,
+    var(--dash-amber) 30%,
+    var(--dash-border)
+  );
+  --dash-purple-surface: color-mix(
+    in srgb,
+    var(--dash-purple) 12%,
+    var(--dash-card)
+  );
+  --dash-purple-border: color-mix(
+    in srgb,
+    var(--dash-purple) 30%,
+    var(--dash-border)
+  );
+  --dash-supporting-text: color-mix(
+    in srgb,
+    var(--dash-text) 82%,
+    var(--dash-muted)
+  );
+  --dash-placeholder: color-mix(
+    in srgb,
+    var(--dash-muted) 82%,
+    var(--dash-main)
+  );
+  --dash-disabled-surface: color-mix(
+    in srgb,
+    var(--dash-raised) 75%,
+    var(--dash-main)
+  );
+  --az-bg: var(--dash-main);
+  --az-surface: var(--dash-card);
+  --az-raised: var(--dash-raised);
+  --az-line: var(--dash-border);
+  --az-text: var(--dash-text);
+  --az-muted: var(--dash-muted);
+  --az-blue: var(--dash-link);
+  --az-green: var(--dash-mint);
+  --az-red: var(--dash-red);
+  background: var(--dash-shell);
+  border-color: var(--dash-border);
+  border-radius: 28px;
+  box-shadow: 0 24px 70px var(--dash-shadow);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing
+  .az-demo-shell[data-dashboard-theme] {
+  --dash-main: #0f1014;
+  --dash-card: #191a21;
+  --dash-raised: #303238;
+  --dash-border: #2e3038;
+  --dash-text: #fff;
+  --dash-muted: #9b9da6;
+  --dash-link: #9aafff;
+  --dash-mint: #36d69d;
+  --dash-red: #fd606c;
+  --dash-amber: #e6ba76;
+  --dash-purple: #c4b5e8;
+  --dash-sidebar: #1e1f25;
+  --dash-shell: #0f1014;
+  --dash-scheme: dark;
+  --dash-shadow: #0f101424;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.az-demo-caption, .az-demo-caption > span:last-child, .az-preview-tag) {
+  color: var(--dash-muted);
+  border-color: var(--dash-border);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-caption-symbol {
+  color: var(--dash-link);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-dashboard {
+  color: var(--dash-text);
+  color-scheme: var(--dash-scheme);
+  background: var(--dash-main);
+  border-color: var(--dash-border);
+  border-radius: 24px;
+  box-shadow: 0 24px 70px var(--dash-shadow);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-sidebar {
+  background: var(--dash-sidebar);
+  border-color: var(--dash-border);
+  padding: 26px 13px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-main {
+  background: var(--dash-main);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-content {
+  padding: 28px 26px 0;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(h2, h3, h4, strong, b):not(:where(.tj-journal *)) {
+  color: var(--dash-text);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(p, small, dt, label):not(:where(.tj-journal *)) {
+  color: var(--dash-muted);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-brand {
+  color: var(--dash-text);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-workspace,
+    .az-workspace small,
+    .az-nav-heading,
+    .az-demo-data-label,
+    .az-dash-topbar,
+    .az-dash-topbar > span > span,
+    .az-sidebar-bottom,
+    .az-sidebar-bottom > span,
+    .az-dash-footer,
+    .az-chart-summary,
+    .az-chart-x,
+    .az-chart-y,
+    .az-subtle,
+    .az-empty,
+    .az-engine-label,
+    .az-followers > span,
+    .az-engine-rule,
+    .az-copy-team-list small,
+    .dd-muted,
+    .dd-panel-note,
+    .dd-inline-note,
+    .dd-read-only,
+    .dd-environment-strip
+  ) {
+  color: var(--dash-muted);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-dash-topbar b,
+    .az-sidebar-bottom strong,
+    .az-engine-rule b,
+    .az-risk-row strong,
+    .az-master,
+    .az-trader-cell,
+    .dd-key-values dd,
+    .dd-platform-balances strong,
+    .dd-compact-list li > span,
+    .dd-service-list strong
+  ) {
+  color: var(--dash-text);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-workspace-avatar,
+    .az-owner-avatar,
+    .az-mini-avatar,
+    .az-avatar-blue,
+    .dd-message-avatar
+  ) {
+  color: var(--dash-link);
+  background: var(--dash-blue-surface);
+  border-color: var(--dash-blue-border);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-sidebar nav button {
+  min-height: 44px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  color: var(--dash-muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .az-dash-sidebar
+  nav
+  button:hover {
+  background: var(--dash-raised);
+  color: var(--dash-text);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .az-dash-sidebar
+  nav
+  button.is-active {
+  color: var(--dash-on-blue);
+  background: var(--dash-blue);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-nav-count {
+  color: var(--dash-text);
+  background: var(--dash-raised);
+  border-radius: 8px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .az-dash-sidebar
+  nav
+  button.is-active
+  .az-nav-count {
+  color: var(--dash-on-blue);
+  background: color-mix(in srgb, var(--dash-on-blue) 12%, transparent);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-demo-settings {
+  color: var(--dash-muted) !important;
+  border-color: var(--dash-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-sidebar-bottom button,
+    .az-panel-heading > button,
+    .dd-panel-title > button,
+    .dd-funding-banner a,
+    .dd-environment-strip > b
+  ) {
+  color: var(--dash-link);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-topbar {
+  border-color: var(--dash-border);
+  height: 60px;
+  padding-inline: 26px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dr-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dr-toolbar button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: var(--dash-tool-surface);
+  color: var(--dash-tool-text);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dr-toolbar button:hover {
+  background: var(--dash-tool-hover);
+  border-color: var(--dash-chart-line);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dr-toolbar button svg {
+  color: var(--dash-tool-text);
+  width: 19px;
+  height: 19px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-heading h2 {
+  color: var(--dash-text);
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.8px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-team-filter,
+    .az-search,
+    .dt-directory-toolbar > label,
+    .dc-community-search
+  ) {
+  color: var(--dash-muted);
+  background: var(--dash-card);
+  border-color: var(--dash-border);
+  border-radius: 999px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    select,
+    textarea,
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"])
+  ):not(:where(.tj-journal *)) {
+  color-scheme: var(--dash-scheme);
+  color: var(--dash-text);
+  background: var(--dash-raised);
+  border-color: var(--dash-border);
+  border-radius: 999px;
+  min-height: 44px;
+  padding: 10px 13px;
+  font-family: inherit;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  textarea:not(:where(.tj-journal *)) {
+  border-radius: 16px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-team-filter select,
+    .az-search input,
+    .dc-community-search input,
+    .dt-directory-toolbar input
+  ) {
+  background: transparent;
+  border: 0;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  select
+  option:not(:where(.tj-journal *)) {
+  color: var(--dash-text);
+  background: var(--dash-raised);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(input, textarea):not(:where(.tj-journal *))::placeholder {
+  color: var(--dash-placeholder);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(input[type="checkbox"], input[type="radio"]):not(:where(.tj-journal *)) {
+  accent-color: var(--dash-blue);
+  color-scheme: var(--dash-scheme);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(select:disabled, input:disabled):not(:where(.tj-journal *)) {
+  color: var(--dash-muted);
+  background: var(--dash-disabled-surface);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-stats {
+  gap: 14px;
+  border: 0;
+  border-radius: 0;
+  overflow: visible;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-stat {
+  border: 1px solid var(--dash-border);
+  border-radius: 20px;
+  background: var(--dash-card);
+  padding: 20px 18px;
+  min-height: 154px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-stat > div {
+  color: var(--dash-muted);
+  font-size: 14px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-stat > div svg {
+  color: var(--dash-muted);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-stat > strong {
+  color: var(--dash-text);
+  margin-top: 14px;
+  font-size: clamp(26px, 2.7vw, 36px);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-stat.is-money > strong {
+  font-size: clamp(23px, 2.1vw, 29px);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-stat-change {
+  color: var(--dash-mint);
+  font-size: 12px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-stat.is-money {
+  --dv-spark-color: #fff;
+  background: var(--dash-blue);
+  border-color: var(--dash-chart-line);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .az-stat.is-money
+  :is(strong, small, .az-stat-change) {
+  color: var(--dash-on-blue);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-stat.is-money > div,
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-stat.is-money > div svg {
+  color: var(--dash-on-blue-muted);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dv-spark-area {
+  fill: var(--dv-spark-color, var(--dash-mint));
+  opacity: 0.06;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dv-spark-line {
+  stroke: var(--dv-spark-color, var(--dash-mint));
+  stroke-width: 1.8;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-stat .dv-sparkline {
+  width: 72px;
+  height: 27px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .az-stat.is-money
+  .dv-spark-area {
+  fill: color-mix(in srgb, var(--dash-on-blue) 8%, transparent);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .az-stat.is-money
+  .dv-spark-line {
+  stroke: var(--dash-on-blue-muted);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-chart-panel,
+    .az-engine,
+    .dd-panel,
+    .az-demo-detail,
+    .dc-supporting-details,
+    .dp-panel,
+    .db-panel,
+    .dt-teamspace,
+    .dtp-pulse,
+    .dc-community
+  ) {
+  color: var(--dash-text);
+  background: var(--dash-card);
+  border-color: var(--dash-border);
+  border-radius: 20px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-chart-panel,
+    .az-engine,
+    .dd-panel,
+    .az-demo-detail,
+    .dp-panel,
+    .db-panel
+  ) {
+  padding: 22px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-panel-heading h3,
+    .dd-panel-title h3,
+    .db-panel-heading h3,
+    .da-panel h4,
+    .dp-panel-head h3
+  ) {
+  color: var(--dash-text);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.dc-supporting-details > summary, .dc-supporting-details > summary span) {
+  color: var(--dash-muted);
+  border-color: var(--dash-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-supporting-details[open]
+  > summary {
+  color: var(--dash-text);
+  border-color: var(--dash-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-periods,
+    .da-segments,
+    .dp-categories,
+    .dp-presets,
+    .db-control-tabs,
+    .dt-team-tabs,
+    .dc-community-settings-tabs
+  ) {
+  background: var(--dash-main);
+  border-color: var(--dash-border);
+  border-radius: 999px;
+  padding: 5px;
+  gap: 5px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-periods button,
+    .da-segments button,
+    .dp-categories button,
+    .dp-presets button,
+    .db-control-tabs button,
+    .dt-team-tabs button,
+    .dc-community-settings-tabs button
+  ) {
+  color: var(--dash-muted);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  min-height: 40px;
+  box-shadow: none;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-periods {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  gap: 6px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-periods button {
+  min-width: 50px;
+  border-color: var(--dash-border);
+  font-size: 13px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-periods button.is-active,
+    .da-segments button[aria-pressed="true"],
+    .dp-categories button[aria-pressed="true"],
+    .dp-presets button[aria-pressed="true"],
+    .db-control-tabs button[aria-selected="true"],
+    .dt-team-tabs button[aria-pressed="true"],
+    .dc-community-settings-tabs button[aria-selected="true"]
+  ) {
+  color: var(--dash-on-blue);
+  background: var(--dash-blue);
+  border-color: var(--dash-chart-line);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-periods button:hover,
+    .da-segments button:hover,
+    .dp-categories button:hover,
+    .dp-presets button:hover,
+    .db-control-tabs button:hover,
+    .dt-team-tabs button:hover
+  ) {
+  color: var(--dash-text);
+  background: var(--dash-raised);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dv-workspace-shortcuts {
+  border: 0;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dv-workspace-shortcuts
+  button {
+  min-height: 56px;
+  padding: 12px 14px;
+  border: 1px solid var(--dash-border);
+  border-radius: 16px;
+  background: var(--dash-card);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dv-workspace-shortcuts
+  button:hover {
+  background: var(--dash-raised);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.dv-volume-rail, .dv-ring-base, .dp-progress, .dp-meter-track) {
+  background: var(--dash-raised);
+  stroke: var(--dash-raised);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dv-volume-rail i,
+.az-marketing .az-demo-shell[data-dashboard-theme] .dp-progress > span {
+  background: var(--dash-chart-line);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.dv-copy-hub, .dv-map-router, .db-engine-node, .da-node-primary) {
+  color: var(--dash-link);
+  background: var(--dash-blue-surface);
+  border-color: var(--dash-blue-border);
+  border-radius: 16px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dv-map-platforms > span,
+    .dv-map-providers > span,
+    .dd-connections article,
+    .db-node,
+    .da-node,
+    .dt-member,
+    .dt-team-event,
+    .dt-date,
+    .dc-community-voice-person
+  ) {
+  color: var(--dash-text);
+  background: var(--dash-raised);
+  border-color: var(--dash-border);
+  border-radius: 14px;
+  box-shadow: none;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dv-context-label,
+    .dp-chip,
+    .dp-payout-tags > span,
+    .dd-connection-capabilities span,
+    .dd-message-meta > span,
+    .da-granted,
+    .dc-community-role,
+    .dc-community-channel b
+  ) {
+  color: var(--dash-link);
+  background: var(--dash-blue-surface);
+  border-color: var(--dash-blue-border);
+  border-radius: 999px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-panel-heading h3 > span,
+    .dv-allocation-legend small,
+    .dv-volume-breakdown,
+    .dv-copy-destinations small,
+    .dv-route-footer,
+    .dv-map-router small,
+    .dv-map-providers svg,
+    .dd-platform-balances small,
+    .dd-compact-list small,
+    .dd-service-list small,
+    .dd-key-values dt,
+    .dd-activity small,
+    .dd-activity time,
+    .dd-payment-list small,
+    .dd-payment-amount time,
+    .dd-connections dt,
+    .dd-connection-heading small
+  ) {
+  color: var(--dash-muted);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-status {
+  color: var(--dash-mint);
+  background: var(--dash-green-surface);
+  border-color: var(--dash-green-border);
+  border-radius: 999px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-status.is-paused {
+  color: var(--dash-amber);
+  background: var(--dash-amber-surface);
+  border-color: var(--dash-amber-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dd-status,
+    .dd-positive,
+    .az-gain,
+    .az-team-pnl,
+    .az-risk-row svg,
+    .db-positive,
+    .db-order-status,
+    .db-engine-badge,
+    .db-providers .db-node > svg,
+    .db-control-chain svg,
+    .db-review p,
+    .dp-health,
+    .dp-equity-totals > div:first-child > span
+  ) {
+  color: var(--dash-mint);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dd-positive {
+  color: var(--dash-mint) !important;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dd-status-pending,
+    .db-order-status.is-review,
+    .db-draft-state.is-dirty
+  ) {
+  color: var(--dash-amber);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.az-loss, .db-negative, .dc-community-error) {
+  color: var(--dash-red);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-side-buy {
+  color: var(--dash-mint);
+  background: var(--dash-green-surface);
+  border-radius: 999px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-side-sell {
+  color: var(--dash-red);
+  background: var(--dash-red-surface);
+  border-radius: 999px;
+}
+
+/* Legacy marketing cards use explicit importance; keep these overrides equally narrow. */
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-team-card {
+  background: var(--dash-card) !important;
+  border-color: var(--dash-border) !important;
+  border-radius: 18px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.az-team-card:hover, .az-team-card.is-selected) {
+  background: var(--dash-blue-surface) !important;
+  border-color: var(--dash-chart-line) !important;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-engine-control {
+  background: var(--dash-raised) !important;
+  color: var(--dash-link) !important;
+  border-color: var(--dash-border) !important;
+  border-radius: 999px;
+  min-height: 44px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.az-gold, .az-avatar-gold, .dc-community-avatar-sand) {
+  color: var(--dash-amber);
+  background: var(--dash-amber-surface);
+  border-color: var(--dash-amber-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.az-blue, .dc-community-avatar-blue, .dt-avatar, .dtp-avatars span) {
+  color: var(--dash-link);
+  background: var(--dash-blue-surface);
+  border-color: var(--dash-card);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.az-purple, .dtp-avatars span:nth-child(4)) {
+  color: var(--dash-purple);
+  background: var(--dash-purple-surface);
+  border-color: var(--dash-purple-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.dc-community-avatar-green, .dtp-avatars span:nth-child(2)) {
+  color: var(--dash-mint);
+  background: var(--dash-green-surface);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dc-community-avatar-rose {
+  color: var(--dash-red);
+  background: var(--dash-red-surface);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dc-community-avatar-gray {
+  color: var(--dash-text);
+  background: var(--dash-raised);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dtp-avatars
+  span:nth-child(3) {
+  color: var(--dash-amber);
+  background: var(--dash-amber-surface);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .az-positions {
+  padding: 22px;
+  border: 1px solid var(--dash-border);
+  border-radius: 20px;
+  background: var(--dash-card);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  table
+  th:not(:where(.tj-journal *)) {
+  color: var(--dash-muted);
+  background: var(--dash-raised);
+  border-color: var(--dash-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  table
+  td:not(:where(.tj-journal *)) {
+  color: var(--dash-text);
+  border-color: var(--dash-border);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] table td.az-gain {
+  color: var(--dash-mint);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] table td.az-loss {
+  color: var(--dash-red);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  tbody
+  tr:not(:where(.tj-journal *)):hover {
+  background: var(--dash-raised);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .az-dash-footer,
+    .az-engine-rule,
+    .az-copy-team-list > div,
+    .az-risk-row,
+    .dv-volume-breakdown,
+    .dv-route-footer,
+    .dd-platform-balances li,
+    .dd-key-values > div,
+    .dd-compact-list li,
+    .dd-service-list li,
+    .dd-payment-list article,
+    .dd-connection-capabilities,
+    .dd-message-panel header,
+    .dd-community-permissions,
+    .da-control-plane,
+    .da-toggle,
+    .da-scope-card,
+    .da-preview-values > div,
+    .da-operation-service,
+    .da-operation-steps li,
+    .da-safeguards,
+    .da-review-summary dl > div,
+    .db-route-bottom,
+    .db-control-chain > div,
+    .db-config-footer,
+    .db-review,
+    .db-review dl > div,
+    .dp-stage + .dp-stage,
+    .dp-stage-count,
+    .dp-risk-micro,
+    .dp-full-rules,
+    .dp-full-rules dl > div,
+    .dtp-actions button
+  ) {
+  border-color: var(--dash-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dd-fee-equation,
+    .dd-admin-fees,
+    .dd-group-rates,
+    .dd-funding-banner,
+    .dd-read-only,
+    .dd-channel-pin,
+    .dd-message-attachment
+  ) {
+  color: var(--dash-muted);
+  background: var(--dash-raised);
+  border-color: var(--dash-border);
+  border-radius: 14px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dd-fee-equation strong,
+    .dd-admin-fees b,
+    .dd-connections dd,
+    .dd-queue-metrics b
+  ) {
+  color: var(--dash-text);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dd-admin-total b,
+    .dd-fee-equation span:last-child strong,
+    .dd-group-rates b
+  ) {
+  color: var(--dash-link);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dd-feature-icon,
+    .dd-payment-direction,
+    .dd-channel-list,
+    .dd-message-panel,
+    .da-panel,
+    .da-control-plane,
+    .da-context
+  ) {
+  color: var(--dash-text);
+  background: var(--dash-card);
+  border-color: var(--dash-border);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dd-incoming {
+  color: var(--dash-mint);
+  background: var(--dash-green-surface);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dd-channel-list
+  nav
+  button.is-active {
+  color: var(--dash-link);
+  background: var(--dash-blue-surface);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.da-controls, .db-view, .dp-view) {
+  color: var(--dash-text);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .da-plane-heading h3,
+    .da-category-heading h3,
+    .da-context b,
+    .da-preview-values dd,
+    .da-review-summary h4,
+    .db-node strong,
+    .db-engine-node > strong,
+    .db-control-chain strong,
+    .db-setting > span,
+    .db-review h4,
+    .db-review dd,
+    .db-blotter td strong
+  ) {
+  color: var(--dash-text);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .da-plane-heading p,
+    .da-category-heading p,
+    .da-example,
+    .da-node small,
+    .da-context span,
+    .da-category-heading > span:last-child,
+    .da-field,
+    .da-field small,
+    .da-toggle small,
+    .da-muted,
+    .da-permissions th,
+    .da-permissions td,
+    .da-scope-card p,
+    .da-preview-overline,
+    .da-instrument-subtitle,
+    .da-preview-values dt,
+    .da-fixed,
+    .da-process small,
+    .da-operation-steps small,
+    .da-operation-service small,
+    .da-delivery-report small,
+    .da-review-actions > p,
+    .da-review-heading p,
+    .da-review-summary dt,
+    .da-review-summary dd s,
+    .da-review-footnote,
+    .db-zone-label,
+    .db-route-legend,
+    .db-node small,
+    .db-provider-rank,
+    .db-route-bottom,
+    .db-depth-labels,
+    .db-depth-footer,
+    .db-blotter-footer,
+    .db-control-chain > div > span,
+    .db-panel-footnote,
+    .db-draft-state,
+    .db-category-note,
+    .db-setting small,
+    .db-config-footer > span,
+    .db-review > div > span,
+    .db-review dt,
+    .db-execution-id
+  ) {
+  color: var(--dash-muted);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.da-panel, .da-review-summary) {
+  border-radius: 18px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .da-access-grid > .da-panel:first-child,
+    .da-policy-layout > .da-panel:first-child
+  ) {
+  padding: 20px;
+  background: var(--dash-card);
+  border: 1px solid var(--dash-border);
+  border-radius: 18px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .da-process li > span,
+    .da-operation-steps li > span,
+    .da-review-summary
+  ) {
+  color: var(--dash-link);
+  background: var(--dash-blue-surface);
+  border-color: var(--dash-blue-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .da-permissions
+  .da-selected-column {
+  color: var(--dash-link);
+  background: var(--dash-blue-surface);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .da-chart-grid {
+  stroke: var(--dash-border);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .da-price-range {
+  fill: var(--dash-blue-surface);
+  stroke: var(--dash-chart-line);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .da-candle-wicks {
+  stroke: var(--dash-chart-line);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .da-candle-bodies {
+  fill: var(--dash-chart-line);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .da-process li:not(:last-child)::after,
+    .da-node:not(:last-child)::after
+  ) {
+  background: var(--dash-chart-line);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.da-reset, .dt-teamspace button) {
+  color: var(--dash-text);
+  background: var(--dash-raised);
+  border-color: var(--dash-border);
+  border-radius: 999px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .da-review-actions .da-review-button,
+    .db-review-button,
+    .dp-review-button,
+    .dc-community .dc-community-button
+  ) {
+  color: var(--dash-on-blue);
+  background: var(--dash-blue);
+  border-color: var(--dash-chart-line);
+  border-radius: 999px;
+  min-height: 44px;
+  padding: 10px 15px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .da-review-summary dd strong,
+    .da-review-heading,
+    .da-review-heading > span,
+    .da-delivery-report,
+    .da-node > span,
+    .db-node-icon,
+    .db-engine-icon
+  ) {
+  color: var(--dash-link);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .db-book-prices {
+  background: var(--dash-raised);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.db-bid, .db-book-prices b:first-child) {
+  color: var(--dash-mint);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.db-ask, .db-book-prices b:last-child) {
+  color: var(--dash-red);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .db-bid i {
+  background: var(--dash-green-surface);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .db-bid b {
+  color: var(--dash-mint);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .db-ask b {
+  color: var(--dash-red);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .db-ask i {
+  background: var(--dash-red-surface);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dp-view {
+  --dp-border: var(--dash-border);
+  --dp-muted: var(--dash-muted);
+  --dp-blue: var(--dash-link);
+  --dp-soft: var(--dash-raised);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.dp-lifecycle, .dp-stage) {
+  color: var(--dash-text);
+  background: var(--dash-card);
+  border-color: var(--dash-border);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dp-lifecycle {
+  border-radius: 18px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dp-stage-active {
+  background: var(--dash-blue-surface);
+  box-shadow: inset 0 3px var(--dash-chart-line);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dp-stage-metric,
+    .dp-stage-count b,
+    .dp-equity-totals > div:first-child > strong,
+    .dp-target-row strong,
+    .dp-risk-row strong,
+    .dp-risk-micro strong,
+    .dp-payout-card p strong,
+    .dp-summary-grid strong,
+    .dp-full-rules dd
+  ) {
+  color: var(--dash-text);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dp-stage-number,
+    .dp-stage-detail,
+    .dp-stage-count,
+    .dp-preview-label,
+    .dp-settings-count,
+    .dp-chart-legend,
+    .dp-risk-row p,
+    .dp-risk-micro > span,
+    .dp-summary-grid span,
+    .dp-full-rules summary > span
+  ) {
+  color: var(--dash-muted);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dp-program-icon,
+    .dt-team-emblem,
+    .dc-community-workspace-mark,
+    .dc-community-voice-room-heading > span,
+    .dc-community-file > span:first-child
+  ) {
+  color: var(--dash-link);
+  background: var(--dash-blue-surface);
+  border-color: var(--dash-blue-border);
+  border-radius: 12px;
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dp-split-ring > span {
+  background: var(--dash-card);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dp-meter-track > span {
+  background: var(--dash-mint);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.dp-chart-axis, .dc-community-chart-label) {
+  fill: var(--dash-muted);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dp-chart-target {
+  fill: var(--dash-link);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dp-chart-floor {
+  fill: var(--dash-amber);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dp-equity-chart line[stroke="#e8edf4"],
+    .dp-equity-chart line[stroke="#f0f3f8"],
+    .az-chart line,
+    .dtp-gridline,
+    .dc-community-chart-grid
+  ) {
+  stroke: var(--dash-border);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dt-teamspace {
+  --dt-ink: var(--dash-text);
+  --dt-muted: var(--dash-muted);
+  --dt-border: var(--dash-border);
+  --dt-blue: var(--dash-link);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dtp-pulse {
+  --dtp-canvas: var(--dash-card);
+  --dtp-surface: var(--dash-raised);
+  --dtp-border: var(--dash-border);
+  --dtp-text: var(--dash-text);
+  --dtp-muted: var(--dash-muted);
+  --dtp-accent: var(--dash-link);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.dt-connection-map, .dt-preview-note, .dt-invite, .dt-teamspace thead) {
+  color: var(--dash-muted);
+  background: var(--dash-raised);
+  border-color: var(--dash-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.dt-preview-note, .dc-community-footnote) {
+  border-radius: 0 0 20px 20px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.dt-avatar i, .dc-community-avatar i) {
+  border-color: var(--dash-card);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dt-teamspace [data-presence="Online"],
+    .dt-teamspace [data-presence="In a voice room"]
+  ) {
+  background: var(--dash-mint);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dc-community {
+  --community-surface: var(--dash-card);
+  --community-rail: var(--dash-sidebar);
+  --community-line: var(--dash-border);
+  --community-text: var(--dash-text);
+  --community-muted: var(--dash-muted);
+  --community-blue: var(--dash-link);
+  --community-green: var(--dash-mint);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dc-community .dc-community-channel-header,
+    .dc-community-members,
+    .dc-community-voice-room,
+    .dc-community-chart,
+    .dc-community .dc-community-attachment-chart,
+    .dc-community-poll,
+    .dc-community-composer,
+    .dc-community .dc-community-dialog,
+    .dc-community-dialog > header,
+    .dc-community-emoji-menu,
+    .dc-community-compose-menu,
+    .dc-community .dc-community-voice-controls button
+  ) {
+  color: var(--dash-text);
+  background: var(--dash-card);
+  border-color: var(--dash-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dc-community .dc-community-pin-notice,
+    .dc-community .dc-community-file,
+    .dc-community-draft-file,
+    .dc-community-event-date,
+    .dc-community-connected-voice,
+    .dc-community .dc-community-reactions button
+  ) {
+  color: var(--dash-link);
+  background: var(--dash-raised);
+  border-color: var(--dash-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community
+  .dc-community-channel[aria-current="page"] {
+  color: var(--dash-link);
+  background: var(--dash-blue-surface);
+  border-radius: 12px;
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dc-community .dc-community-channel-actions button[aria-pressed="true"],
+    .dc-community .dc-community-reactions button[aria-pressed="true"],
+    .dc-community .dc-community-voice-controls button[aria-pressed="true"]
+  ) {
+  color: var(--dash-link);
+  background: var(--dash-blue-surface);
+  border-color: var(--dash-chart-line);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community
+  .dc-community-message-content
+  > p {
+  color: var(--dash-supporting-text);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dc-community-message-author time,
+    .dc-community-message-actions button,
+    .dc-community-channel > svg,
+    .dc-community-channel-heading h3 > svg
+  ) {
+  color: var(--dash-muted);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dc-community button:hover {
+  background: var(--dash-raised);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community
+  .dc-community-attachment-chart:hover {
+  background: var(--dash-raised);
+  border-color: var(--dash-chart-line);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community
+  .dc-community-voice-controls
+  .dc-community-leave {
+  color: var(--dash-red);
+  border-color: var(--dash-red-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community-dialog::backdrop {
+  background: var(--dash-backdrop);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(
+    .dc-community-chart figcaption,
+    .dc-community-chart-note,
+    .dc-community-channel-inventory > div,
+    .dc-community-role-assignments > div,
+    .dc-community-permissions label,
+    .dc-community-thread-root,
+    .dc-community-moderation-log
+  ) {
+  border-color: var(--dash-border);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(.dc-community-day-divider::before, .dc-community-day-divider::after) {
+  background: var(--dash-border);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dc-community-poll button i {
+  background: var(--dash-raised);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community-poll
+  button[aria-pressed="true"]
+  i {
+  background: color-mix(in srgb, var(--dash-blue) 24%, var(--dash-raised));
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dc-community-chart-zone {
+  fill: var(--dash-blue-surface);
+}
+
+.az-marketing .az-demo-shell[data-dashboard-theme] .dc-community-chart-price {
+  fill: color-mix(in srgb, var(--dash-blue) 24%, var(--dash-raised));
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community-chart-price-text {
+  fill: var(--dash-link);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community-candle-up
+  line {
+  stroke: var(--dash-mint);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community-candle-up
+  rect {
+  fill: var(--dash-mint);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community-candle-down
+  line {
+  stroke: var(--dash-red);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community-candle-down
+  rect {
+  fill: var(--dash-red);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  .dc-community-speaking
+  .dc-community-wave
+  i {
+  background: var(--dash-mint);
+}
+
+.az-marketing
+  .az-demo-shell[data-dashboard-theme]
+  :is(button, select, input, textarea, summary):not(
+    :where(.tj-journal *)
+  ):focus-visible {
+  outline: 2px solid var(--dash-link);
+  outline-offset: 3px;
+}
+
+@media (max-width: 1100px) {
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-content {
+    padding-inline: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-dashboard {
+    border-radius: 20px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-sidebar {
+    padding: 10px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-content {
+    padding: 22px 14px 0;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-topbar {
+    padding-inline: 14px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .dr-toolbar {
+    gap: 5px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .dr-toolbar button {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-heading h2 {
+    font-size: 24px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-stats {
+    gap: 10px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-stat {
+    padding: 16px 13px;
+    min-height: 146px;
+    border-radius: 18px;
+  }
+
+  .az-marketing
+    .az-demo-shell[data-dashboard-theme]
+    :is(
+      .az-chart-panel,
+      .az-engine,
+      .dd-panel,
+      .az-demo-detail,
+      .az-positions,
+      .dp-panel,
+      .db-panel,
+      .da-access-grid > .da-panel:first-child,
+      .da-policy-layout > .da-panel:first-child
+    ) {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .dv-workspace-shortcuts {
+    gap: 7px;
+  }
+
+  .az-marketing
+    .az-demo-shell[data-dashboard-theme]
+    .dv-workspace-shortcuts
+    button {
+    min-height: 48px;
+    padding: 9px 6px;
+    border-radius: 14px;
+  }
+
+  .az-marketing
+    .az-demo-shell[data-dashboard-theme]
+    :is(.da-segments, .db-control-tabs) {
+    border-radius: 20px;
+  }
+
+  .az-marketing
+    .az-demo-shell[data-dashboard-theme]
+    :is(
+      .az-periods button,
+      .da-segments button,
+      .dp-categories button,
+      .dp-presets button,
+      .db-control-tabs button
+    ) {
+    min-height: 44px;
+  }
+
+  .az-marketing
+    .az-demo-shell[data-dashboard-theme]
+    .dc-community
+    .dd-message-panel {
+    padding: 0;
+    border-radius: 0;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .dd-funding-banner > div {
+    flex: 1 1 calc(100% - 58px);
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .dd-funding-banner > a {
+    max-width: 100%;
+    white-space: normal;
+  }
+}
+
+@media (max-width: 389px) {
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-stat {
+    min-height: 136px;
+  }
+
+  .az-marketing
+    .az-demo-shell[data-dashboard-theme]
+    .az-stat.is-money
+    > strong {
+    font-size: 26px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .dd-admin-fees {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+    padding: 14px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .dd-admin-fees > span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .dd-admin-fees b {
+    flex-shrink: 0;
+    margin-top: 0;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .dd-admin-fees b small {
+    display: inline;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .dd-admin-fees > i {
+    justify-self: center;
+  }
+}
+
+@media (max-width: 600px) {
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-topbar {
+    height: auto;
+    min-height: 60px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding-block: 12px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-dash-topbar > div {
+    min-width: 0;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .dr-toolbar {
+    flex-shrink: 0;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-owner-avatar {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+  .az-marketing .az-demo-shell[data-dashboard-theme] .az-demo-data-label {
+    order: 1;
+    flex-basis: 100%;
+  }
+}

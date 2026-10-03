@@ -1,0 +1,3505 @@
+.az-marketing {
+  --text: #172235;
+  --surface-raised: #ffffff;
+  --line: #dce3ee;
+  --subtle: #64748b;
+  --accent: #3869fc;
+  --accent-solid: #3869fc;
+  --az-bg: #ffffff;
+  --az-surface: #f8fafd;
+  --az-raised: #f1f5fb;
+  --az-line: #dce3ee;
+  --az-muted: #56657a;
+  --az-blue: #3869fc;
+  --az-green: #16724f;
+  --az-text: #172235;
+  background: var(--az-bg);
+  color: var(--az-text);
+  font-family:
+    "Azuriya Gotham Numerals", var(--font-instrument), Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color-scheme: light;
+  overflow: clip;
+  min-height: 100dvh;
+}
+.az-marketing *,
+.az-marketing *::before,
+.az-marketing *::after {
+  box-sizing: border-box;
+}
+.az-marketing h1,
+.az-marketing h2,
+.az-marketing h3,
+.az-marketing p {
+  margin: 0;
+}
+.az-marketing h1,
+.az-marketing h2,
+.az-marketing h3 {
+  font-weight: 500;
+}
+.az-marketing a {
+  color: inherit;
+}
+.az-marketing button {
+  font-family: inherit;
+}
+.az-marketing button:not(:disabled):hover {
+  filter: none;
+}
+.az-marketing a,
+.az-marketing button {
+  -webkit-tap-highlight-color: transparent;
+}
+.az-marketing :is(a, button, input, select, summary):focus-visible {
+  outline: 2px solid var(--az-blue);
+  outline-offset: 5px;
+}
+.az-marketing :is(section, .az-demo-shell)[id] {
+  scroll-margin-top: 100px;
+}
+.az-container {
+  width: min(1200px, calc(100% - 80px));
+  margin-inline: auto;
+}
+.az-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.az-skip-link {
+  position: fixed;
+  top: -60px;
+  left: 16px;
+  z-index: 40;
+  padding: 12px 20px;
+  background: #172235;
+  color: #ffffff !important;
+  border-radius: 6px;
+}
+.az-skip-link:focus {
+  top: 12px;
+}
+/* Layers: page 0, sticky navigation 20, navigation menu 21, skip link 40. */
+.az-header {
+  height: 80px;
+  border-bottom: 1px solid #e8edf4;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #ffffffed;
+  backdrop-filter: blur(20px);
+}
+.az-header-inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+.az-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: #172235;
+  font-weight: 600;
+  font-size: 28px;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.az-brand-mark {
+  display: grid;
+  place-items: center;
+  width: 31px;
+  height: 31px;
+  color: #315fc0;
+  transform: rotate(-5deg);
+}
+.az-brand-mark svg {
+  width: 32px;
+  height: 32px;
+}
+.az-brand-period {
+  color: #315fc0;
+}
+.az-brand-compact {
+  font-size: 24px;
+  gap: 8px;
+}
+.az-brand-compact .az-brand-mark,
+.az-brand-compact .az-brand-mark svg {
+  width: 26px;
+  height: 26px;
+}
+.az-desktop-nav {
+  display: flex;
+  gap: 28px;
+  margin-left: 24px;
+}
+.az-desktop-nav a,
+.az-login {
+  color: #42526b;
+  font-size: 13px;
+  transition: color 0.2s;
+}
+.az-desktop-nav a:hover,
+.az-login:hover {
+  color: #172235;
+}
+.az-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.az-login {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.az-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  min-height: 50px;
+  padding: 13px 21px;
+  color: #fff !important;
+  font-size: 14px;
+  font-weight: 550;
+  background: #2859c5;
+  border: 1px solid #315fc0;
+  border-radius: 8px;
+  box-shadow:
+    0 2px 3px #2445770c,
+    inset 0 1px 0 #ffffff1a;
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    border-color 0.2s;
+  white-space: nowrap;
+  border-color: #2859c5;
+}
+.az-button:hover {
+  background: #264da1;
+  border-color: #315fc0;
+  transform: translateY(-2px);
+}
+.az-button:active {
+  transform: translateY(0);
+}
+.az-button-small {
+  min-height: 41px;
+  padding: 9px 15px;
+  font-size: 13px;
+  gap: 19px;
+}
+.az-button-secondary {
+  background: #ffffff;
+  border-color: #d5deec;
+  color: #172235 !important;
+  box-shadow: none;
+}
+.az-button-secondary:hover {
+  background: #f0f4fa;
+  border-color: #dce3ee;
+}
+.az-menu-toggle,
+.az-mobile-nav {
+  display: none;
+}
+.az-hero {
+  padding-top: 80px;
+}
+.az-hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: #42526b;
+  font-size: 11px;
+  font-weight: 550;
+  letter-spacing: 1.4px;
+  margin-bottom: 26px;
+}
+.az-eyebrow-line {
+  display: inline-block;
+  height: 2px;
+  width: 20px;
+  background: #416fd9;
+}
+.az-hero-grid {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.az-hero h1 {
+  font-size: clamp(42px, 4.7vw, 66px);
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+  font-weight: 500;
+}
+.az-hero h1 > span {
+  color: #56657a;
+}
+.az-hero-copy {
+  padding-bottom: 4px;
+}
+.az-hero-copy p {
+  color: #506077;
+  line-height: 1.75;
+  font-size: 16px;
+  max-width: 355px;
+}
+.az-hero-actions {
+  margin-top: 25px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 17px;
+  align-items: center;
+}
+.az-explore {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #42526b !important;
+  padding: 1px 0;
+  min-height: 36px;
+}
+.az-explore:hover {
+  color: #172235 !important;
+}
+.az-hero-capabilities {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-top: 35px;
+  margin-bottom: 40px;
+}
+.az-hero-capabilities > span {
+  color: #536078;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.az-hero-capabilities svg {
+  color: #56657a;
+}
+.az-demo-shell {
+  border: 1px solid #dce3ee;
+  border-radius: 16px;
+  padding: 0 8px 8px;
+  background: #f3f6fb;
+  box-shadow:
+    0 20px 60px #203e6812,
+    0 3px 12px #203e6808;
+  border-color: #d8e1ef;
+  box-shadow:
+    0 24px 64px -24px #294f8133,
+    0 4px 16px #294f8108;
+}
+.az-demo-caption {
+  min-height: 44px;
+  padding: 0 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #56657a;
+  font-size: 10px;
+  letter-spacing: 0.7px;
+}
+.az-demo-caption > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.az-demo-caption > span:last-child {
+  letter-spacing: 0;
+  color: #42526b;
+  font-size: 11px;
+}
+.az-caption-symbol {
+  display: inline-flex;
+  color: #315fc0;
+}
+.az-preview-tag {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.7px;
+  color: #42526b;
+  border: 1px solid #dce3ee;
+  border-radius: 3px;
+  padding: 2px 5px;
+  white-space: nowrap;
+}
+.az-dashboard {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  background: #ffffff;
+  border: 1px solid #dce3ee;
+  border-radius: 9px;
+  overflow: hidden;
+}
+.az-dash-sidebar {
+  background: #f8fafd;
+  border-right: 1px solid #dce3ee;
+  padding: 26px 13px 16px;
+  display: flex;
+  flex-direction: column;
+}
+.az-dash-sidebar > .az-brand {
+  margin: 0 12px 25px;
+}
+.az-workspace {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid #dce3ee;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 11px;
+  line-height: 1.3;
+}
+.az-workspace small {
+  font-size: 10px;
+  color: #56657a;
+  display: block;
+  margin-top: 3px;
+}
+.az-workspace-avatar {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 29px;
+  border-radius: 4px;
+  background: #e5edff;
+  color: #315fc0;
+  font-weight: 600;
+  font-size: 12px;
+}
+.az-nav-heading {
+  color: #56657a;
+  font-size: 11px;
+  letter-spacing: 1.1px;
+  padding: 27px 11px 10px;
+}
+.az-dash-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.az-dash-sidebar nav button {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  width: 100%;
+  text-align: left;
+  font-size: 12px;
+  color: #56657a;
+  min-height: 40px;
+  padding: 8px 11px;
+  border-radius: 5px;
+}
+.az-dash-sidebar nav button:hover {
+  background: #edf2f9;
+  color: #42526b;
+}
+.az-dash-sidebar nav button.is-active {
+  background: #eaf1ff;
+  color: #315fc0;
+}
+.az-nav-count {
+  margin-left: auto;
+  font-size: 11px;
+  background: #edf1f7;
+  color: #42526b;
+  border-radius: 3px;
+  padding: 0 5px;
+}
+.az-sidebar-bottom {
+  margin-top: auto;
+  padding: 20px 9px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: #56657a;
+  gap: 8px;
+}
+.az-sidebar-bottom strong {
+  color: #42526b;
+  font-size: 11px;
+  font-weight: 500;
+}
+.az-sidebar-bottom > span {
+  color: #56657a;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.az-sidebar-bottom button {
+  color: #315fc0;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+.az-demo-settings {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid #dce3ee;
+  padding: 14px 9px 0;
+  font-size: 11px;
+  color: #56657a !important;
+}
+.az-demo-settings > svg:last-child {
+  margin-left: auto;
+}
+.az-dash-main {
+  min-width: 0;
+}
+.az-dash-topbar {
+  height: 51px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 23px;
+  border-bottom: 1px solid #dce3ee;
+  font-size: 11px;
+  color: #56657a;
+}
+.az-dash-topbar > span > span {
+  padding-inline: 12px;
+  color: #56657a;
+}
+.az-dash-topbar b {
+  font-weight: 400;
+  color: #42526b;
+}
+.az-dash-topbar > div {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.az-demo-data-label {
+  font-size: 11px;
+  color: #56657a;
+}
+.az-owner-avatar {
+  background: #e5edff;
+  border: 1px solid #dce3ee;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: #315fc0;
+  font-size: 11px;
+}
+.az-dash-content {
+  padding: 26px 23px 0;
+  min-height: 745px;
+}
+.az-dash-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 10px;
+}
+.az-dashboard .az-dash-heading h2 {
+  font-size: 23px;
+  letter-spacing: -0.7px;
+  line-height: 1.25;
+}
+.az-dash-heading p {
+  font-size: 11px;
+  color: #56657a;
+  margin-top: 6px;
+}
+.az-team-filter {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #dce3ee;
+  border-radius: 6px;
+  padding: 3px 9px;
+  color: #42526b;
+  background: #ffffff;
+}
+.az-team-filter select {
+  background: transparent;
+  color: #42526b;
+  border: 0;
+  padding: 0;
+  font-size: 11px;
+  max-width: 110px;
+  min-height: 30px;
+}
+.az-team-filter select option {
+  background: #ffffff;
+}
+.az-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.az-stat {
+  border: 1px solid #dce3ee;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 15px 13px 13px;
+  min-width: 0;
+}
+.az-stat > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: #56657a;
+  line-height: 1.35;
+}
+.az-stat > div svg {
+  color: #56657a;
+}
+.az-stat > strong {
+  display: block;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(22px, 2.1vw, 29px);
+  font-weight: 500;
+  letter-spacing: -0.8px;
+  margin-top: 10px;
+  line-height: 1.4;
+}
+.az-stat > strong small {
+  font-size: 11px;
+  font-weight: 400;
+  color: #56657a;
+  letter-spacing: 0;
+}
+.az-stat-change {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--az-green);
+  font-size: 10px;
+  margin-top: 6px;
+  white-space: normal;
+}
+.az-stat-change em {
+  color: #56657a;
+  font-style: normal;
+  font-size: 9px;
+}
+.az-dash-middle {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 14px;
+  margin-top: 20px;
+}
+.az-chart-panel,
+.az-engine {
+  background: #ffffff;
+  border: 1px solid #dce3ee;
+  border-radius: 8px;
+  padding: 17px;
+}
+.az-panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.az-panel-heading h3 {
+  color: #26364d;
+  font-size: 12px;
+  font-weight: 550;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.az-panel-heading h3 > span {
+  font-size: 11px;
+  color: #56657a;
+  padding: 0 5px;
+  background: #eef2f8;
+  border-radius: 3px;
+}
+.az-panel-heading > button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: #315fc0;
+  padding: 3px 0;
+  min-height: 30px;
+}
+.az-periods {
+  display: flex;
+  gap: 3px;
+}
+.az-periods button {
+  font-size: 11px;
+  padding: 3px 7px;
+  border-radius: 5px;
+  color: #56657a;
+  min-height: 30px;
+  min-width: 31px;
+}
+.az-periods button.is-active {
+  color: #315fc0;
+  background: #e7efff;
+}
+.az-periods button:hover {
+  color: #172235;
+}
+.az-chart-summary {
+  display: flex;
+  justify-content: space-between;
+  color: #56657a;
+  font-size: 10px;
+  margin-top: 17px;
+}
+.az-chart-summary > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.az-chart-summary i {
+  width: 5px;
+  height: 5px;
+  background: #416fd9;
+  border-radius: 50%;
+}
+.az-subtle {
+  color: #56657a;
+}
+.az-chart {
+  position: relative;
+  padding: 20px 0 0 28px;
+}
+.az-chart > svg {
+  display: block;
+  width: 100%;
+  height: 150px;
+  overflow: visible;
+}
+.az-chart-y {
+  position: absolute;
+  top: 17px;
+  bottom: 25px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: #56657a;
+  font-size: 10px;
+}
+.az-chart-x {
+  display: flex;
+  justify-content: space-between;
+  color: #56657a;
+  font-size: 9px;
+  padding-top: 12px;
+}
+.az-engine .az-panel-heading {
+  gap: 4px;
+}
+.az-engine .az-panel-heading h3 {
+  font-size: 12px;
+}
+.az-status {
+  display: inline-flex;
+  align-items: center;
+  color: #16724f;
+  background: #eaf7f0;
+  border: 1px solid #c8e7d8;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+}
+.az-status.is-paused {
+  color: #8b6321;
+  background: #fff5df;
+  border-color: #e8dcb9;
+}
+.az-engine-label {
+  display: block;
+  margin-top: 19px;
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  color: #56657a;
+}
+.az-master {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-top: 9px;
+  font-size: 11px;
+}
+.az-avatar {
+  display: grid;
+  place-items: center;
+  width: 29px;
+  height: 29px;
+  font-size: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.az-avatar-gold {
+  background: #f9f1dc;
+  color: #8b6321;
+  border: 1px solid #e8dcb9;
+}
+.az-avatar-blue {
+  background: #eaf0fb;
+  color: #42526b;
+  border: 1px solid #dce3ee;
+}
+.az-master small {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
+  color: #56657a;
+  font-size: 10px;
+}
+.az-master small svg {
+  color: #315fc0;
+}
+.az-engine-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 5px;
+  color: #315fc0;
+}
+.az-engine-flow > span {
+  width: 1px;
+  height: 9px;
+  background: #c9d5e8;
+}
+.az-engine-flow svg {
+  margin-block: 4px;
+}
+.az-followers {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #315fc0;
+  margin-top: 9px;
+}
+.az-followers strong {
+  color: #172235;
+  font-size: 17px;
+  font-weight: 500;
+}
+.az-followers > span {
+  color: #56657a;
+  font-size: 10px;
+}
+.az-engine-rule {
+  border-top: 1px solid #dce3ee;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 12px;
+  font-size: 10px;
+  color: #56657a;
+  gap: 5px;
+}
+.az-engine-rule b {
+  color: #42526b;
+  font-weight: 400;
+  font-size: 10px;
+}
+.az-engine-control {
+  width: 100%;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: #edf3ff !important;
+  color: #315fc0 !important;
+  border: 1px solid #dce3ee !important;
+  font-size: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  min-height: 30px;
+}
+.az-teams-section {
+  margin-top: 22px;
+}
+.az-team-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 9px;
+}
+.az-team-card {
+  display: grid;
+  grid-template-columns: 29px 1fr 12px;
+  align-items: center;
+  gap: 9px;
+  background: #f3f6fb !important;
+  border: 1px solid #dce3ee !important;
+  border-radius: 7px;
+  padding: 13px !important;
+  text-align: left;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    transform 0.2s;
+}
+.az-team-card:hover,
+.az-team-card.is-selected {
+  border-color: #dce3ee !important;
+  background: #edf3ff !important;
+}
+.az-team-symbol {
+  width: 30px;
+  height: 30px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.az-gold {
+  color: #8b6321;
+  background: #f9f1dc;
+  border: 1px solid #e8dcb9;
+}
+.az-blue {
+  color: #315fc0;
+  background: #eaf0fb;
+  border: 1px solid #dce3ee;
+}
+.az-purple {
+  color: #6853a1;
+  background: #f0edf8;
+  border: 1px solid #ddd4ef;
+}
+.az-team-card strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 550;
+  color: #172235;
+}
+.az-team-card small {
+  display: block;
+  font-size: 10px;
+  color: #56657a;
+  margin-top: 3px;
+  white-space: normal;
+  line-height: 1.5;
+}
+.az-team-card small > span {
+  padding-inline: 3px;
+}
+.az-team-card > svg {
+  color: #56657a;
+}
+.az-team-pnl {
+  grid-column: 2 / -1;
+  color: #16724f;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 5px;
+}
+.az-positions {
+  margin-top: 20px;
+}
+.az-table-scroll {
+  overflow-x: auto;
+  margin-top: 8px;
+}
+.az-marketing table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.az-marketing th {
+  color: #57667e;
+  font-size: 10px;
+  font-weight: 400;
+  text-align: left;
+  background: #f7f9fc;
+  padding: 10px 9px;
+  border-bottom: 1px solid #dce3ee;
+}
+.az-marketing td {
+  font-size: 11px;
+  padding: 10px 9px;
+  border-bottom: 1px solid #dce3ee;
+  color: #34445d;
+}
+.az-trader-cell {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.az-mini-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  border: 1px solid #dce3ee;
+  border-radius: 50%;
+  background: #edf1f8;
+  color: #42526b;
+  font-size: 11px;
+}
+.az-trader-cell small {
+  color: #56657a;
+  padding-left: 6px;
+  font-size: 10px;
+}
+.az-marketing .az-align-right {
+  text-align: right;
+}
+.az-side {
+  padding: 1px 6px;
+  font-size: 11px;
+  border-radius: 3px;
+}
+.az-side-buy {
+  background: #eaf7f0;
+  color: #16724f;
+}
+.az-side-sell {
+  background: #fceff1;
+  color: #b23f54;
+}
+.az-marketing .az-gain {
+  color: #16724f;
+}
+.az-marketing .az-loss {
+  color: #b23f54;
+}
+.az-dash-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  color: #56657a;
+  font-size: 10px;
+  padding: 16px 0;
+}
+.az-dash-footer > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.az-search {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.az-search input {
+  padding: 5px 7px;
+  font-size: 11px;
+  margin: 0;
+  background: #ffffff;
+  border-color: #dce3ee;
+}
+.az-empty {
+  padding: 40px 15px;
+  text-align: center;
+  color: #56657a;
+  font-size: 12px;
+}
+.az-demo-detail {
+  margin-top: 24px;
+  min-height: 375px;
+  padding: 24px;
+  background: #f8fafd;
+  border: 1px solid #dce3ee;
+  border-radius: 8px;
+}
+.az-demo-detail > svg {
+  color: #315fc0;
+}
+.az-demo-detail h3 {
+  font-size: 20px;
+  margin: 12px 0 7px;
+}
+.az-demo-detail > p {
+  color: #56657a;
+  font-size: 12px;
+  max-width: 520px;
+}
+.az-demo-detail > small {
+  display: block;
+  color: #56657a;
+  font-size: 11px;
+  margin-top: 10px;
+}
+.az-copy-team-list {
+  margin: 20px 0;
+}
+.az-copy-team-list > div {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 12px 0;
+  border-bottom: 1px solid #dce3ee;
+}
+.az-copy-team-list > div > span:nth-child(3) {
+  margin-left: auto;
+}
+.az-copy-team-list b {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+}
+.az-copy-team-list small {
+  display: block;
+  font-size: 11px;
+  color: #56657a;
+}
+.az-copy-team-list .az-status {
+  margin-left: 12px;
+}
+.az-risk-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  padding: 17px 0;
+  border-bottom: 1px solid #dce3ee;
+}
+.az-risk-row svg {
+  color: #16724f;
+}
+.az-risk-row strong {
+  margin-left: auto;
+  color: #42526b;
+  font-weight: 500;
+}
+.az-preview-footnote {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 2px 0;
+  color: #56657a;
+  font-size: 12px;
+}
+.az-preview-footnote a {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #42526b;
+}
+.az-preview-footnote a:hover {
+  color: #315fc0;
+}
+.az-audience {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+  padding-top: 38px;
+  padding-bottom: 38px;
+  margin-top: 25px;
+  border-bottom: 1px solid #dce3ee;
+}
+.az-audience > p {
+  font-size: 12px;
+  color: #56657a;
+  line-height: 1.8;
+  white-space: nowrap;
+}
+.az-audience strong {
+  color: #42526b;
+  font-weight: 400;
+}
+.az-audience > div {
+  display: flex;
+  align-items: center;
+  gap: 34px;
+}
+.az-audience > div > span {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #455570;
+  font-size: 13px;
+  font-weight: 500;
+}
+.az-audience svg {
+  width: 21px;
+  height: 21px;
+  color: #56657a;
+}
+.az-section {
+  padding-block: 100px;
+}
+.az-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 1.6px;
+  color: #56657a;
+  margin-bottom: 21px;
+}
+.az-section h2,
+.az-conditions h2,
+.az-risk-section h2 {
+  font-size: clamp(32px, 3.5vw, 46px);
+  letter-spacing: -0.045em;
+  line-height: 1.15;
+}
+.az-section h2 > span,
+.az-conditions h2 > span,
+.az-risk-section h2 > span {
+  color: #56657a;
+}
+.az-section-intro > p {
+  max-width: 530px;
+  color: #56657a;
+  font-size: 16px;
+  line-height: 1.75;
+  margin-top: 19px;
+}
+.az-feature-grid {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: 22px;
+  margin-top: 36px;
+}
+.az-feature {
+  background: #f7f9fc;
+  border: 1px solid #dce3ee;
+  border-radius: 14px;
+  padding: 32px;
+  overflow: hidden;
+  border-color: #e0e6f0;
+}
+.az-feature-copy > svg,
+.az-accounts-feature > svg {
+  color: #56657a;
+  margin-bottom: 15px;
+}
+.az-feature h3 {
+  font-size: 23px;
+  line-height: 1.3;
+  letter-spacing: -0.6px;
+  font-weight: 500;
+}
+.az-feature p {
+  font-size: 15px;
+  color: #56657a;
+  line-height: 1.75;
+  margin-top: 10px;
+  max-width: 430px;
+}
+.az-feature-copy > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: #315fc0;
+  font-size: 13px;
+  margin-top: 20px;
+  min-height: 28px;
+}
+.az-hierarchy {
+  --az-hierarchy-gap: 12px;
+  margin-top: 35px;
+  padding: 7px 8px 0;
+}
+.az-hierarchy-owner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 230px;
+  border: 1px solid #dce3ee;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 14px;
+  margin: auto;
+  box-shadow: 0 3px 10px #24477708;
+}
+.az-mini-brand {
+  display: grid;
+  place-items: center;
+  color: #315fc0;
+  background: #e7efff;
+  border: 1px solid #dce3ee;
+  border-radius: 6px;
+  width: 33px;
+  height: 33px;
+}
+.az-hierarchy-owner strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+}
+.az-hierarchy-owner small {
+  display: block;
+  font-size: 11px;
+  color: #56657a;
+}
+.az-hierarchy-owner > svg {
+  margin-left: auto;
+  color: #315fc0;
+}
+.az-hierarchy-branches {
+  height: 57px;
+  margin-inline: calc((100% - 2 * var(--az-hierarchy-gap)) / 6);
+  position: relative;
+}
+.az-hierarchy-teams {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--az-hierarchy-gap);
+}
+.az-hierarchy-teams > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #dce3ee;
+  border-radius: 8px;
+  padding: 18px 8px 13px;
+}
+.az-hierarchy-teams strong {
+  margin-top: 9px;
+  font-size: 12px;
+  font-weight: 500;
+}
+.az-hierarchy-teams small {
+  margin-top: 3px;
+  color: #56657a;
+  font-size: 11px;
+}
+.az-role-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-top: 1px solid #dce3ee;
+  margin-top: 12px;
+  padding-top: 8px;
+  font-size: 11px;
+  color: #42526b;
+}
+.az-visual-caption {
+  display: block;
+  margin-top: 18px;
+  font-size: 11px;
+  color: #56657a;
+  text-align: center;
+}
+.az-account-visual {
+  background: #ffffff;
+  border: 1px solid #dce3ee;
+  border-radius: 9px;
+  padding: 22px;
+  margin-top: 38px;
+  box-shadow: 0 6px 18px #24477708;
+}
+.az-account-visual > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.az-account-visual small {
+  display: block;
+  color: #56657a;
+  font-size: 11px;
+}
+.az-account-state {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #16724f;
+  font-size: 11px;
+  margin-left: auto;
+}
+.az-account-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 28px;
+  gap: 18px;
+}
+.az-account-values strong {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+  display: block;
+  margin-top: 8px;
+}
+.az-account-bottom {
+  border-top: 1px solid #dce3ee;
+  margin-top: 24px;
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #56657a;
+}
+.az-account-bottom b {
+  color: #16724f;
+  font-weight: 500;
+}
+.az-split-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+#copy-trading {
+  padding-top: 15px;
+}
+.az-section-copy > p {
+  font-size: 16px;
+  line-height: 1.8;
+  color: #56657a;
+  margin-top: 22px;
+  max-width: 430px;
+}
+.az-check-list {
+  list-style: none;
+  padding: 0;
+  margin: 29px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 17px;
+}
+.az-check-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #42526b;
+}
+.az-check-list svg {
+  width: 17px;
+  height: 17px;
+  color: #56657a;
+}
+.az-text-link {
+  color: #315fc0 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  font-size: 14px;
+  min-height: 32px;
+}
+.az-text-link:hover {
+  color: #315fc0 !important;
+}
+.az-copy-visual {
+  border: 1px solid #dce3ee;
+  border-radius: 14px;
+  background: #f8fafd;
+  padding: 27px;
+  border-color: #dce3ee;
+  box-shadow: 0 10px 30px -18px #294f8130;
+}
+.az-copy-visual-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #dce3ee;
+  font-size: 14px;
+}
+.az-copy-visual-header > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.az-copy-visual-header svg {
+  color: #56657a;
+}
+.az-copy-tabs {
+  display: flex;
+  gap: 6px;
+  margin-top: 20px;
+}
+.az-copy-tabs button {
+  color: #56657a;
+  font-size: 12px;
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  min-height: 36px;
+}
+.az-copy-tabs button.is-active {
+  border-color: #dce3ee;
+  background: #eaf1ff;
+  color: #315fc0;
+}
+.az-master-ticket {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #dce3ee;
+  border-radius: 8px;
+  padding: 22px 17px;
+  background: #ffffff;
+  margin-top: 24px;
+}
+.az-master-ticket small {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: #56657a;
+  display: block;
+}
+.az-master-ticket strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 4px;
+}
+.az-ticket-symbol {
+  margin-left: auto;
+  font-size: 12px;
+  text-align: right;
+}
+.az-ticket-symbol small {
+  margin-top: 4px;
+  letter-spacing: 0;
+}
+.az-ticket-symbol small > span {
+  margin-right: 5px;
+}
+.az-copy-connectors {
+  height: 67px;
+  position: relative;
+  width: 68%;
+  margin-inline: auto;
+}
+.az-copy-connectors > div:first-child {
+  position: absolute;
+  height: 32px;
+  width: 1px;
+  left: 50%;
+  top: 0;
+  background: #c9d5e8;
+}
+.az-copy-connectors > div:last-child {
+  position: absolute;
+  height: 29px;
+  width: 100%;
+  bottom: 0;
+  border: 1px solid #dce3ee;
+  border-bottom: none;
+  border-radius: 7px 7px 0 0;
+}
+.az-copy-connectors > span {
+  display: grid;
+  place-items: center;
+  background: #eaf1ff;
+  color: #315fc0;
+  width: 23px;
+  height: 23px;
+  border: 1px solid #dce3ee;
+  border-radius: 50%;
+  position: absolute;
+  left: calc(50% - 11px);
+  top: 24px;
+  z-index: 1;
+}
+.az-copy-connectors > span::after {
+  content: "";
+  position: absolute;
+  width: 1px;
+  height: 20px;
+  top: 23px;
+  background: #c9d5e8;
+}
+.az-follower-tickets {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.az-follower-tickets > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: #ffffff;
+  border: 1px solid #dce3ee;
+  padding: 19px 8px 15px;
+  border-radius: 8px;
+}
+.az-follower-tickets .az-mini-avatar {
+  width: 27px;
+  height: 27px;
+  margin-bottom: 4px;
+}
+.az-follower-tickets strong {
+  font-size: 12px;
+  font-weight: 500;
+  color: #42526b;
+}
+.az-follower-tickets > div > span:not(.az-mini-avatar) {
+  color: #172235;
+  font-size: 21px;
+  margin-block: 5px;
+}
+.az-follower-tickets small {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #16724f;
+  font-size: 11px;
+}
+.az-copy-visual-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 23px;
+  color: #56657a;
+  font-size: 11px;
+}
+.az-copy-visual-footer > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.az-copy-visual-footer > button {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 30px;
+  border: 1px solid #dce3ee;
+  background: #edf3ff;
+  border-radius: 5px;
+  color: #42526b;
+}
+.az-marketing .az-copy-note {
+  border-top: 1px solid #dce3ee;
+  padding-top: 16px;
+  margin-top: 16px;
+  color: #56657a;
+  font-size: 11px;
+  text-align: center;
+}
+.az-conditions {
+  padding-block: 72px 32px;
+  border-block: 1px solid #dce3ee;
+  background: #f5f8fc;
+  border-color: #e1e7f1;
+}
+.az-conditions-heading {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  align-items: end;
+  gap: 100px;
+}
+.az-conditions-heading > p {
+  color: #56657a;
+  font-size: 16px;
+  margin-bottom: 5px;
+  line-height: 1.8;
+}
+.az-condition-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: 46px;
+  padding-bottom: 33px;
+  border-bottom: 1px solid #dce3ee;
+}
+.az-condition-grid > div {
+  padding-inline: 30px;
+  border-left: 1px solid #dce3ee;
+}
+.az-condition-grid > div:first-child {
+  padding-left: 0;
+  border-left: none;
+}
+.az-condition-grid > div:last-child {
+  padding-right: 0;
+}
+.az-condition-grid > div > span {
+  color: #56657a;
+  font-size: 10px;
+  letter-spacing: 1px;
+  font-weight: 550;
+}
+.az-condition-grid strong {
+  display: block;
+  font-size: 49px;
+  letter-spacing: -1.9px;
+  font-weight: 450;
+  line-height: 1.6;
+}
+.az-condition-grid strong small {
+  font-size: 15px;
+  letter-spacing: -0.5px;
+  color: #56657a;
+}
+.az-condition-grid p {
+  font-size: 12px;
+  color: #56657a;
+}
+.az-condition-grid strong.az-condition-strategy {
+  font-size: 29px;
+  letter-spacing: -1px;
+  line-height: 2.5;
+  white-space: nowrap;
+}
+.az-condition-footnote {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 22px;
+  color: #56657a;
+}
+.az-condition-footnote svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.az-condition-footnote p {
+  font-size: 11px;
+  line-height: 1.8;
+  max-width: 1030px;
+}
+.az-revenue-features {
+  display: flex;
+  flex-direction: column;
+  gap: 23px;
+  margin-top: 30px;
+}
+.az-revenue-features > span {
+  display: flex;
+  gap: 13px;
+}
+.az-revenue-features svg {
+  color: #56657a;
+  margin-top: 2px;
+}
+.az-revenue-features strong {
+  font-size: 14px;
+  font-weight: 500;
+  color: #172235;
+}
+.az-revenue-features p {
+  font-size: 13px;
+  color: #56657a;
+  margin-top: 4px;
+}
+.az-small-note {
+  display: block;
+  color: #56657a;
+  font-size: 12px;
+  margin-top: 30px;
+  max-width: 370px;
+}
+.az-risk-section {
+  padding: 48px;
+  background: #f7f9fc;
+  border: 1px solid #dce3ee;
+  border-radius: 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 70px;
+  align-items: center;
+  border-color: #e0e6f0;
+}
+.az-risk-visual {
+  border: 1px solid #dce3ee;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 24px;
+  box-shadow: 0 5px 15px #24477708;
+}
+.az-risk-visual-top {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 14px;
+  padding-bottom: 24px;
+}
+.az-risk-visual-top > svg {
+  color: #315fc0;
+}
+.az-risk-visual-top .az-preview-tag {
+  margin-left: auto;
+  font-size: 11px;
+}
+.az-policy-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding-block: 15px;
+  border-top: 1px solid #dce3ee;
+  font-size: 12px;
+}
+.az-policy-row > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #42526b;
+}
+.az-policy-row svg {
+  color: #16724f;
+}
+.az-policy-row strong {
+  color: #172235;
+  font-weight: 500;
+}
+.az-policy-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #56657a;
+  padding-top: 18px;
+  margin-top: 7px;
+  border-top: 1px solid #dce3ee;
+}
+.az-risk-section .az-text-link {
+  margin-top: 23px;
+}
+.az-risk-section h2 {
+  font-size: 36px;
+}
+.az-risk-section .az-section-copy > p {
+  font-size: 15px;
+}
+.az-faq {
+  display: grid;
+  grid-template-columns: 1fr 1.25fr;
+  gap: 80px;
+}
+.az-faq > div:first-child > p {
+  color: #56657a;
+  font-size: 15px;
+  margin-top: 22px;
+}
+.az-faq-items details {
+  border-bottom: 1px solid #dce3ee;
+}
+.az-faq-items details:first-child {
+  border-top: 1px solid #dce3ee;
+}
+.az-faq-items summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-block: 23px;
+  cursor: pointer;
+  font-size: 15px;
+  list-style: none;
+  color: #26364d;
+}
+.az-faq-items summary::-webkit-details-marker {
+  display: none;
+}
+.az-faq-items summary svg {
+  flex-shrink: 0;
+  color: #56657a;
+  transition: transform 0.2s;
+}
+.az-faq-items details[open] summary svg {
+  transform: rotate(45deg);
+}
+.az-faq-items details > p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #56657a;
+  padding: 0 25px 22px 0;
+}
+.az-final-cta {
+  padding: 52px;
+  text-align: left;
+  border: 1px solid #dce3ee;
+  border-radius: 16px;
+  background: #f1f5fd;
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  column-gap: 55px;
+  border-color: #dce5f5;
+}
+.az-cta-mark {
+  display: inline-block;
+  margin-bottom: 30px;
+  grid-column: 1 / -1;
+}
+.az-final-cta h2 {
+  font-size: 42px;
+  line-height: 1.17;
+  letter-spacing: -1.6px;
+  grid-column: 1;
+}
+.az-final-cta h2 > span {
+  color: #56657a;
+}
+.az-final-cta p {
+  color: #56657a;
+  margin-top: 18px;
+  font-size: 15px;
+  grid-column: 1;
+}
+.az-final-cta > div {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 0;
+  grid-column: 2;
+  grid-row: 2 / 4;
+  flex-direction: column;
+  align-items: stretch;
+}
+.az-final-cta small {
+  display: block;
+  color: #56657a;
+  font-size: 11px;
+  margin-top: 15px;
+  grid-column: 2;
+  text-align: center;
+}
+.az-footer {
+  padding-top: 75px;
+  padding-bottom: 28px;
+}
+.az-footer-top {
+  display: grid;
+  grid-template-columns: 2.1fr 1fr 1.2fr 1fr;
+  gap: 40px;
+  padding-bottom: 48px;
+}
+.az-footer-top > div > p {
+  color: #56657a;
+  font-size: 14px;
+  line-height: 1.8;
+  margin-top: 19px;
+}
+.az-footer nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 13px;
+  color: #56657a;
+}
+.az-footer nav strong {
+  color: #26364d;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.az-footer nav a:hover {
+  color: #315fc0;
+}
+.az-footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #dce3ee;
+  padding-block: 23px 12px;
+  font-size: 12px;
+  color: #56657a;
+}
+.az-footer-bottom > span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.az-footer-disclosure {
+  color: #56657a;
+  font-size: 11px;
+  line-height: 1.9;
+  max-width: 1050px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .az-hero-grid,
+  .az-hero-eyebrow {
+    animation: az-enter 0.6s both;
+  }
+  .az-demo-shell {
+    animation: az-enter 0.8s 0.1s both;
+  }
+  @keyframes az-enter {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+@media (min-width: 1500px) {
+  .az-container {
+    width: min(1280px, calc(100% - 112px));
+  }
+  .az-hero h1 {
+    font-size: 73px;
+  }
+  .az-hero-copy p {
+    font-size: 16px;
+  }
+  .az-desktop-nav {
+    gap: 37px;
+  }
+}
+@media (max-width: 1199px) {
+  .az-container {
+    width: calc(100% - 64px);
+  }
+  .az-desktop-nav {
+    gap: 20px;
+    margin-left: 0;
+  }
+  .az-header-inner {
+    gap: 24px;
+  }
+  .az-header-actions {
+    gap: 16px;
+  }
+  .az-hero-grid {
+    gap: 35px;
+    grid-template-columns: 1.6fr 1fr;
+  }
+  .az-hero h1 {
+    font-size: 55px;
+  }
+  .az-dashboard {
+    grid-template-columns: 163px minmax(0, 1fr);
+  }
+  .az-dash-content {
+    padding-inline: 17px;
+  }
+  .az-stat {
+    padding: 10px;
+  }
+  .az-stat-change em {
+    display: none;
+  }
+  .az-team-card {
+    grid-template-columns: 25px 1fr 10px;
+    padding: 9px !important;
+    gap: 6px;
+  }
+  .az-team-card .az-team-symbol {
+    width: 25px;
+    height: 27px;
+  }
+  .az-audience > div {
+    gap: 25px;
+  }
+  .az-audience > div > span {
+    font-size: 11px;
+    gap: 7px;
+  }
+  .az-split-section {
+    gap: 60px;
+  }
+  .az-condition-grid > div {
+    padding-inline: 20px;
+  }
+  .az-condition-grid strong {
+    font-size: 40px;
+  }
+  .az-condition-grid strong.az-condition-strategy {
+    font-size: 25px;
+    line-height: 2.7;
+  }
+  .az-conditions-heading {
+    gap: 100px;
+  }
+  .az-risk-section {
+    gap: 55px;
+    padding: 35px;
+  }
+}
+@media (max-width: 1023px) {
+  .az-desktop-nav {
+    gap: 18px;
+  }
+  .az-desktop-nav a {
+    font-size: 11px;
+  }
+  .az-header-actions {
+    gap: 13px;
+  }
+  .az-header-actions .az-login {
+    display: none;
+  }
+  .az-hero {
+    padding-top: 57px;
+  }
+  .az-hero-grid {
+    grid-template-columns: 1.7fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+  .az-hero h1 {
+    font-size: 46px;
+  }
+  .az-hero-copy p {
+    font-size: 12px;
+  }
+  .az-hero-actions {
+    margin-top: 15px;
+    gap: 13px;
+  }
+  .az-hero-actions .az-button {
+    font-size: 11px;
+    padding: 9px 12px;
+    gap: 12px;
+    min-height: 40px;
+  }
+  .az-hero-capabilities {
+    gap: 20px;
+  }
+  .az-hero-capabilities > span {
+    font-size: 11px;
+  }
+  .az-dashboard {
+    grid-template-columns: 138px minmax(0, 1fr);
+  }
+  .az-dash-sidebar {
+    padding-inline: 8px;
+  }
+  .az-dash-sidebar > .az-brand {
+    margin-inline: 7px;
+  }
+  .az-dash-sidebar .az-brand {
+    font-size: 20px;
+  }
+  .az-workspace {
+    padding: 6px;
+    font-size: 11px;
+  }
+  .az-workspace small {
+    font-size: 11px;
+  }
+  .az-dash-sidebar nav button {
+    font-size: 11px;
+    gap: 7px;
+    padding-inline: 7px;
+  }
+  .az-nav-count {
+    display: none;
+  }
+  .az-dash-content {
+    padding: 19px 13px 0;
+    min-height: 650px;
+  }
+  .az-dash-topbar {
+    padding-inline: 13px;
+  }
+  .az-stats {
+    gap: 6px;
+  }
+  .az-stat {
+    padding: 9px 7px;
+  }
+  .az-stat > div {
+    font-size: 11px;
+  }
+  .az-stat > div > svg {
+    display: none;
+  }
+  .az-stat > strong {
+    font-size: 23px;
+  }
+  .az-dash-middle {
+    grid-template-columns: 1.55fr 1fr;
+    gap: 8px;
+  }
+  .az-chart-panel,
+  .az-engine {
+    padding: 10px;
+  }
+  .az-chart-panel .az-panel-heading {
+    align-items: flex-start;
+  }
+  .az-panel-heading h3 {
+    font-size: 11px;
+  }
+  .az-periods button {
+    padding: 3px 4px;
+    font-size: 11px;
+  }
+  .az-chart-summary {
+    font-size: 11px;
+  }
+  .az-team-card {
+    grid-template-columns: 1fr 10px;
+    gap: 5px;
+    padding: 8px !important;
+  }
+  .az-team-card > .az-team-symbol {
+    display: none;
+  }
+  .az-team-card strong {
+    font-size: 11px;
+  }
+  .az-team-pnl {
+    grid-column: 1 / -1;
+    font-size: 11px;
+  }
+  .az-trader-cell small {
+    display: block;
+    padding: 0;
+  }
+  .az-trader-cell {
+    gap: 5px;
+  }
+  .az-marketing td {
+    font-size: 11px;
+  }
+  .az-audience {
+    gap: 25px;
+  }
+  .az-audience > div {
+    flex-wrap: wrap;
+    gap: 20px 27px;
+  }
+  .az-audience > div > span {
+    width: 130px;
+  }
+  .az-section {
+    padding-block: 80px;
+  }
+  .az-feature-grid {
+    grid-template-columns: 1.4fr 1fr;
+    gap: 13px;
+  }
+  .az-feature {
+    padding: 22px;
+  }
+  .az-feature h3 {
+    font-size: 18px;
+  }
+  .az-feature p {
+    font-size: 12px;
+  }
+  .az-hierarchy {
+    padding-inline: 0;
+  }
+  .az-hierarchy {
+    --az-hierarchy-gap: 7px;
+  }
+  .az-hierarchy-teams strong {
+    font-size: 11px;
+  }
+  .az-hierarchy-teams small {
+    font-size: 11px;
+  }
+  .az-role-chip {
+    font-size: 11px;
+  }
+  .az-account-visual {
+    padding: 12px;
+    margin-top: 40px;
+  }
+  .az-account-visual .az-account-state {
+    font-size: 0;
+  }
+  .az-account-values {
+    gap: 8px;
+  }
+  .az-account-values strong {
+    font-size: 16px;
+  }
+  .az-split-section {
+    gap: 35px;
+  }
+  .az-section h2,
+  .az-conditions h2 {
+    font-size: 35px;
+  }
+  .az-section-copy > p {
+    font-size: 12px;
+  }
+  .az-check-list li {
+    font-size: 11px;
+  }
+  .az-copy-visual {
+    padding: 18px;
+  }
+  .az-master-ticket {
+    padding: 14px 10px;
+    gap: 8px;
+  }
+  .az-master-ticket strong {
+    font-size: 11px;
+  }
+  .az-ticket-symbol {
+    font-size: 11px;
+  }
+  .az-master-ticket .az-team-symbol {
+    width: 26px;
+    height: 26px;
+  }
+  .az-conditions-heading {
+    gap: 50px;
+  }
+  .az-conditions-heading > p {
+    font-size: 12px;
+  }
+  .az-condition-grid > div {
+    padding-inline: 15px;
+  }
+  .az-condition-grid strong {
+    font-size: 34px;
+  }
+  .az-condition-grid strong.az-condition-strategy {
+    font-size: 22px;
+    line-height: 2.5;
+  }
+  .az-condition-grid > div > span {
+    font-size: 11px;
+  }
+  .az-condition-grid p {
+    font-size: 11px;
+  }
+  .az-risk-section {
+    padding: 26px;
+    gap: 35px;
+  }
+  .az-risk-section h2 {
+    font-size: 31px;
+  }
+  .az-risk-visual {
+    padding: 15px;
+  }
+  .az-risk-visual-top {
+    font-size: 11px;
+    gap: 6px;
+  }
+  .az-risk-visual-top .az-preview-tag {
+    font-size: 11px;
+  }
+  .az-policy-row {
+    font-size: 11px;
+    gap: 8px;
+  }
+  .az-faq {
+    gap: 50px;
+  }
+  .az-faq-items summary {
+    font-size: 12px;
+  }
+}
+@media (max-width: 767px) {
+  .az-container {
+    width: calc(100% - 40px);
+  }
+  .az-header {
+    height: 70px;
+  }
+  .az-header-inner {
+    gap: 15px;
+  }
+  .az-brand {
+    font-size: 26px;
+  }
+  .az-brand-mark,
+  .az-brand-mark svg {
+    width: 28px;
+    height: 28px;
+  }
+  .az-desktop-nav {
+    display: none;
+  }
+  .az-header-actions {
+    gap: 15px;
+  }
+  .az-menu-toggle {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 36px;
+    padding: 0;
+  }
+  .az-header .az-button-small {
+    min-height: 35px;
+    padding: 7px 10px;
+    font-size: 11px;
+    gap: 9px;
+  }
+  .az-mobile-nav {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 20px 18px;
+    background: #ffffff;
+    border-bottom: 1px solid #dce3ee;
+    position: absolute;
+    z-index: 21;
+    top: 69px;
+    width: 100%;
+  }
+  .az-mobile-nav > a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #42526b;
+    font-size: 14px;
+    padding: 13px 4px;
+  }
+  .az-hero {
+    padding-top: 44px;
+  }
+  .az-hero-eyebrow {
+    font-size: 11px;
+    letter-spacing: 1.25px;
+    gap: 8px;
+    margin-bottom: 21px;
+  }
+  .az-eyebrow-line {
+    width: 16px;
+  }
+  .az-hero-grid {
+    display: block;
+  }
+  .az-hero h1 {
+    font-size: clamp(36px, 7.7vw, 56px);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+  }
+  .az-hero-copy {
+    padding-top: 22px;
+  }
+  .az-hero-copy p {
+    max-width: 400px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .az-desktop-break {
+    display: none;
+  }
+  .az-hero-actions {
+    margin-top: 22px;
+    gap: 19px;
+  }
+  .az-hero-actions .az-button {
+    min-height: 45px;
+    font-size: 12px;
+    padding: 10px 14px;
+    gap: 14px;
+  }
+  .az-explore {
+    font-size: 11px;
+    gap: 6px;
+  }
+  .az-hero-capabilities {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 10px;
+    margin-top: 27px;
+    margin-bottom: 30px;
+  }
+  .az-hero-capabilities > span {
+    font-size: 11px;
+  }
+  .az-hero-capabilities svg {
+    width: 15px;
+  }
+  .az-demo-shell {
+    padding: 0 4px 4px;
+    border-radius: 9px;
+  }
+  .az-demo-caption {
+    min-height: 34px;
+    padding: 0 7px;
+    font-size: 11px;
+    letter-spacing: 0.6px;
+  }
+  .az-demo-caption > span {
+    gap: 5px;
+  }
+  .az-demo-caption > span:last-child {
+    font-size: 0;
+    gap: 0;
+  }
+  .az-demo-caption .az-preview-tag {
+    font-size: 11px;
+  }
+  .az-dashboard {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+  }
+  .az-dash-sidebar {
+    padding: 9px 7px;
+    border-right: 0;
+    border-bottom: 1px solid #dce3ee;
+  }
+  .az-dash-sidebar > .az-brand,
+  .az-workspace,
+  .az-nav-heading,
+  .az-sidebar-bottom,
+  .az-demo-settings {
+    display: none;
+  }
+  .az-dash-sidebar nav {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .az-dash-sidebar nav button {
+    flex-shrink: 0;
+    width: auto;
+    font-size: 11px;
+    min-height: 34px;
+    padding: 6px 9px;
+    gap: 5px;
+  }
+  .az-dash-sidebar nav button svg {
+    width: 14px;
+    height: 14px;
+  }
+  .az-dash-topbar {
+    height: 37px;
+    padding-inline: 13px;
+    font-size: 11px;
+  }
+  .az-demo-data-label {
+    font-size: 11px;
+  }
+  .az-dash-topbar > div {
+    gap: 8px;
+  }
+  .az-owner-avatar {
+    width: 21px;
+    height: 21px;
+    font-size: 11px;
+  }
+  .az-dash-content {
+    padding: 19px 12px 0;
+    min-height: 0;
+  }
+  .az-dash-heading {
+    margin-bottom: 15px;
+  }
+  .az-dashboard .az-dash-heading h2 {
+    font-size: 17px;
+  }
+  .az-dash-heading p {
+    font-size: 11px;
+    margin-top: 4px;
+  }
+  .az-team-filter {
+    padding: 5px;
+  }
+  .az-team-filter select {
+    max-width: 88px;
+    font-size: 11px;
+  }
+  .az-stats {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .az-stat {
+    padding: 12px;
+  }
+  .az-stat > div {
+    font-size: 11px;
+  }
+  .az-stat > div svg {
+    display: inline;
+    width: 14px;
+  }
+  .az-stat > strong {
+    font-size: 27px;
+    margin-top: 4px;
+  }
+  .az-stat-change {
+    font-size: 11px;
+  }
+  .az-stat-change em {
+    display: inline;
+    font-size: 11px;
+  }
+  .az-dash-middle {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin-top: 12px;
+  }
+  .az-chart-panel {
+    padding: 14px 12px;
+  }
+  .az-panel-heading h3 {
+    font-size: 11px;
+  }
+  .az-periods button {
+    padding: 4px 8px;
+    font-size: 11px;
+  }
+  .az-chart-summary {
+    font-size: 11px;
+  }
+  .az-chart > svg {
+    height: 126px;
+  }
+  .az-engine {
+    display: none;
+  }
+  .az-team-cards {
+    gap: 6px;
+  }
+  .az-team-card {
+    padding: 8px !important;
+  }
+  .az-team-card small {
+    font-size: 11px;
+  }
+  .az-team-card strong {
+    font-size: 11px;
+  }
+  .az-team-pnl {
+    font-size: 11px;
+  }
+  .az-team-pnl svg {
+    width: 10px;
+  }
+  .az-positions {
+    margin-top: 18px;
+  }
+  .az-marketing th {
+    padding: 6px 4px;
+    font-size: 11px;
+  }
+  .az-marketing td {
+    padding: 8px 4px;
+    font-size: 11px;
+  }
+  .az-trader-cell .az-mini-avatar {
+    display: none;
+  }
+  .az-trader-cell small {
+    font-size: 11px;
+  }
+  .az-dash-footer {
+    font-size: 11px;
+    padding-block: 12px;
+  }
+  .az-dash-footer > span:last-child {
+    display: none;
+  }
+  .az-preview-footnote {
+    font-size: 11px;
+    gap: 14px;
+    line-height: 1.6;
+  }
+  .az-preview-footnote > span {
+    max-width: 100px;
+  }
+  .az-preview-footnote a {
+    font-size: 11px;
+    max-width: 185px;
+  }
+  .az-preview-footnote a svg {
+    flex-shrink: 0;
+  }
+  .az-demo-detail {
+    padding: 17px;
+    min-height: 365px;
+  }
+  .az-demo-detail h3 {
+    font-size: 19px;
+  }
+  .az-demo-detail > p {
+    font-size: 11px;
+  }
+  .az-copy-team-list > div {
+    gap: 9px;
+  }
+  .az-copy-team-list b {
+    font-size: 11px;
+  }
+  .az-copy-team-list small {
+    font-size: 11px;
+  }
+  .az-copy-team-list .az-status {
+    margin-left: 2px;
+  }
+  .az-risk-row {
+    font-size: 11px;
+    gap: 6px;
+  }
+  .az-risk-row strong {
+    font-size: 11px;
+  }
+  .az-search input {
+    width: 125px;
+    font-size: 11px;
+  }
+  .az-audience {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-block: 32px 37px;
+    margin-top: 17px;
+    gap: 24px;
+  }
+  .az-audience > p {
+    font-size: 11px;
+  }
+  .az-audience > p > br {
+    display: none;
+  }
+  .az-audience > p strong {
+    padding-left: 3px;
+  }
+  .az-audience > div {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+    gap: 19px;
+  }
+  .az-audience > div > span {
+    width: auto;
+    font-size: 11px;
+  }
+  .az-audience svg {
+    width: 19px;
+    height: 19px;
+  }
+  .az-section {
+    padding-block: 64px;
+  }
+  .az-eyebrow {
+    font-size: 11px;
+    gap: 8px;
+    letter-spacing: 1.3px;
+    margin-bottom: 18px;
+  }
+  .az-section h2,
+  .az-conditions h2,
+  .az-risk-section h2 {
+    font-size: 34px;
+  }
+  .az-section-intro > p {
+    font-size: 13px;
+    line-height: 1.8;
+    margin-top: 18px;
+  }
+  .az-feature-grid {
+    grid-template-columns: 1fr;
+    gap: 17px;
+    margin-top: 28px;
+  }
+  .az-feature {
+    padding: 24px 20px;
+  }
+  .az-feature h3 {
+    font-size: 21px;
+  }
+  .az-feature p {
+    font-size: 13px;
+  }
+  .az-hierarchy {
+    margin-top: 28px;
+  }
+  .az-hierarchy-teams strong {
+    font-size: 11px;
+  }
+  .az-hierarchy-teams small {
+    font-size: 11px;
+  }
+  .az-role-chip {
+    font-size: 11px;
+  }
+  .az-account-visual {
+    padding: 19px;
+    margin-top: 26px;
+  }
+  .az-account-visual > div:first-child {
+    font-size: 12px;
+  }
+  .az-account-visual .az-account-state {
+    font-size: 11px;
+  }
+  .az-account-visual small {
+    font-size: 11px;
+  }
+  .az-account-values strong {
+    font-size: 23px;
+  }
+  .az-split-section {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  #copy-trading {
+    padding-top: 3px;
+  }
+  .az-section-copy > p {
+    font-size: 13px;
+    margin-top: 19px;
+    max-width: none;
+  }
+  .az-check-list li {
+    font-size: 12px;
+  }
+  .az-check-list {
+    margin-top: 23px;
+    gap: 15px;
+  }
+  .az-copy-visual {
+    padding: 22px 18px;
+  }
+  .az-master-ticket {
+    padding: 18px 12px;
+  }
+  .az-master-ticket strong {
+    font-size: 11px;
+  }
+  .az-ticket-symbol {
+    font-size: 11px;
+  }
+  .az-follower-tickets {
+    gap: 8px;
+  }
+  .az-conditions {
+    padding-block: 49px 28px;
+  }
+  .az-conditions-heading {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .az-conditions-heading > p {
+    font-size: 13px;
+    max-width: 350px;
+  }
+  .az-condition-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 29px 0;
+    margin-top: 30px;
+  }
+  .az-condition-grid > div {
+    padding-inline: 20px;
+  }
+  .az-condition-grid > div:nth-child(3) {
+    border: 0;
+    padding-left: 0;
+  }
+  .az-condition-grid > div:nth-child(even) {
+    padding-right: 0;
+  }
+  .az-condition-grid > div > span {
+    font-size: 11px;
+  }
+  .az-condition-grid strong {
+    font-size: 39px;
+  }
+  .az-condition-grid strong.az-condition-strategy {
+    font-size: 24px;
+    line-height: 2.65;
+  }
+  .az-condition-grid p {
+    font-size: 11px;
+  }
+  .az-condition-footnote p {
+    font-size: 11px;
+  }
+  .az-revenue-features {
+    gap: 22px;
+  }
+  .az-revenue-features strong {
+    font-size: 13px;
+  }
+  .az-revenue-features p {
+    font-size: 12px;
+  }
+  .az-risk-section {
+    display: flex;
+    flex-direction: column-reverse;
+    padding: 27px 20px;
+    gap: 32px;
+  }
+  .az-risk-visual {
+    width: 100%;
+    padding: 18px 15px;
+  }
+  .az-risk-visual-top {
+    font-size: 12px;
+  }
+  .az-policy-row {
+    font-size: 11px;
+  }
+  .az-risk-visual-top .az-preview-tag {
+    font-size: 11px;
+  }
+  .az-faq {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .az-faq > div:first-child > p {
+    margin-top: 16px;
+  }
+  .az-faq-items summary {
+    font-size: 13px;
+    gap: 18px;
+    padding-block: 19px;
+  }
+  .az-final-cta {
+    padding: 39px 18px;
+  }
+  .az-final-cta h2 {
+    font-size: 33px;
+    letter-spacing: -1.25px;
+  }
+  .az-final-cta p {
+    font-size: 12px;
+  }
+  .az-final-cta > div {
+    flex-direction: column;
+    align-items: center;
+    gap: 11px;
+    margin-top: 25px;
+  }
+  .az-final-cta .az-button {
+    min-width: 224px;
+  }
+  .az-final-cta small {
+    font-size: 11px;
+  }
+  .az-footer {
+    padding-top: 48px;
+  }
+  .az-footer-top {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px 20px;
+    padding-bottom: 32px;
+  }
+  .az-footer-top > div {
+    grid-column: 1 / -1;
+  }
+  .az-footer-top > div > p {
+    margin-top: 13px;
+  }
+  .az-footer nav {
+    font-size: 12px;
+    gap: 11px;
+  }
+  .az-footer nav strong {
+    font-size: 12px;
+  }
+  .az-footer-bottom {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 9px;
+    font-size: 11px;
+    padding-block: 22px 16px;
+  }
+  .az-footer-disclosure {
+    font-size: 11px;
+  }
+}
+@media (max-width: 374px) {
+  .az-container {
+    width: calc(100% - 32px);
+  }
+  .az-header-actions {
+    gap: 8px;
+  }
+  .az-header .az-button-small {
+    font-size: 11px;
+    gap: 6px;
+    padding-inline: 8px;
+  }
+  .az-hero h1 {
+    font-size: 33px;
+  }
+  .az-hero-capabilities > span {
+    font-size: 11px;
+    gap: 5px;
+  }
+  .az-stat > strong {
+    font-size: 24px;
+  }
+  .az-stat-change em {
+    display: none;
+  }
+  .az-team-card small {
+    font-size: 11px;
+  }
+  .az-team-card strong {
+    font-size: 11px;
+  }
+  .az-team-pnl {
+    font-size: 11px;
+  }
+  .az-team-pnl svg {
+    display: none;
+  }
+  .az-section h2,
+  .az-conditions h2,
+  .az-risk-section h2 {
+    font-size: 30px;
+  }
+  .az-hierarchy-teams strong {
+    font-size: 11px;
+  }
+  .az-hierarchy-teams small {
+    font-size: 11px;
+  }
+  .az-condition-grid strong.az-condition-strategy {
+    font-size: 21px;
+    line-height: 3;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .az-marketing *,
+  .az-marketing *::before,
+  .az-marketing *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (max-width: 767px) {
+  .az-dash-sidebar nav button {
+    min-height: 38px;
+    font-size: 11px;
+  }
+  .az-periods button {
+    min-width: 34px;
+    min-height: 32px;
+    font-size: 11px;
+  }
+  .az-panel-heading > button {
+    min-height: 32px;
+    font-size: 11px;
+  }
+  .az-team-filter select {
+    min-height: 30px;
+    font-size: 11px;
+  }
+  .az-team-filter {
+    padding-block: 0;
+  }
+  .az-team-card {
+    min-height: 72px;
+  }
+  .az-search input {
+    min-height: 32px;
+    font-size: 11px;
+  }
+  .az-copy-tabs button {
+    min-height: 38px;
+    font-size: 11px;
+  }
+  .az-copy-visual-footer > button {
+    width: 42px;
+    height: 40px;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .az-header {
+    background: #ffffff;
+    backdrop-filter: none;
+  }
+}
+
+.az-marketing tbody tr:hover {
+  background: #f2f6fc;
+}
+.az-marketing input::placeholder {
+  color: #64748b;
+}
+.az-hero h1 > span {
+  color: #315fc0;
+}
+
+/* Light canvas extends through the document scroll gutter on this route. */
+html:has(.az-marketing),
+body:has(.az-marketing) {
+  background: #fff;
+  color-scheme: light;
+}
+html:has(.az-marketing) {
+  scrollbar-color: #bdc9db #f7f9fc;
+}
+.az-marketing ::selection {
+  color: #172235;
+  background: #dce8ff;
+}
+.az-button > svg,
+.az-text-link > svg,
+.az-explore > svg {
+  transition: transform 0.2s ease;
+}
+.az-button:hover > svg,
+.az-text-link:hover > svg {
+  transform: translateX(2px);
+}
+.az-faq-items summary:hover {
+  color: #2859c5;
+}
+.az-faq-items details[open] summary {
+  color: #2859c5;
+}
+.az-copy-visual-footer > button {
+  min-width: 38px;
+  min-height: 36px;
+}
+@media (min-width: 1200px) {
+  .az-hero-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+@media (max-width: 1199px) and (min-width: 768px) {
+  .az-hero-copy p {
+    font-size: 14px;
+  }
+  .az-dash-sidebar nav button {
+    font-size: 11px;
+  }
+  .az-workspace {
+    padding: 7px;
+  }
+  .az-workspace small {
+    font-size: 9px;
+  }
+  .az-stat > div {
+    font-size: 10px;
+  }
+  .az-engine .az-panel-heading {
+    flex-wrap: wrap;
+  }
+  .az-engine .az-panel-heading h3 {
+    font-size: 11px;
+  }
+  .az-master {
+    font-size: 10px;
+    gap: 5px;
+  }
+  .az-master small {
+    font-size: 9px;
+  }
+  .az-engine-rule {
+    flex-wrap: wrap;
+  }
+  .az-trader-cell small {
+    display: block;
+    padding-left: 0;
+  }
+  .az-audience > div {
+    gap: 20px;
+  }
+  .az-audience > div > span {
+    font-size: 12px;
+  }
+  .az-account-values strong {
+    font-size: 19px;
+  }
+  .az-feature p {
+    font-size: 14px;
+  }
+  .az-section-copy > p {
+    font-size: 14px;
+  }
+  .az-follower-tickets strong {
+    font-size: 11px;
+  }
+  .az-master-ticket strong {
+    font-size: 10px;
+  }
+  .az-final-cta {
+    gap: 20px;
+    padding: 35px;
+  }
+  .az-final-cta h2 {
+    font-size: 35px;
+  }
+  .az-final-cta p {
+    font-size: 13px;
+  }
+}
+@media (max-width: 1023px) {
+  .az-desktop-nav {
+    display: none;
+  }
+  .az-menu-toggle {
+    display: grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+  .az-mobile-nav {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 79px;
+    width: 100%;
+    padding: 12px 28px 22px;
+    background: #fff;
+    border-bottom: 1px solid #dce3ee;
+    box-shadow: 0 12px 24px #294f810d;
+  }
+  .az-mobile-nav a {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 48px;
+    padding: 10px 4px;
+    color: #42526b;
+    font-size: 14px;
+  }
+  .az-hierarchy {
+    --az-hierarchy-gap: 8px;
+  }
+  .az-hierarchy-teams > div {
+    padding-inline: 5px;
+  }
+  .az-hierarchy-teams strong {
+    font-size: 11px;
+  }
+  .az-role-chip {
+    font-size: 9px;
+    gap: 3px;
+  }
+}
+@media (max-width: 767px) {
+  .az-header {
+    height: 72px;
+  }
+  .az-mobile-nav {
+    top: 71px;
+    padding-inline: 20px;
+  }
+  .az-header .az-button-small {
+    min-height: 40px;
+    padding-inline: 13px;
+    font-size: 12px;
+  }
+  .az-hero {
+    padding-top: 42px;
+  }
+  .az-hero-eyebrow {
+    font-size: 10px;
+    letter-spacing: 1px;
+  }
+  .az-hero-copy p {
+    font-size: 15px;
+    line-height: 1.75;
+  }
+  .az-hero-actions .az-button {
+    min-height: 48px;
+    font-size: 13px;
+    padding-inline: 17px;
+  }
+  .az-explore {
+    font-size: 12px;
+    min-height: 40px;
+  }
+  .az-hero-capabilities {
+    gap: 16px 10px;
+    margin-top: 28px;
+    margin-bottom: 28px;
+  }
+  .az-hero-capabilities > span {
+    font-size: 11px;
+  }
+  .az-demo-shell {
+    padding: 0 5px 5px;
+    border-radius: 12px;
+  }
+  .az-demo-caption {
+    min-height: 38px;
+    font-size: 9px;
+  }
+  .az-dash-content {
+    min-height: 0;
+    padding: 20px 12px 0;
+  }
+  .az-dash-heading {
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .az-dashboard .az-dash-heading h2 {
+    font-size: 19px;
+  }
+  .az-dash-heading p {
+    max-width: 165px;
+    font-size: 10px;
+  }
+  .az-dash-sidebar nav button {
+    min-height: 40px;
+    font-size: 11px;
+  }
+  .az-stat {
+    min-height: 108px;
+    padding: 13px 11px;
+  }
+  .az-stat > div {
+    font-size: 11px;
+  }
+  .az-stat > strong {
+    font-size: 29px;
+  }
+  .az-stat-change {
+    font-size: 10px;
+  }
+  .az-stat-change em {
+    display: none;
+  }
+  .az-panel-heading {
+    flex-wrap: wrap;
+  }
+  .az-panel-heading h3 {
+    font-size: 12px;
+  }
+  .az-panel-heading > button {
+    font-size: 11px;
+    min-height: 36px;
+  }
+  .az-periods button {
+    font-size: 11px;
+    min-height: 34px;
+  }
+  .az-chart-summary {
+    font-size: 10px;
+  }
+  .az-chart-x {
+    font-size: 9px;
+  }
+  .az-chart-y {
+    font-size: 9px;
+  }
+  .az-team-cards {
+    gap: 6px;
+  }
+  .az-team-card {
+    padding: 9px 7px !important;
+    grid-template-columns: 1fr;
+  }
+  .az-team-card > svg {
+    display: none;
+  }
+  .az-team-card strong {
+    font-size: 11px;
+  }
+  .az-team-card small {
+    font-size: 10px;
+    white-space: normal;
+  }
+  .az-team-pnl {
+    font-size: 11px;
+  }
+  .az-team-pnl svg {
+    display: none;
+  }
+  .az-marketing td {
+    font-size: 10px;
+    padding: 10px 4px;
+  }
+  .az-marketing th {
+    font-size: 9px;
+    padding: 8px 4px;
+  }
+  .az-trader-cell small {
+    font-size: 9px;
+  }
+  .az-side {
+    font-size: 10px;
+    padding-inline: 4px;
+  }
+  .az-dash-footer {
+    font-size: 9px;
+    padding-block: 13px;
+  }
+  .az-preview-footnote {
+    font-size: 11px;
+    padding-top: 16px;
+  }
+  .az-preview-footnote a {
+    font-size: 11px;
+  }
+  .az-audience > p {
+    white-space: normal;
+    font-size: 12px;
+  }
+  .az-audience > div > span {
+    font-size: 12px;
+  }
+  .az-section {
+    padding-block: 64px;
+  }
+  .az-section-intro > p,
+  .az-section-copy > p,
+  .az-feature p {
+    font-size: 15px;
+    line-height: 1.75;
+  }
+  .az-feature {
+    border-radius: 12px;
+    padding: 25px 20px;
+  }
+  .az-feature h3 {
+    font-size: 22px;
+  }
+  .az-hierarchy-teams small {
+    font-size: 10px;
+  }
+  .az-account-visual {
+    padding: 18px;
+  }
+  .az-account-values strong {
+    font-size: 23px;
+  }
+  .az-check-list li {
+    font-size: 13px;
+  }
+  .az-text-link {
+    font-size: 13px;
+  }
+  .az-copy-visual {
+    padding: 23px 17px;
+    border-radius: 12px;
+  }
+  .az-master-ticket {
+    padding: 17px 10px;
+    gap: 8px;
+  }
+  .az-master-ticket strong {
+    font-size: 11px;
+  }
+  .az-master-ticket small {
+    font-size: 9px;
+  }
+  .az-copy-tabs button {
+    font-size: 12px;
+    min-height: 40px;
+  }
+  .az-follower-tickets > div {
+    padding: 17px 6px 13px;
+  }
+  .az-follower-tickets strong {
+    font-size: 11px;
+  }
+  .az-follower-tickets > div > span:not(.az-mini-avatar) {
+    font-size: 19px;
+  }
+  .az-copy-visual-footer {
+    font-size: 11px;
+  }
+  .az-conditions-heading > p {
+    font-size: 15px;
+  }
+  .az-condition-grid strong {
+    font-size: 39px;
+  }
+  .az-condition-grid > div > span {
+    font-size: 9px;
+    letter-spacing: 0.5px;
+  }
+  .az-condition-grid p {
+    font-size: 11px;
+  }
+  .az-condition-footnote p {
+    font-size: 11px;
+  }
+  .az-revenue-features strong {
+    font-size: 14px;
+  }
+  .az-revenue-features p {
+    font-size: 13px;
+  }
+  .az-risk-section {
+    padding: 28px 20px;
+  }
+  .az-risk-section .az-section-copy > p {
+    font-size: 15px;
+  }
+  .az-risk-visual {
+    padding: 20px 14px;
+  }
+  .az-risk-visual-top {
+    font-size: 12px;
+  }
+  .az-policy-row {
+    font-size: 11px;
+  }
+  .az-faq-items summary {
+    font-size: 14px;
+  }
+  .az-faq-items details > p {
+    font-size: 13px;
+  }
+  .az-final-cta {
+    display: block;
+    padding: 35px 22px;
+    text-align: left;
+  }
+  .az-final-cta h2 {
+    font-size: 33px;
+    letter-spacing: -1.3px;
+  }
+  .az-final-cta p {
+    font-size: 14px;
+  }
+  .az-final-cta > div {
+    margin-top: 25px;
+    align-items: stretch;
+  }
+  .az-final-cta .az-button {
+    width: 100%;
+    min-width: 0;
+  }
+  .az-final-cta small {
+    font-size: 11px;
+  }
+  .az-footer nav,
+  .az-footer nav strong {
+    font-size: 13px;
+  }
+  .az-footer-disclosure {
+    font-size: 11px;
+  }
+}
+@media (max-width: 374px) {
+  .az-hero-eyebrow {
+    font-size: 9px;
+  }
+  .az-hero-capabilities > span {
+    font-size: 10px;
+  }
+  .az-dashboard .az-dash-heading h2 {
+    font-size: 17px;
+  }
+  .az-team-card strong {
+    font-size: 10px;
+  }
+  .az-team-pnl {
+    font-size: 10px;
+  }
+  .az-marketing td {
+    font-size: 9px;
+  }
+  .az-copy-visual {
+    padding-inline: 13px;
+  }
+  .az-master-ticket strong {
+    font-size: 10px;
+  }
+  .az-master-ticket > .az-team-symbol {
+    display: none;
+  }
+  .az-final-cta h2 {
+    font-size: 29px;
+  }
+}

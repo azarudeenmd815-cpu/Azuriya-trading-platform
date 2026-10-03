@@ -1,0 +1,290 @@
+[
+  {
+    "slug": "metatrader-4",
+    "name": "MetaTrader 4",
+    "website": "https://www.metatrader4.com/",
+    "assetSource": "https://www.metatrader4.com/favicon.ico",
+    "assetKind": "official website icon",
+    "file": "metatrader-4.ico",
+    "bytes": 32988
+  },
+  {
+    "slug": "metatrader-5",
+    "name": "MetaTrader 5",
+    "website": "https://www.metatrader5.com/",
+    "assetSource": "https://www.metatrader5.com/i/favicons/apple-touch-icon-180x180.png",
+    "assetKind": "official website icon",
+    "file": "metatrader-5.png",
+    "bytes": 36126
+  },
+  {
+    "slug": "ctrader",
+    "name": "cTrader",
+    "website": "https://ctrader.com/",
+    "assetSource": "https://ctrader.com/favicon.ico",
+    "assetKind": "official website icon",
+    "file": "ctrader.ico",
+    "bytes": 9662
+  },
+  {
+    "slug": "dxtrade",
+    "name": "DXtrade",
+    "website": "https://dx.trade/",
+    "assetSource": "https://dx.trade/app/uploads/2025/09/cropped-favicon-180x180.png",
+    "assetKind": "official website icon",
+    "file": "dxtrade.png",
+    "bytes": 11242
+  },
+  {
+    "slug": "match-trader",
+    "name": "Match-Trader",
+    "website": "https://match-trader.com/",
+    "assetSource": "https://match-trader.com/wp-content/uploads/2024/03/favicon.png",
+    "assetKind": "official website icon",
+    "file": "match-trader.png",
+    "bytes": 3096
+  },
+  {
+    "slug": "tradelocker",
+    "name": "TradeLocker",
+    "website": "https://tradelocker.com/",
+    "assetSource": "https://tradelocker.com/wp-content/uploads/2023/04/cropped-Icon-3-180x180.png",
+    "assetKind": "official website icon",
+    "file": "tradelocker.webp",
+    "bytes": 1950
+  },
+  {
+    "slug": "tradingview",
+    "name": "TradingView",
+    "website": "https://www.tradingview.com/",
+    "assetSource": "https://static.tradingview.com/static/images/favicon/apple-touch-icon-180x180.png",
+    "assetKind": "official website icon",
+    "file": "tradingview.png",
+    "bytes": 2916
+  },
+  {
+    "slug": "ninjatrader",
+    "name": "NinjaTrader",
+    "website": "https://ninjatrader.com/",
+    "assetSource": "https://ninjatrader.com/favicon.ico",
+    "assetKind": "official website favicon",
+    "file": "ninjatrader.ico",
+    "bytes": 58694
+  },
+  {
+    "slug": "quantower",
+    "name": "Quantower",
+    "website": "https://www.quantower.com/",
+    "assetSource": "https://www.quantower.com/themes/quantower/logo.svg",
+    "assetKind": "official website logo",
+    "file": "quantower.svg",
+    "bytes": 944
+  },
+  {
+    "slug": "atas",
+    "name": "ATAS",
+    "website": "https://help.atas.net/en/support/home",
+    "assetSource": "https://s3.amazonaws.com/cdn.freshdesk.com/data/helpdesk/attachments/production/72102436533/fav_icon/335cqhPnZX5yOctep4XnPrZ1pQaPpwoFOg.png",
+    "assetKind": "official platform logo",
+    "file": "atas.png",
+    "bytes": 1221
+  },
+  {
+    "slug": "motivewave",
+    "name": "MotiveWave",
+    "website": "https://www.motivewave.com/",
+    "assetSource": "https://www.motivewave.com/img/darkLogoTagline-Just%20the%20logo.ico",
+    "assetKind": "official platform logo",
+    "file": "motivewave.ico",
+    "bytes": 8502
+  },
+  {
+    "slug": "multicharts",
+    "name": "MultiCharts",
+    "website": "https://www.multicharts.com/",
+    "assetSource": "https://www.multicharts.com/apple-touch-icon.png",
+    "assetKind": "official website icon",
+    "file": "multicharts.png",
+    "bytes": 5547
+  },
+  {
+    "slug": "sierra-chart",
+    "name": "Sierra Chart",
+    "website": "https://www.sierrachart.com/",
+    "assetSource": "https://www.sierrachart.com/favicon/favicon-192x192.png",
+    "assetKind": "official website icon",
+    "file": "sierra-chart.png",
+    "bytes": 39482
+  },
+  {
+    "slug": "bookmap",
+    "name": "Bookmap",
+    "website": "https://bookmap.com/en",
+    "assetSource": "https://bookmap.com/static/icons/apple-touch-icon.png",
+    "assetKind": "official website icon",
+    "file": "bookmap.png",
+    "bytes": 283
+  },
+  {
+    "slug": "cqg",
+    "name": "CQG",
+    "website": "https://www.cqg.com/",
+    "assetSource": "https://www.cqgchina.com/themes/custom/cqg/logo.svg",
+    "assetKind": "official regional website logo",
+    "file": "cqg.svg",
+    "bytes": 7571
+  },
+  {
+    "slug": "rithmic",
+    "name": "Rithmic",
+    "website": "https://www.rithmic.com/",
+    "assetSource": "https://www.rithmic.com/favicon.png",
+    "assetKind": "official website favicon",
+    "file": "rithmic.png",
+    "bytes": 129378
+  },
+  {
+    "slug": "tradovate",
+    "name": "Tradovate",
+    "website": "https://www.tradovate.com/",
+    "assetSource": "https://www.tradovate.com/static/018ca1a1bfd4a51bbb4e15078cfaeddd/0128b/Tradovate-darkbg.png",
+    "assetKind": "official platform logo",
+    "file": "tradovate.png",
+    "bytes": 12440
+  },
+  {
+    "slug": "tt",
+    "name": "Trading Technologies",
+    "website": "https://tradingtechnologies.com/",
+    "assetSource": "https://tradingtechnologies.com/wp-content/themes/tt2/assets/favicons/apple-touch-icon.png",
+    "assetKind": "official website icon",
+    "file": "tt.png",
+    "bytes": 1550
+  },
+  {
+    "slug": "ibkr-tws",
+    "name": "IBKR Trader Workstation",
+    "website": "https://www.interactivebrokers.com/en/trading/tws.php",
+    "assetSource": "https://www.interactivebrokers.com/images/web/favicons/apple-touch-icon-144x144.png",
+    "assetKind": "official website icon",
+    "file": "ibkr-tws.png",
+    "bytes": 6569
+  },
+  {
+    "slug": "thinkorswim",
+    "name": "thinkorswim",
+    "website": "https://www.schwab.com/trading/thinkorswim",
+    "assetSource": "https://www.schwab.com/themes/custom/sch_beacon_retail/favicons/apple-icon.png",
+    "assetKind": "official website icon",
+    "file": "thinkorswim.png",
+    "bytes": 16764
+  },
+  {
+    "slug": "saxotrader",
+    "name": "SaxoTrader",
+    "website": "https://www.home.saxo/platforms/saxotrader",
+    "assetSource": "https://www.home.saxo/-/media/meta/beinvested-2023/apple-touch-icon.png",
+    "assetKind": "official website icon",
+    "file": "saxotrader.png",
+    "bytes": 2094
+  },
+  {
+    "slug": "prorealtime",
+    "name": "ProRealTime",
+    "website": "https://www.prorealtime.com/en/",
+    "assetSource": "https://www.prorealtime.com/apple-touch-icon.png",
+    "assetKind": "official website icon",
+    "file": "prorealtime.png",
+    "bytes": 1311
+  },
+  {
+    "slug": "vertexfx",
+    "name": "VertexFX",
+    "website": "https://hybridsolutions.com/",
+    "assetSource": "https://hybridsolutions.com/wp-content/uploads/2025/05/cropped-big-full-logo-180x180.webp",
+    "assetKind": "official website icon",
+    "file": "vertexfx.webp",
+    "bytes": 2348
+  },
+  {
+    "slug": "sirix",
+    "name": "Sirix",
+    "website": "https://leverate.com/sirix/",
+    "assetSource": "https://leverate.com/wp-content/uploads/2021/01/leverate-fav-1-480x480.png.webp",
+    "assetKind": "official website icon",
+    "file": "sirix.webp",
+    "bytes": 13302
+  },
+  {
+    "slug": "utip",
+    "name": "UTIP",
+    "website": "https://www.utip.org/",
+    "assetSource": "https://www.utip.org/apple-touch-icon.png?version=1780895279143",
+    "assetKind": "official website icon",
+    "file": "utip.png",
+    "bytes": 3512
+  },
+  {
+    "slug": "agenatrader",
+    "name": "AgenaTrader",
+    "website": "https://agenatrader.com/",
+    "assetSource": "https://agenatrader.com/wp-content/uploads/fbrfg/apple-touch-icon.png",
+    "assetKind": "official website icon",
+    "file": "agenatrader.png",
+    "bytes": 12417
+  },
+  {
+    "slug": "das-trader",
+    "name": "DAS Trader Pro",
+    "website": "https://dastrader.com/",
+    "assetSource": "https://dastrader.com/wp-content/uploads/2020/08/favicon.png",
+    "assetKind": "official website icon",
+    "file": "das-trader.png",
+    "bytes": 58160
+  },
+  {
+    "slug": "edgeprox",
+    "name": "EdgeProX",
+    "website": "https://edgeclear.com/technology/edgeprox/",
+    "assetSource": "https://cdn.edgeclear.com/wp-content/uploads/2024/03/edgeclear-favicon.png",
+    "assetKind": "official website icon",
+    "file": "edgeprox.png",
+    "bytes": 6576
+  },
+  {
+    "slug": "tradestation",
+    "name": "TradeStation",
+    "website": "https://www.tradestation.com/",
+    "assetSource": "https://www.tradestation.com/favicon.ico",
+    "assetKind": "official website icon",
+    "file": "tradestation.ico",
+    "bytes": 1279
+  },
+  {
+    "slug": "esignal",
+    "name": "eSignal",
+    "website": "https://www.esignal.com/index",
+    "assetSource": "https://www.esignal.com/publicdocs/images/esignal-logo.svg",
+    "assetKind": "official platform logo",
+    "file": "esignal.svg",
+    "bytes": 3078
+  },
+  {
+    "slug": "tastytrade",
+    "name": "tastytrade",
+    "website": "https://tastytrade.com/",
+    "assetSource": "https://tastytrade.com/icons/icon-512x512.png?v=8ca44522c3eaa2f81bd4984c419e750d",
+    "assetKind": "official website icon",
+    "file": "tastytrade.png",
+    "bytes": 19297
+  },
+  {
+    "slug": "jigsaw",
+    "name": "Jigsaw Trading",
+    "website": "https://www.jigsawtrading.com/",
+    "assetSource": "https://www.jigsawtrading.com/wp-content/uploads/2026/06/cropped-ApplicationLogo128x128-180x180.png",
+    "assetKind": "official website icon",
+    "file": "jigsaw.png",
+    "bytes": 29887
+  }
+]

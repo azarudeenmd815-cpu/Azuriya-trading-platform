@@ -1,0 +1,730 @@
+.fw-walkthrough {
+  color: #172235;
+  background: #f1f5fb;
+  border: 1px solid #dce3ee;
+  border-radius: 16px;
+  overflow: hidden;
+  isolation: isolate;
+}
+.fw-heading {
+  min-height: 68px;
+  padding: 18px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #dce3ee;
+  font-size: 12px;
+  color: #56657a;
+}
+.fw-heading > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.fw-heading img {
+  object-fit: contain;
+}
+.fw-heading strong {
+  color: #172235;
+  font-size: 14px;
+  font-weight: 600;
+}
+.fw-heading-divider {
+  height: 18px;
+  width: 1px;
+  background: #cfd9e8;
+}
+.fw-demo-label {
+  font-size: 11px;
+  white-space: nowrap;
+}
+.fw-device-layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 232px;
+  align-items: center;
+  gap: 28px;
+  padding: 34px 36px;
+}
+.fw-desktop {
+  min-width: 0;
+  background: #ffffff;
+  border: 1px solid #b9c9dd;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 15px 38px #1e427714;
+}
+.fw-desktop-topbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 18px;
+  background: #f8fafd;
+  color: #52637b;
+  font-size: 11px;
+  border-bottom: 1px solid #e2e8f2;
+}
+.fw-desktop-topbar > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.fw-desktop-content {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+}
+.fw-terminal-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: #f8fafd;
+  border-right: 1px solid #e2e8f2;
+  padding: 23px 10px 16px;
+  font-size: 11px;
+  color: #52637b;
+}
+.fw-terminal-nav > :is(span, strong):not(.fw-account-label) {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+}
+.fw-terminal-nav > strong {
+  font-weight: 550;
+  color: #2859c5;
+  background: #e9effb;
+  border-radius: 6px;
+}
+.fw-account-label {
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  padding: 0 10px 13px;
+  color: #617189;
+}
+.fw-nav-bottom {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding: 35px 5px 0;
+  font-size: 9px;
+  color: #63738a;
+}
+.fw-payment-content {
+  min-width: 0;
+  padding: 25px 28px 23px;
+}
+.fw-payment-title {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 26px;
+}
+.fw-payment-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 auto;
+  color: #2859c5;
+  background: #edf2fc;
+  border-radius: 10px;
+}
+.fw-payment-title > div > span {
+  display: block;
+  color: #5c6f88;
+  font-size: 9px;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+.az-marketing .fw-payment-title h3 {
+  font-size: 19px;
+  font-weight: 550;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+}
+.fw-step-content {
+  min-height: 213px;
+}
+.fw-field-label {
+  font-size: 11px;
+  color: #4f6078;
+  margin-bottom: 9px;
+}
+.fw-amount-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border: 1px solid #cbd7e8;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.fw-amount-display > span:first-child {
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -1px;
+}
+.fw-amount-display > span:last-child {
+  font-size: 13px;
+  font-weight: 550;
+  color: #617189;
+}
+.az-marketing .fw-step-content p {
+  font-size: 12px;
+  line-height: 1.7;
+  color: #617189;
+}
+.fw-detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 0;
+  font-size: 11px;
+  color: #5b6c83;
+}
+.fw-detail-row strong {
+  color: #273a56;
+  font-weight: 550;
+  text-align: right;
+}
+.fw-amount-step .fw-detail-row {
+  margin-top: 8px;
+}
+.fw-methods {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+.fw-methods button {
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #cbd7e8;
+  border-radius: 8px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  text-align: left;
+  gap: 12px;
+  cursor: pointer;
+  color: #576b89;
+  min-height: 107px;
+}
+.fw-methods button[aria-pressed="true"] {
+  border-color: #2859c5;
+  background: #f5f8fe;
+  color: #2859c5;
+}
+.fw-methods button > svg:last-child:not(:first-child) {
+  position: absolute;
+  right: 10px;
+  top: 15px;
+}
+.fw-methods strong {
+  color: #273a56;
+  font-weight: 550;
+  font-size: 11px;
+  display: block;
+}
+.fw-methods small {
+  font-size: 10px;
+  color: #617189;
+}
+.fw-checkout-summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+.fw-checkout-icon {
+  color: #2859c5;
+  width: 43px;
+  height: 48px;
+  background: #edf2fc;
+  border-radius: 9px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+.fw-checkout-summary strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 550;
+  line-height: 1.4;
+  margin-bottom: 3px;
+}
+.fw-provider-step .fw-detail-row {
+  padding: 10px 0;
+  border-bottom: 1px solid #e7edf5;
+}
+.fw-provider-step > p {
+  margin-top: 12px;
+}
+.fw-preview-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #e7edf5;
+}
+.fw-preview-actions > span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #617189;
+}
+.fw-preview-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border: 1px solid #2859c5;
+  border-radius: 6px;
+  min-height: 44px;
+  padding: 8px 12px;
+  background: #2859c5;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 550;
+  cursor: pointer;
+}
+.fw-preview-actions button:hover {
+  background: #264da1;
+}
+.fw-terminal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-top: 1px solid #dce3ee;
+  background: #f8fafd;
+  padding: 8px 16px;
+  font-size: 9px;
+  color: #60738d;
+}
+.fw-terminal-footer > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #2859c5;
+}
+.fw-mobile {
+  position: relative;
+  align-self: center;
+  border: 5px solid #22314a;
+  border-radius: 32px;
+  width: 232px;
+  min-height: 498px;
+  background: #ffffff;
+  box-shadow:
+    0 15px 26px #1e42771b,
+    inset 0 0 0 1px #aebacf;
+  padding: 36px 15px 24px;
+}
+.fw-mobile-camera {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70px;
+  height: 15px;
+  border-radius: 20px;
+  background: #22314a;
+}
+.fw-mobile-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  margin-bottom: 26px;
+}
+.fw-mobile-topbar > svg {
+  color: #2859c5;
+}
+.fw-mobile-topbar strong {
+  font-weight: 550;
+}
+.fw-mobile-eyebrow {
+  font-size: 10px;
+  letter-spacing: 0.7px;
+  color: #66768e;
+  font-weight: 550;
+}
+.fw-mobile-amount {
+  font-size: 28px;
+  font-weight: 500;
+  letter-spacing: -1px;
+  line-height: 1.4;
+  margin: 4px 0 16px;
+  font-variant-numeric: tabular-nums;
+}
+.fw-mobile-amount small {
+  font-size: 11px;
+  letter-spacing: 0;
+  color: #66768e;
+}
+.fw-mobile-summary {
+  border-radius: 8px;
+  background: #f1f5fb;
+  padding: 12px;
+}
+.fw-mobile-summary > span {
+  color: #60738d;
+  font-size: 10px;
+  display: block;
+  margin-bottom: 8px;
+}
+.fw-mobile-summary > strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 550;
+}
+.fw-mobile-summary > strong svg {
+  color: #2859c5;
+}
+.fw-mobile-flow {
+  display: grid;
+  gap: 12px;
+  margin: 19px 0;
+}
+.fw-mobile-flow > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 11px;
+  color: #738299;
+}
+.fw-mobile-flow > div > span {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  background: #edf2f8;
+  color: #708097;
+  border-radius: 6px;
+  font-size: 9px;
+}
+.fw-mobile-flow > .fw-mobile-current {
+  color: #2859c5;
+  font-weight: 550;
+}
+.fw-mobile-flow > .fw-mobile-current > span {
+  background: #2859c5;
+  color: #ffffff;
+}
+.fw-mobile-security {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 4px 9px;
+  padding-top: 12px;
+  border-top: 1px solid #e4ebf4;
+}
+.fw-mobile-security > svg {
+  grid-row: span 2;
+  color: #2859c5;
+}
+.fw-mobile-security strong {
+  font-size: 11px;
+  font-weight: 550;
+  line-height: 1.5;
+}
+.az-marketing .fw-mobile-security p {
+  font-size: 10px;
+  color: #66768e;
+  line-height: 1.6;
+}
+.fw-mobile-label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: #738299;
+  margin-top: 15px;
+}
+.fw-mobile-home {
+  position: absolute;
+  bottom: 9px;
+  width: 66px;
+  height: 3px;
+  border-radius: 3px;
+  background: #22314a;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.fw-walkthrough-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid #dce3ee;
+  background: #ffffff;
+}
+.fw-walkthrough-controls button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 23px;
+  min-height: 67px;
+  border: 0;
+  border-right: 1px solid #e3e9f2;
+  background: #ffffff;
+  text-align: left;
+  font-size: 13px;
+  color: #56657a;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+.fw-walkthrough-controls button:last-child {
+  border-right: 0;
+}
+.fw-walkthrough-controls button[aria-pressed="true"] {
+  color: #2859c5;
+  background: #f5f8fd;
+}
+.fw-walkthrough-controls button > span {
+  width: 29px;
+  height: 29px;
+  border: 1px solid #d3ddea;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  font-size: 11px;
+}
+.fw-walkthrough-controls button[aria-pressed="true"] > span {
+  background: #2859c5;
+  color: #ffffff;
+  border-color: #2859c5;
+}
+.fw-walkthrough-controls button > svg {
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+.fw-compact .fw-heading {
+  padding: 14px 20px;
+  min-height: 60px;
+}
+.fw-compact .fw-heading-divider,
+.fw-compact .fw-heading > span:first-child {
+  gap: 9px;
+}
+.fw-compact .fw-demo-label {
+  font-size: 10px;
+}
+.fw-compact .fw-device-layout {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 23px;
+}
+.fw-compact .fw-desktop-content {
+  grid-template-columns: 110px minmax(0, 1fr);
+}
+.fw-compact .fw-payment-content {
+  padding: 23px 22px 19px;
+}
+.fw-compact .fw-payment-title h3 {
+  font-size: 17px;
+}
+.fw-compact .fw-terminal-nav {
+  font-size: 10px;
+  padding-inline: 6px;
+}
+.fw-compact .fw-account-label {
+  font-size: 7px;
+}
+.fw-compact .fw-nav-bottom {
+  font-size: 8px;
+  gap: 4px;
+}
+.fw-compact .fw-walkthrough-controls button {
+  font-size: 11px;
+  padding: 13px 12px;
+  gap: 8px;
+}
+.fw-compact .fw-walkthrough-controls button > span {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  font-size: 10px;
+}
+.fw-compact .fw-walkthrough-controls button > svg {
+  display: none;
+}
+@media (max-width: 1100px) {
+  .fw-device-layout {
+    gap: 20px;
+    padding: 28px;
+    grid-template-columns: minmax(0, 1fr) 218px;
+  }
+  .fw-mobile {
+    width: 218px;
+  }
+  .fw-desktop-content {
+    grid-template-columns: 116px minmax(0, 1fr);
+  }
+  .fw-payment-content {
+    padding: 23px;
+  }
+  .fw-nav-bottom {
+    font-size: 8px;
+  }
+}
+@media (max-width: 900px) {
+  .fw-device-layout {
+    grid-template-columns: minmax(0, 1fr) 195px;
+    gap: 16px;
+    padding: 24px;
+  }
+  .fw-terminal-nav {
+    display: none;
+  }
+  .fw-desktop-content,
+  .fw-compact .fw-desktop-content {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fw-mobile {
+    width: 195px;
+    padding-inline: 12px;
+  }
+  .fw-mobile-amount {
+    font-size: 25px;
+  }
+  .fw-heading {
+    padding-inline: 24px;
+  }
+  .fw-walkthrough-controls button {
+    padding-inline: 17px;
+    font-size: 11px;
+    gap: 8px;
+  }
+}
+@media (max-width: 767px) {
+  .fw-heading {
+    align-items: start;
+    flex-direction: column;
+    gap: 8px;
+    padding: 15px 18px;
+  }
+  .fw-heading > span:first-child {
+    gap: 9px;
+    font-size: 10px;
+  }
+  .fw-heading strong {
+    font-size: 12px;
+  }
+  .fw-heading img {
+    width: 25px;
+    height: 25px;
+  }
+  .fw-demo-label {
+    padding-left: 34px;
+    font-size: 10px;
+  }
+  .fw-device-layout {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 18px;
+    gap: 25px;
+  }
+  .fw-mobile {
+    width: 222px;
+    justify-self: center;
+    min-height: 490px;
+    padding-inline: 15px;
+  }
+  .fw-mobile-amount {
+    font-size: 28px;
+  }
+  .fw-payment-content {
+    padding: 20px;
+  }
+  .fw-payment-title {
+    gap: 9px;
+    margin-bottom: 22px;
+  }
+  .az-marketing .fw-payment-title h3 {
+    font-size: 17px;
+  }
+  .fw-payment-title > div > span {
+    font-size: 9px;
+  }
+  .fw-payment-icon {
+    width: 35px;
+    height: 35px;
+    border-radius: 8px;
+  }
+  .fw-step-content {
+    min-height: 226px;
+  }
+  .fw-walkthrough-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fw-walkthrough-controls button,
+  .fw-compact .fw-walkthrough-controls button {
+    padding: 12px 20px;
+    min-height: 54px;
+    font-size: 12px;
+    border-right: 0;
+    border-bottom: 1px solid #e3e9f2;
+    gap: 12px;
+  }
+  .fw-walkthrough-controls button:last-child {
+    border-bottom: 0;
+  }
+  .fw-compact .fw-walkthrough-controls button > span {
+    width: 26px;
+    height: 26px;
+  }
+  .fw-compact .fw-heading {
+    padding: 14px 18px;
+  }
+  .fw-compact .fw-device-layout {
+    padding: 16px;
+  }
+  .fw-compact .fw-payment-content {
+    padding: 20px 18px;
+  }
+}
+@media (max-width: 390px) {
+  .fw-payment-content,
+  .fw-compact .fw-payment-content {
+    padding: 18px 14px;
+  }
+  .fw-preview-actions {
+    align-items: start;
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+  .fw-preview-actions button {
+    width: 100%;
+  }
+  .fw-payment-title > div > span {
+    font-size: 9px;
+  }
+  .az-marketing .fw-payment-title h3 {
+    font-size: 15px;
+  }
+  .fw-payment-icon {
+    width: 31px;
+    height: 31px;
+  }
+  .fw-payment-icon > svg {
+    width: 18px;
+    height: 18px;
+  }
+  .fw-methods button {
+    padding: 11px;
+  }
+}

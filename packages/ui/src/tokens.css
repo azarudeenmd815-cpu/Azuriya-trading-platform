@@ -1,0 +1,18 @@
+:root {
+  color-scheme: dark;
+  --canvas: #0b0f14;
+  --surface: #10151d;
+  --surface-raised: #151c26;
+  --surface-hover: #1b2531;
+  --line: #242e3b;
+  --line-soft: #1b2430;
+  --text: #e9eef5;
+  --muted: #8e9cad;
+  --subtle: #5c6d81;
+  --accent: #a4c2ff;
+  --accent-solid: #497beb;
+  --buy: #43c9a0;
+  --sell: #ed7c85;
+  --warning: #d7b373;
+  --radius: 7px;
+}

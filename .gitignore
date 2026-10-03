@@ -1,0 +1,33 @@
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Dependencies, build products, and local tools
+node_modules/
+.next/
+dist/
+coverage/
+*.tsbuildinfo
+*.exe
+*.test
+backend/api
+.tools/
+.local/
+.vercel/
+tmp/
+
+# Logs and browser test output
+*.log
+test-results/
+playwright-report/
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
