@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Sora } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { getSiteOrigin, isPublicIndexingEnabled } from "@/lib/seo";
 import { marketingThemeBootstrap } from "@/components/marketing/marketing-theme-config";
 import { MarketingThemeSync } from "@/components/marketing/marketing-theme";
 import "./globals.css";
-const sora = Sora({ subsets: [latin], variable: --font-sora, display: swap });
+const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
 export const metadata: Metadata = {
   title: "Azuriya | Free brokerage & prop firm solutions for influencers",
   description:
