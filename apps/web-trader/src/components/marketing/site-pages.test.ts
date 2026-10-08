@@ -11,6 +11,7 @@ const expectedPaths = [
   "/admin-portal",
   "/liquidity",
   "/trading-platforms",
+  "/integrations",
   "/funding",
   "/risk-management",
   "/pricing",

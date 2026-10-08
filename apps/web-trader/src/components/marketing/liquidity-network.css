@@ -408,7 +408,7 @@
     font-size: 12px;
   }
   .ln-account-node > span > span,
-  .ln-provider-node > span > span {
+  .ln-provider-node > span:last-child > span {
     font-size: 10px;
   }
   .ln-routing-connector > span {
@@ -479,7 +479,7 @@
     font-size: 11px;
   }
   .ln-account-node > span > span,
-  .ln-provider-node > span > span {
+  .ln-provider-node > span:last-child > span {
     display: none;
   }
   .ln-routing-providers .ln-routing-label {

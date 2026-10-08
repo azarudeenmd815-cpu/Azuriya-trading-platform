@@ -175,8 +175,20 @@ export const legalPages: SitePage[] = [
         ],
       },
       {
+        id: "launch-offer",
+        title: "5. Standard package & launch-offer terms",
+        paragraphs: [
+          "The standard Azuriya package is offered with a $0 fixed monthly subscription and a 35% share of eligible business revenue. The written service agreement defines the included modules, configuration, reporting and settlement schedule before activation.",
+          "The agreement must define eligible revenue, its currency and reporting period, treatment of refunds, taxes and adjustments, and the settlement process. Trader deposits and account balances are not themselves business revenue. The website's $10,000 example divides eligible revenue into $3,500 for Azuriya and $6,500 for the business before other agreed costs; it does not guarantee revenue.",
+          "Third-party trading-platform licences, liquidity and payment-provider charges are separate from the $0 Azuriya subscription. Custom development, additional services and changes outside the standard package require an agreed scope.",
+          "The release is limited to 100 launch slots. The published allocation is 97 of 100, leaving 3 slots. Eligibility, a signed service agreement and deployment readiness are required. Sending an enquiry does not reserve a slot, and the allocation is updated when the operator confirms a change.",
+          "Service availability, operating permissions, support, termination, data export and ongoing responsibilities are defined in the final service agreement. The current website and terminal remain a simulated or illustrative preview until a configured deployment is activated.",
+        ],
+        links: [{ label: "Pricing & offer scope", href: "/pricing" }],
+      },
+      {
         id: "content-and-brands",
-        title: "5. Content & third-party brands",
+        title: "6. Content & third-party brands",
         paragraphs: [
           "Trading-platform and provider marks identify the products and reference material shown. Their inclusion does not establish endorsement, a partnership or an active connection. Rights in those marks remain with their respective owners.",
           "Community discussions and chart examples are illustrative. A production community must define member content permissions and moderation responsibilities before enabling real publishing.",
@@ -184,7 +196,7 @@ export const legalPages: SitePage[] = [
       },
       {
         id: "availability-and-legal-review",
-        title: "6. Availability, disputes & final review",
+        title: "7. Availability, disputes & final review",
         paragraphs: [
           "Demo functions may change as the product develops. Connectivity indicators describe the displayed system state; they do not promise uninterrupted access or execution. Confirm important actions against an authoritative account record in a live environment.",
           "The final agreement must identify the parties, service commitments, applicable law and proportionate dispute and liability provisions. This framework does not select a court or arbitration process, waive mandatory customer rights or set a contractual liability cap.",
@@ -235,6 +247,8 @@ export const legalPages: SitePage[] = [
         paragraphs: [
           "The public community mock holds message drafts, replies, role edits and event selections in page memory. It does not publish them to a messaging backend or upload example attachments. Voice controls do not request microphone, camera or screen capture access.",
           "The contact inquiry builder holds the name, email, project topic and message you enter in page memory. Preparing a draft does not deliver it. If you choose Copy inquiry, the text is copied to your device’s clipboard. Reloading the page clears these in-memory drafts.",
+          "The language suggestion uses a country code supplied with the request by the hosting platform when available, with the browser language as a fallback. The application uses the country only to suggest a language and does not request precise device location. A language is saved on this device only after you choose to save it.",
+          "The decorative globe loads an external renderer from tkartik.com when it is visible and motion is enabled. That host receives normal connection information such as your IP address. Azuriya does not pass account, trading or inquiry data to the globe. A local graphic is used when motion is reduced or the renderer is unavailable.",
         ],
         bullets: [
           "Example member identities, chart values and account rows are demonstration content.",
@@ -262,7 +276,7 @@ export const legalPages: SitePage[] = [
         id: "retention-and-protection",
         title: "5. Retention & protection",
         paragraphs: [
-          "Authentication sessions expire after 12 hours in the current backend and are revoked on sign-out. Browser workspace and remembered privacy preferences remain until cleared. This is separate from the retention of account and operational records on the server.",
+          "Authentication sessions expire after 12 hours in the current backend and are revoked on sign-out. Browser language and workspace preferences remain until cleared. The consent cookie lasts up to one year, while its local preference record remains until cleared. This is separate from the retention of account and operational records on the server.",
           "Server retention periods are not finalised. Production review must set schedules by data category, including deletion, backup handling and any required audit retention. Append-only trading records preserve transaction history; a deletion request must be assessed against applicable duties rather than silently altering that history.",
         ],
         bullets: [
@@ -289,7 +303,7 @@ export const legalPages: SitePage[] = [
     navLabel: "Cookies & storage",
     eyebrow: "LEGAL / DEVICE STORAGE",
     description:
-      "A concrete inventory of the session cookie, workspace preference and optional remembered privacy choice used in the current implementation.",
+      "A concrete inventory of the sign-in session, language and cookie preferences, and workspace storage used in the current implementation.",
     kind: "legal",
     highlights: [
       {
@@ -298,7 +312,7 @@ export const legalPages: SitePage[] = [
       },
       {
         title: "Device preferences",
-        text: "Workspace selection and an explicitly remembered privacy choice use local storage.",
+        text: "Language, cookie choice and workspace selection use browser storage.",
       },
       {
         title: "No optional analytics",
@@ -332,10 +346,11 @@ export const legalPages: SitePage[] = [
       },
       {
         id: "privacy-preference",
-        title: "4. Your privacy preference",
+        title: "4. Language and cookie preferences",
         paragraphs: [
-          "Privacy preferences in the footer explains essential access and shows that optional analytics is not in use. If you select Remember privacy choice on this device and save, the site stores azuriya:privacy-preferences with optionalAnalytics set to false and rememberPreference set to true.",
-          "This entry has no automatic expiry. Saving without the remember option removes this preference entry only. It does not clear the session cookie, workspace preference or unrelated browser data. The preference control does not enable an analytics service.",
+          "The first-visit language and cookie dialog stores the selected language in local storage as azuriya:language. It stores the cookie choice in local storage as azuriya:site-consent and in the first-party azuriya_site_consent cookie for up to one year. The consent cookie is SameSite=Lax and does not contain account or trading data.",
+          "Essential storage is always enabled. You can allow optional analytics cookies or choose essential only. Optional analytics and advertising scripts are not currently loaded by this preview, so accepting the optional category records your choice but does not activate a tracker. The footer lets you reopen these settings.",
+          "If the consent dialog is dismissed without saving, a session-only browser entry prevents it from reopening during that browser session. It does not set consent or enable optional storage.",
         ],
       },
       {

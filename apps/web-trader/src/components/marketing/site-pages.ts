@@ -3,6 +3,7 @@ import { resourcePages } from "./site-resource-data";
 import { legalPages } from "./site-legal-data";
 import { articlePages, insightsPage } from "./site-articles";
 import type { SitePage } from "./site-types";
+import { ecosystemPage } from "./ecosystem-page-data";
 
 const directoryPage: SitePage = {
   path: "/sitemap",
@@ -39,6 +40,7 @@ const directoryPage: SitePage = {
 };
 
 export const sitePages: SitePage[] = [
+  ecosystemPage,
   ...productPages,
   ...resourcePages,
   ...legalPages,

@@ -1,0 +1,734 @@
+.az-marketing .ec-directory,
+.az-marketing .ec-preview,
+.az-marketing .ec-automation {
+  color: var(--az-text);
+}
+.az-marketing .ec-directory {
+  padding-block: 72px 40px;
+}
+.az-marketing .ec-hero {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  align-items: end;
+  gap: 64px;
+  margin-bottom: 48px;
+}
+.az-marketing .ec-hero-copy h1 {
+  font-size: clamp(38px, 4.5vw, 60px);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.12;
+  margin: 22px 0;
+}
+.az-marketing .ec-hero-copy h1 span {
+  color: var(--az-muted);
+}
+.az-marketing .ec-hero-copy p {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--az-muted);
+  max-width: 620px;
+}
+.az-marketing .ec-hero-count {
+  padding: 24px;
+  border-left: 1px solid var(--az-line);
+}
+.az-marketing .ec-hero-count strong {
+  display: block;
+  font-size: 88px;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  font-weight: 500;
+  color: var(--az-blue);
+}
+.az-marketing .ec-hero-count > span {
+  display: block;
+  font-size: 17px;
+  margin-top: 14px;
+}
+.az-marketing .ec-hero-count > small {
+  display: block;
+  font-size: 11px;
+  color: var(--az-muted);
+  margin-top: 10px;
+}
+.az-marketing .ec-toolbar {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.az-marketing .ec-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 58px;
+  flex: 1;
+  min-width: 0;
+  border: 1px solid var(--az-line);
+  border-radius: 14px;
+  padding: 0 18px;
+  background: var(--az-surface);
+  color: var(--az-muted);
+}
+.az-marketing .ec-search:focus-within {
+  outline: 2px solid var(--az-blue);
+  outline-offset: 3px;
+}
+.az-marketing .ec-search > svg {
+  flex: none;
+}
+.az-marketing .ec-search input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  height: 56px;
+  border: 0;
+  background: transparent;
+  font-size: 15px;
+  color: var(--az-text);
+  box-shadow: none;
+  outline: none;
+}
+.az-marketing .ec-search input:focus-visible {
+  outline: none;
+}
+.az-marketing .ec-search button {
+  display: grid;
+  place-items: center;
+  min-width: 36px;
+  min-height: 44px;
+  padding: 0;
+  color: var(--az-muted);
+}
+.az-marketing .ec-scope {
+  color: var(--az-muted);
+  font-size: 12px;
+  line-height: 1.75;
+  margin: 20px 0 40px;
+  max-width: 850px;
+}
+.az-marketing .ec-directory-layout {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 1fr);
+  gap: 40px;
+  align-items: start;
+}
+.az-marketing .ec-filters {
+  position: sticky;
+  top: 104px;
+  display: grid;
+  gap: 5px;
+  max-height: calc(100dvh - 124px);
+  overflow-y: auto;
+  padding: 4px;
+}
+.az-marketing .ec-filters button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 46px;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  color: var(--az-muted);
+  font-size: 12px;
+  text-align: left;
+  line-height: 1.45;
+}
+.az-marketing .ec-filters button > span:last-child {
+  font-size: 10px;
+  min-width: 24px;
+  text-align: right;
+  color: var(--az-muted);
+}
+.az-marketing .ec-filters button:hover {
+  background: var(--az-surface);
+  color: var(--az-text);
+}
+.az-marketing .ec-filters button[aria-pressed="true"] {
+  color: var(--az-text);
+  border-color: var(--az-line);
+  background: var(--az-surface);
+}
+.az-marketing .ec-filters button[aria-pressed="true"] > span:last-child {
+  color: var(--az-blue);
+}
+.az-marketing .ec-result-count {
+  font-size: 12px;
+  color: var(--az-muted);
+  margin: 8px 0 32px;
+}
+.az-marketing .ec-category {
+  margin-bottom: 48px;
+  scroll-margin-top: 110px;
+}
+.az-marketing .ec-category-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.az-marketing .ec-category-heading h2 {
+  font-size: 24px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+  margin: 0;
+}
+.az-marketing .ec-category-heading p {
+  font-size: 12px;
+  color: var(--az-muted);
+  line-height: 1.6;
+  margin: 8px 0 0;
+}
+.az-marketing .ec-category-heading > span {
+  font-size: 11px;
+  color: var(--az-blue);
+  border: 1px solid var(--az-line);
+  border-radius: 999px;
+  padding: 5px 10px;
+  flex: none;
+}
+.az-marketing .ec-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+.az-marketing .ec-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  min-height: 132px;
+  padding: 20px;
+  border: 1px solid var(--az-line);
+  border-radius: 16px;
+  background: var(--az-surface);
+  color: var(--az-text) !important;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+.az-marketing .ec-card > div {
+  flex: 1;
+  min-width: 0;
+}
+.az-marketing .ec-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.az-marketing .ec-card > div > span {
+  display: block;
+  font-size: 10px;
+  color: var(--az-muted);
+  line-height: 1.5;
+  margin-top: 8px;
+}
+.az-marketing .ec-card > svg {
+  flex: none;
+  color: var(--az-muted);
+  align-self: flex-start;
+  width: 14px;
+}
+.az-marketing .ec-card:hover {
+  border-color: var(--az-blue);
+  background: var(--az-raised);
+}
+.az-marketing .ec-card:hover > svg {
+  color: var(--az-blue);
+}
+.az-marketing .ec-logo {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  flex: 0 0 64px;
+  background: #ffffff;
+  border: 1px solid #0000000a;
+  border-radius: 14px;
+  overflow: hidden;
+  padding: 10px;
+}
+.az-marketing .ec-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.az-marketing .ec-logo-dark {
+  background: #111826;
+  border-color: #ffffff14;
+}
+.az-marketing .ec-logo-text {
+  background: var(--az-raised);
+  border-color: var(--az-line);
+  color: var(--az-blue);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+.az-marketing .ec-show-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--az-blue);
+}
+.az-marketing .ec-empty {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 14px;
+}
+.az-marketing .ec-empty > svg {
+  color: var(--az-blue);
+}
+.az-marketing .ec-empty h2 {
+  font-size: 28px;
+}
+.az-marketing .ec-empty p {
+  color: var(--az-muted);
+  font-size: 14px;
+}
+.az-marketing .ec-empty :is(button, a) {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--az-blue);
+  font-size: 13px;
+}
+.az-marketing .ec-directory-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 40px;
+  border: 1px solid var(--az-line);
+  border-radius: 20px;
+  background: var(--az-surface);
+  margin: 32px 0;
+}
+.az-marketing .ec-directory-footer h2 {
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+  margin: 0 0 12px;
+}
+.az-marketing .ec-directory-footer p {
+  font-size: 14px;
+  color: var(--az-muted);
+  line-height: 1.7;
+  max-width: 620px;
+}
+.az-marketing .ec-source-note {
+  color: var(--az-muted);
+  font-size: 11px;
+  line-height: 1.8;
+  max-width: 960px;
+}
+.az-marketing .ec-source-note a {
+  color: var(--az-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.az-marketing .ec-preview,
+.az-marketing .ec-automation {
+  padding-block: 80px;
+  border-top: 1px solid var(--az-line);
+}
+.az-marketing .ec-preview-heading {
+  display: grid;
+  grid-template-columns: 1fr 240px;
+  gap: 48px;
+  align-items: end;
+  margin-bottom: 32px;
+}
+.az-marketing .ec-preview-heading h2,
+.az-marketing .ec-automation-heading h2 {
+  font-size: clamp(32px, 3.4vw, 46px);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  margin: 20px 0 18px;
+}
+.az-marketing .ec-preview-heading p,
+.az-marketing .ec-automation-heading p {
+  font-size: 15px;
+  color: var(--az-muted);
+  line-height: 1.75;
+  max-width: 690px;
+}
+.az-marketing .ec-preview-count {
+  text-align: right;
+}
+.az-marketing .ec-preview-count strong {
+  display: block;
+  color: var(--az-blue);
+  font-size: 64px;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+}
+.az-marketing .ec-preview-count span {
+  display: block;
+  color: var(--az-muted);
+  font-size: 12px;
+  line-height: 1.5;
+  margin-top: 12px;
+}
+.az-marketing .ec-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.az-marketing .ec-preview-category {
+  display: block;
+  padding: 24px;
+  border: 1px solid var(--az-line);
+  border-radius: 18px;
+  background: var(--az-surface);
+  color: var(--az-text) !important;
+  transition: border-color 0.2s;
+}
+.az-marketing .ec-preview-category:hover {
+  border-color: var(--az-blue);
+}
+.az-marketing .ec-preview-category-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.az-marketing .ec-preview-category-top > span {
+  font-size: 11px;
+  color: var(--az-muted);
+}
+.az-marketing .ec-preview-category-top > svg {
+  color: var(--az-blue);
+}
+.az-marketing .ec-preview-logos {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.az-marketing .ec-preview-logos .ec-logo {
+  width: 48px;
+  height: 48px;
+  flex-basis: 48px;
+  border-radius: 12px;
+  padding: 8px;
+}
+.az-marketing .ec-preview-category h3 {
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+  margin: 0 0 10px;
+}
+.az-marketing .ec-preview-category p {
+  font-size: 12px;
+  color: var(--az-muted);
+  line-height: 1.6;
+  margin: 0;
+}
+.az-marketing .ec-preview-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+.az-marketing .ec-preview-links a {
+  padding: 10px 14px;
+  min-height: 44px;
+  border: 1px solid var(--az-line);
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--az-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.az-marketing .ec-preview-links a > span {
+  color: var(--az-blue);
+}
+.az-marketing .ec-preview-links a:hover {
+  color: var(--az-text);
+  border-color: var(--az-blue);
+}
+.az-marketing .ec-preview-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 32px;
+  margin-top: 32px;
+}
+.az-marketing .ec-preview-bottom p {
+  color: var(--az-muted);
+  font-size: 12px;
+  line-height: 1.8;
+  max-width: 650px;
+}
+.az-marketing .ec-automation-heading {
+  max-width: 800px;
+  margin-bottom: 32px;
+}
+.az-marketing .ec-automation-tools {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 24px;
+}
+.az-marketing .ec-automation-tools a {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid var(--az-line);
+  border-radius: 14px;
+  color: var(--az-text);
+  background: var(--az-surface);
+}
+.az-marketing .ec-automation-tools .ec-logo {
+  width: 36px;
+  height: 36px;
+  flex-basis: 36px;
+  padding: 6px;
+  border-radius: 9px;
+  font-size: 13px;
+}
+.az-marketing .ec-automation-tools a > span:last-child {
+  font-size: 12px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+.az-marketing .ec-automation-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-top: 24px;
+}
+.az-marketing .ec-automation-footer p {
+  font-size: 12px;
+  color: var(--az-muted);
+  line-height: 1.75;
+  max-width: 700px;
+}
+.az-marketing .ec-automation-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--az-blue);
+  font-size: 13px;
+  white-space: nowrap;
+}
+@media (max-width: 1199px) {
+  .az-marketing .ec-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .az-marketing .ec-directory-layout {
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: 28px;
+  }
+  .az-marketing .ec-automation-tools {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+@media (max-width: 900px) {
+  .az-marketing .ec-hero {
+    grid-template-columns: 1fr 200px;
+    gap: 24px;
+  }
+  .az-marketing .ec-hero-count strong {
+    font-size: 68px;
+  }
+  .az-marketing .ec-directory-layout {
+    grid-template-columns: 1fr;
+  }
+  .az-marketing .ec-filters {
+    position: static;
+    display: flex;
+    overflow-x: auto;
+    max-height: none;
+    padding: 4px 0 12px;
+    margin-bottom: 4px;
+  }
+  .az-marketing .ec-filters button {
+    width: auto;
+    flex: none;
+    white-space: nowrap;
+  }
+  .az-marketing .ec-card-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .az-marketing .ec-card {
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    gap: 16px;
+    padding: 20px;
+  }
+  .az-marketing .ec-card > svg {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+  }
+  .az-marketing .ec-card h3 {
+    font-size: 16px;
+  }
+  .az-marketing .ec-preview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .az-marketing .ec-preview-heading {
+    grid-template-columns: 1fr 170px;
+    gap: 24px;
+  }
+}
+@media (max-width: 767px) {
+  .az-marketing .ec-directory {
+    padding-top: 48px;
+  }
+  .az-marketing .ec-hero {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    margin-bottom: 32px;
+  }
+  .az-marketing .ec-hero-count {
+    border-left: 0;
+    border-top: 1px solid var(--az-line);
+    padding: 24px 0 0;
+  }
+  .az-marketing .ec-hero-count strong {
+    font-size: 64px;
+  }
+  .az-marketing .ec-hero-count > span {
+    margin-top: 10px;
+  }
+  .az-marketing .ec-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .az-marketing .ec-toolbar > .az-button {
+    align-self: flex-start;
+  }
+  .az-marketing .ec-scope {
+    margin-bottom: 24px;
+  }
+  .az-marketing .ec-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .az-marketing .ec-category-heading h2 {
+    font-size: 22px;
+  }
+  .az-marketing .ec-directory-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 28px;
+    gap: 24px;
+  }
+  .az-marketing .ec-directory-footer h2 {
+    font-size: 28px;
+  }
+  .az-marketing .ec-preview,
+  .az-marketing .ec-automation {
+    padding-block: 64px;
+  }
+  .az-marketing .ec-preview-heading {
+    grid-template-columns: 1fr;
+  }
+  .az-marketing .ec-preview-count {
+    text-align: left;
+    padding-top: 20px;
+    border-top: 1px solid var(--az-line);
+  }
+  .az-marketing .ec-preview-count strong {
+    font-size: 56px;
+  }
+  .az-marketing .ec-preview-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .az-marketing .ec-automation-tools {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .az-marketing .ec-automation-tools a {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .az-marketing .ec-automation-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+@media (max-width: 479px) {
+  .az-marketing .ec-card-grid {
+    grid-template-columns: 1fr;
+  }
+  .az-marketing .ec-card {
+    flex-direction: row;
+    align-items: center;
+    padding: 18px;
+    min-height: 116px;
+    gap: 14px;
+  }
+  .az-marketing .ec-card > svg {
+    position: static;
+    align-self: flex-start;
+    margin-top: 4px;
+  }
+  .az-marketing .ec-logo {
+    width: 64px;
+    height: 64px;
+    flex-basis: 64px;
+  }
+  .az-marketing .ec-search {
+    padding-inline: 14px;
+  }
+  .az-marketing .ec-search input {
+    font-size: 16px;
+  }
+  .az-marketing .ec-preview-grid {
+    grid-template-columns: 1fr;
+  }
+  .az-marketing .ec-preview-category {
+    padding: 24px;
+  }
+  .az-marketing .ec-preview-category-top {
+    margin-bottom: 22px;
+  }
+  .az-marketing .ec-automation-tools {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .az-marketing .ec-automation-tools a {
+    flex-direction: row;
+    align-items: center;
+    padding: 12px;
+  }
+  .az-marketing .ec-automation-footer a {
+    white-space: normal;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .az-marketing .ec-card,
+  .az-marketing .ec-preview-category {
+    transition: none;
+  }
+}

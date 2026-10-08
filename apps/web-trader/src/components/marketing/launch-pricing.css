@@ -1,0 +1,633 @@
+.az-marketing .lp-section {
+  padding-block: 88px;
+  border-top: 1px solid var(--az-line);
+  color: var(--az-text);
+}
+.az-marketing .lp-heading {
+  max-width: 740px;
+  margin-bottom: 36px;
+}
+.az-marketing .lp-heading :is(h1, h2) {
+  font-size: clamp(36px, 4.2vw, 56px);
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+  margin: 20px 0;
+  font-weight: 600;
+}
+.az-marketing .lp-heading :is(h1, h2) span {
+  color: var(--az-muted);
+}
+.az-marketing .lp-heading p,
+.az-marketing .lp-model p {
+  color: var(--az-muted);
+  font-size: 16px;
+  line-height: 1.75;
+  max-width: 650px;
+}
+.az-marketing .lp-allocation {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  padding: 22px 24px;
+  border: 1px solid color-mix(in srgb, var(--az-blue) 25%, var(--az-line));
+  border-radius: 16px;
+  background: color-mix(in srgb, #3869fc 5%, var(--az-bg));
+  margin-bottom: 32px;
+}
+.az-marketing .lp-allocation-copy {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+.az-marketing .lp-live-dot {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: #3869fc;
+  box-shadow: 0 0 0 5px #3869fc18;
+}
+.az-marketing .lp-allocation-copy strong,
+.az-marketing .lp-allocation-copy div > span {
+  display: block;
+}
+.az-marketing .lp-allocation-copy strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+.az-marketing .lp-allocation-copy div > span {
+  color: var(--az-muted);
+  font-size: 13px;
+  margin-top: 5px;
+}
+.az-marketing .lp-allocation-meter {
+  width: 190px;
+  flex: none;
+}
+.az-marketing .lp-allocation-meter > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.az-marketing .lp-allocation-meter strong {
+  font-size: 23px;
+  letter-spacing: -0.03em;
+}
+.az-marketing .lp-allocation-meter strong span,
+.az-marketing .lp-allocation-meter small {
+  color: var(--az-muted);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.az-marketing .lp-allocation-meter progress {
+  display: block;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  margin-top: 9px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 4px;
+  background: var(--az-raised);
+}
+.az-marketing .lp-allocation-meter progress::-webkit-progress-bar {
+  background: var(--az-raised);
+}
+.az-marketing .lp-allocation-meter progress::-webkit-progress-value {
+  background: #3869fc;
+  border-radius: 4px;
+}
+.az-marketing .lp-allocation-meter progress::-moz-progress-bar {
+  background: #3869fc;
+}
+.az-marketing .lp-allocation > a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--az-blue);
+  font-size: 13px;
+}
+.az-marketing .lp-plans {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  align-items: stretch;
+}
+.az-marketing .lp-plan {
+  padding: 28px;
+  border: 1px solid var(--az-line);
+  border-radius: 20px;
+  background: var(--az-surface);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.az-marketing .lp-plan-featured {
+  border-color: #3869fc;
+  box-shadow: inset 0 3px 0 #3869fc;
+}
+.az-marketing .lp-plan-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--az-blue);
+  font-size: 9px;
+  letter-spacing: 0.09em;
+  font-weight: 600;
+  min-height: 40px;
+}
+.az-marketing .lp-plan-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--az-line);
+  border-radius: 12px;
+  background: var(--az-raised);
+  flex: none;
+}
+.az-marketing .lp-plan-intro :is(h2, h3) {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin: 20px 0 12px;
+  min-height: 62px;
+}
+.az-marketing .lp-plan-intro > p {
+  font-size: 14px;
+  color: var(--az-muted);
+  line-height: 1.7;
+  min-height: 72px;
+  margin: 0;
+}
+.az-marketing .lp-price-reference {
+  padding: 16px;
+  margin-top: 24px;
+  border: 1px solid var(--az-line);
+  border-radius: 12px;
+  background: var(--az-raised);
+}
+.az-marketing .lp-reference-label {
+  display: block;
+  margin-bottom: 12px;
+  color: var(--az-muted);
+  font-size: 10px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+.az-marketing .lp-price-reference dl {
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.az-marketing .lp-price-reference dl > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.az-marketing .lp-price-reference dt {
+  color: var(--az-muted);
+}
+.az-marketing .lp-price-reference dd {
+  margin: 0;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.az-marketing .lp-price-reference .lp-reference-total {
+  padding-top: 10px;
+  margin-top: 2px;
+  border-top: 1px solid var(--az-line);
+}
+.az-marketing .lp-reference-total dd {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+.az-marketing .lp-reference-total s {
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--az-muted);
+}
+.az-marketing .lp-price {
+  margin: 26px 0 20px;
+}
+.az-marketing .lp-price-label {
+  display: block;
+  color: var(--az-muted);
+  font-size: 9px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: 0.07em;
+  margin-bottom: 12px;
+}
+.az-marketing .lp-price > div {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.az-marketing .lp-price strong {
+  font-size: 64px;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  font-weight: 600;
+}
+.az-marketing .lp-price > div > span {
+  font-size: 14px;
+  color: var(--az-muted);
+}
+.az-marketing .lp-share {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 0;
+  border-block: 1px solid var(--az-line);
+  font-size: 13px;
+  color: var(--az-muted);
+}
+.az-marketing .lp-share strong {
+  font-size: 20px;
+  color: var(--az-blue);
+  letter-spacing: -0.02em;
+}
+.az-marketing .lp-feature-groups {
+  display: grid;
+  align-content: start;
+  gap: 28px;
+  margin-block: 28px;
+  flex: 1;
+}
+.az-marketing .lp-feature-group :is(h3, h4) {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.az-marketing .lp-feature-group dl {
+  display: grid;
+  gap: 0;
+  margin: 0;
+}
+.az-marketing .lp-feature-group dl > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 12px;
+  padding-block: 9px;
+  border-bottom: 1px solid color-mix(in srgb, var(--az-line) 55%, transparent);
+  font-size: 12px;
+  line-height: 1.55;
+  min-height: 40px;
+}
+.az-marketing .lp-feature-group dt {
+  color: var(--az-muted);
+}
+.az-marketing .lp-feature-group dd {
+  margin: 0;
+  text-align: right;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.az-marketing .lp-feature-group .lp-included {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 5px;
+  color: var(--az-blue);
+}
+.az-marketing .lp-feature-group .lp-included svg {
+  color: var(--az-blue);
+  flex: none;
+}
+.az-marketing .lp-plan .lp-package-scope {
+  color: var(--az-muted);
+  font-size: 10px;
+  line-height: 1.7;
+  margin: 0 0 20px;
+}
+.az-marketing .lp-plan > .az-button {
+  width: 100%;
+  min-height: 48px;
+  gap: 10px;
+  padding-inline: 14px;
+  font-size: 13px;
+}
+.az-marketing .lp-plan > small {
+  font-size: 10px;
+  color: var(--az-muted);
+  line-height: 1.6;
+  margin-top: 14px;
+  text-align: center;
+}
+.az-marketing .lp-plan > small a {
+  color: var(--az-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.az-marketing .lp-reference-note {
+  margin: 24px 0 0;
+  max-width: 1040px;
+  color: var(--az-muted);
+  font-size: 11px;
+  line-height: 1.8;
+}
+.az-marketing .lp-reference-note a {
+  color: var(--az-blue);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.az-marketing .lp-model {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+  margin-top: 64px;
+}
+.az-marketing .lp-kicker {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--az-blue);
+}
+.az-marketing .lp-model :is(h2, h3) {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  margin: 14px 0 16px;
+}
+.az-marketing .lp-model p {
+  font-size: 14px;
+}
+.az-marketing .lp-split-example {
+  border: 1px solid var(--az-line);
+  border-radius: 18px;
+  background: var(--az-surface);
+  padding: 28px;
+}
+.az-marketing .lp-example-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+.az-marketing .lp-example-total span {
+  font-size: 12px;
+  color: var(--az-muted);
+}
+.az-marketing .lp-example-total strong {
+  font-size: 24px;
+  letter-spacing: -0.04em;
+}
+.az-marketing .lp-split-bar {
+  display: grid;
+  grid-template-columns: 65fr 35fr;
+  gap: 4px;
+  height: 12px;
+  margin: 24px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.az-marketing .lp-split-bar span:first-child {
+  background: var(--az-muted);
+}
+.az-marketing .lp-split-bar span:last-child {
+  background: #3869fc;
+}
+.az-marketing .lp-split-values {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.az-marketing .lp-split-values > div:last-child {
+  text-align: right;
+}
+.az-marketing .lp-split-values span {
+  display: block;
+  font-size: 11px;
+  color: var(--az-muted);
+  margin-bottom: 10px;
+}
+.az-marketing .lp-split-values strong {
+  font-size: 21px;
+  letter-spacing: -0.03em;
+}
+.az-marketing .lp-split-values > div:last-child strong {
+  color: var(--az-blue);
+}
+.az-marketing .lp-split-example > small {
+  display: block;
+  font-size: 10px;
+  color: var(--az-muted);
+  line-height: 1.6;
+  margin-top: 22px;
+}
+.az-marketing .lp-terms {
+  margin-top: 40px;
+  border-block: 1px solid var(--az-line);
+}
+.az-marketing .lp-terms summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 64px;
+  gap: 20px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  list-style: none;
+}
+.az-marketing .lp-terms summary::-webkit-details-marker {
+  display: none;
+}
+.az-marketing .lp-terms summary > span {
+  font-size: 24px;
+  color: var(--az-blue);
+  transition: transform 0.2s;
+}
+.az-marketing .lp-terms[open] summary > span {
+  transform: rotate(45deg);
+}
+.az-marketing .lp-terms > div {
+  padding: 0 0 24px;
+  max-width: 900px;
+}
+.az-marketing .lp-terms ul {
+  padding-left: 20px;
+  margin: 0 0 20px;
+  display: grid;
+  gap: 12px;
+  font-size: 13px;
+  color: var(--az-muted);
+  line-height: 1.75;
+}
+.az-marketing .lp-terms a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--az-blue);
+  font-size: 13px;
+  min-height: 44px;
+}
+.az-marketing .lp-allocation-compact {
+  margin: 0;
+  padding: 18px 20px;
+  flex-wrap: wrap;
+}
+.az-marketing .lp-allocation-compact .lp-allocation-meter {
+  width: 160px;
+}
+@media (max-width: 1099px) {
+  .az-marketing .lp-plans {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .az-marketing .lp-plan {
+    padding: 32px;
+  }
+  .az-marketing .lp-plan-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .az-marketing .lp-plan-intro :is(h2, h3) {
+    min-height: 0;
+    font-size: 30px;
+  }
+  .az-marketing .lp-plan-intro > p {
+    min-height: 0;
+    max-width: 340px;
+  }
+  .az-marketing .lp-price-reference {
+    margin-top: 0;
+  }
+  .az-marketing .lp-feature-groups {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 32px 40px;
+    margin-top: 32px;
+  }
+  .az-marketing .lp-feature-group:last-child {
+    grid-column: 1 / -1;
+  }
+  .az-marketing .lp-feature-group:last-child dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 40px;
+  }
+  .az-marketing .lp-feature-group dl > div {
+    font-size: 12px;
+    min-height: 40px;
+  }
+  .az-marketing .lp-feature-group dd {
+    font-size: 11px;
+  }
+  .az-marketing .lp-plan > .az-button {
+    font-size: 13px;
+  }
+  .az-marketing .lp-model {
+    gap: 32px;
+  }
+  .az-marketing .lp-allocation {
+    gap: 20px;
+  }
+  .az-marketing .lp-allocation > a {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .az-marketing .lp-section {
+    padding-block: 64px;
+  }
+  .az-marketing .lp-plans {
+    gap: 20px;
+  }
+  .az-marketing .lp-plan {
+    padding: 28px;
+  }
+  .az-marketing .lp-model {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 48px;
+  }
+  .az-marketing .lp-heading p {
+    font-size: 15px;
+  }
+  .az-marketing .lp-allocation {
+    flex-wrap: wrap;
+  }
+  .az-marketing .lp-allocation-meter {
+    width: 100%;
+  }
+  .az-marketing .lp-allocation-copy {
+    flex-basis: 100%;
+  }
+  .az-marketing .lp-allocation-compact .lp-allocation-meter {
+    width: 100%;
+  }
+}
+@media (max-width: 639px) {
+  .az-marketing .lp-plan-head {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .az-marketing .lp-plan-intro :is(h2, h3) {
+    font-size: 27px;
+  }
+  .az-marketing .lp-feature-groups {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .az-marketing .lp-feature-group:last-child dl {
+    grid-template-columns: 1fr;
+  }
+  .az-marketing .lp-feature-group:last-child {
+    grid-column: auto;
+  }
+  .az-marketing .lp-reference-note a {
+    white-space: normal;
+  }
+}
+@media (max-width: 479px) {
+  .az-marketing .lp-plan {
+    padding: 22px;
+  }
+  .az-marketing .lp-feature-group dl > div {
+    font-size: 12px;
+    gap: 10px;
+  }
+  .az-marketing .lp-feature-group dd {
+    font-size: 11px;
+  }
+  .az-marketing .lp-split-example {
+    padding: 22px;
+  }
+  .az-marketing .lp-example-total {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .az-marketing .lp-split-values strong {
+    font-size: 19px;
+  }
+  .az-marketing .lp-allocation {
+    padding: 20px;
+  }
+  .az-marketing .lp-model :is(h2, h3) {
+    font-size: 27px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .az-marketing .lp-terms summary > span {
+    transition: none;
+  }
+}

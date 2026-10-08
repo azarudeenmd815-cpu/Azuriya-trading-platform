@@ -200,8 +200,8 @@ export function Mt5DepositsPage() {
                   <Check size={16} /> Commission and approval settings
                 </li>
               </ul>
-              <Link href="/terminal?mode=register" className="az-button">
-                Explore your portal <ArrowUpRight size={17} />
+              <Link href="/platform" className="az-button">
+                Explore the platform <ArrowUpRight size={17} />
               </Link>
             </div>
 
@@ -402,8 +402,8 @@ export function Mt5DepositsPage() {
               Bring the complete brokerage experience into one Azuriya portal.
             </p>
           </div>
-          <Link href="/terminal?mode=register" className="az-button">
-            Get started <ArrowUpRight size={17} />
+          <Link href="/contact" className="az-button">
+            Plan your workspace <ArrowUpRight size={17} />
           </Link>
         </section>
       </main>

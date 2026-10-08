@@ -5,15 +5,18 @@ import Link from "next/link";
 import { ArrowUpRight, List, X } from "@phosphor-icons/react";
 import { MarketingBrand } from "./brand";
 import { MarketingThemeSwitch } from "./marketing-theme";
+import { SiteLanguageButton } from "./site-preferences";
+import { localizedUi } from "@/lib/site-language";
+import { useSiteLanguage } from "@/lib/site-language-client";
 import "./navigation.css";
 
 const links = [
-  ["Solutions", "#solutions"],
-  ["A-book liquidity", "#liquidity"],
-  ["Trading platforms", "#trading-platforms"],
-  ["Copy trading", "#copy-trading"],
-  ["MT5 deposits", "/mt5-deposits"],
-  ["Resources", "/resources"],
+  ["Products", "#products"],
+  ["Platform", "/platform"],
+  ["Integrations", "/integrations"],
+  ["Pricing", "/pricing"],
+  ["Developers", "/resources"],
+  ["Company", "/about"],
 ];
 
 export function MarketingNavigation({
@@ -26,26 +29,35 @@ export function MarketingNavigation({
   currentPath?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const navigationLinks = pageLinks
-    ? [
-        ["Solutions", "/solutions"],
-        ["A-book liquidity", "/liquidity"],
-        ["Trading platforms", "/trading-platforms"],
-        ["Copy trading", "/copy-trading"],
-        ["Resources", "/resources"],
-      ]
-    : links.map(([label, href]) => [
-        label,
-        homeLinks && href.startsWith("#") ? `/${href}` : href,
-      ]);
+  const copy = localizedUi[useSiteLanguage()];
+  const navigationLinks = links.map(([label, href]) => [
+    label,
+    (homeLinks || pageLinks) && href.startsWith("#") ? `/${href}` : href,
+  ]);
   return (
     <header className="az-header">
       <div className="az-container az-header-inner">
         <Link href="/" aria-label="Azuriya home">
           <MarketingBrand />
         </Link>
-        <nav className="az-desktop-nav" aria-label="Main navigation">
-          {navigationLinks.map(([label, href]) => (
+        <nav className="az-desktop-nav" aria-label={copy.mainNavigation}>
+          <details className="az-products-menu">
+            <summary>Products</summary>
+            <div>
+              <Link href="/brokerage">
+                Azuriya Brokerage
+                <small>Launch and operate your brokerage.</small>
+              </Link>
+              <Link href="/prop-firm">
+                Azuriya Prop<small>Build and manage a prop firm.</small>
+              </Link>
+              <Link href="/#azuriya-core">
+                Azuriya API
+                <small>Discuss connecting your infrastructure.</small>
+              </Link>
+            </div>
+          </details>
+          {navigationLinks.slice(1).map(([label, href]) => (
             <Link
               key={href}
               href={href}
@@ -56,19 +68,14 @@ export function MarketingNavigation({
           ))}
         </nav>
         <div className="az-header-actions">
+          <Link className="az-button-small az-launch-nav" href="/contact">
+            Launch Your Business
+          </Link>
+          <SiteLanguageButton />
           <MarketingThemeSwitch />
-          <Link className="az-login" href="/terminal">
-            Log in <ArrowUpRight size={14} />
-          </Link>
-          <Link
-            className="az-button az-button-small"
-            href="/terminal?mode=register"
-          >
-            Get started <ArrowUpRight size={15} />
-          </Link>
           <button
             className="az-menu-toggle"
-            aria-label={open ? "Close navigation" : "Open navigation"}
+            aria-label={open ? copy.closeNavigation : copy.openNavigation}
             aria-expanded={open}
             aria-controls="mobile-navigation"
             onClick={() => setOpen(!open)}
@@ -94,8 +101,8 @@ export function MarketingNavigation({
               <ArrowUpRight size={16} />
             </Link>
           ))}
-          <Link href="/terminal">
-            Log in to your workspace <ArrowUpRight size={16} />
+          <Link href="/contact" onClick={() => setOpen(false)}>
+            Launch Your Business <ArrowUpRight size={16} />
           </Link>
         </nav>
       )}

@@ -79,20 +79,20 @@ export function createTradingViewAdapter(
   const chart: IChartApi = createChart(container, {
     autoSize: true,
     layout: {
-      background: { type: ColorType.Solid, color: "#10151d" },
-      textColor: "#78899e",
+      background: { type: ColorType.Solid, color: "#141414" },
+      textColor: "#b8b8b8",
       fontSize: 11,
       fontFamily: '"Azuriya Gotham Numerals", Arial, sans-serif',
       attributionLogo: true,
     },
-    grid: { vertLines: { color: "#1a2230" }, horzLines: { color: "#1a2230" } },
+    grid: { vertLines: { color: "#242424" }, horzLines: { color: "#242424" } },
     rightPriceScale: {
-      borderColor: "#242e3b",
+      borderColor: "#333333",
       minimumWidth: 76,
       scaleMargins: { top: 0.12, bottom: 0.12 },
     },
     timeScale: {
-      borderColor: "#242e3b",
+      borderColor: "#333333",
       timeVisible: true,
       secondsVisible: interval < 60,
       rightOffset: 12,
@@ -100,17 +100,17 @@ export function createTradingViewAdapter(
     },
     crosshair: {
       mode: CrosshairMode.Normal,
-      vertLine: { color: "#7e91aa", labelBackgroundColor: "#344153" },
-      horzLine: { color: "#7e91aa", labelBackgroundColor: "#344153" },
+      vertLine: { color: "#a3a3a3", labelBackgroundColor: "#333333" },
+      horzLine: { color: "#a3a3a3", labelBackgroundColor: "#333333" },
     },
     handleScroll: true,
     handleScale: true,
   });
   const series: ISeriesApi<"Candlestick"> = chart.addSeries(CandlestickSeries, {
-    upColor: "#43c9a0",
-    downColor: "#ed7c85",
-    wickUpColor: "#43c9a0",
-    wickDownColor: "#ed7c85",
+    upColor: "#36d69d",
+    downColor: "#fd606c",
+    wickUpColor: "#36d69d",
+    wickDownColor: "#fd606c",
     borderVisible: false,
     priceLineVisible: false,
     priceFormat: { type: "price", precision: digits, minMove: 10 ** -digits },
@@ -189,7 +189,7 @@ export function createTradingViewAdapter(
     setQuote(quote, showAsk) {
       const bidOptions = {
         price: Number(quote.bid),
-        color: "#43c9a0",
+        color: "#36d69d",
         title: "BID",
         lineWidth: 1 as const,
         lineStyle: LineStyle.Dotted,
@@ -201,7 +201,7 @@ export function createTradingViewAdapter(
         const options = {
           ...bidOptions,
           price: Number(quote.ask),
-          color: "#ed7c85",
+          color: "#fd606c",
           title: "ASK",
         };
         if (askLine) askLine.applyOptions(options);

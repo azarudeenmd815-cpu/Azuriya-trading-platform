@@ -1,17 +1,17 @@
 .risk-preview {
   margin: 14px 0;
-  border-top: 1px solid var(--border, #253040);
+  border-top: 1px solid var(--line);
   padding-top: 12px;
   font-size: 11px;
 }
 .preview-heading {
   display: flex;
   justify-content: space-between;
-  color: #aebfd2;
+  color: var(--text);
   margin-bottom: 10px;
 }
 .preview-heading small {
-  color: #7b8da4;
+  color: var(--muted);
 }
 .risk-preview dl {
   display: grid;
@@ -24,32 +24,32 @@
   gap: 8px;
 }
 .risk-preview dt {
-  color: #8da0b8;
+  color: var(--muted);
 }
 .risk-preview dd {
   margin: 0;
   font-variant-numeric: tabular-nums;
-  color: #e0ebf7;
+  color: var(--text);
 }
 .risk-preview dd small {
-  color: #8da0b8;
+  color: var(--muted);
 }
 .risk-preview dd.positive {
-  color: #36c3a4;
+  color: var(--buy);
 }
 .risk-preview dd.negative {
-  color: #fa7787;
+  color: var(--sell);
 }
 .protection-summary {
   display: grid;
   gap: 4px;
   padding-top: 10px;
-  color: #8da0b8;
+  color: var(--muted);
   font-variant-numeric: tabular-nums;
 }
 .inline-warning {
   font-size: 11px;
-  color: #e6be76;
+  color: var(--warning);
   margin: 7px 0;
 }
 .sizing-tabs,
@@ -61,18 +61,18 @@
 .sizing-tabs button,
 .input-mode-tabs button {
   flex: 1;
-  background: #0d131c;
-  color: #91a6bf;
-  border: 1px solid #253144;
+  background: var(--surface);
+  color: var(--muted);
+  border: 1px solid var(--line);
   padding: 7px 5px;
   border-radius: 4px;
   font-size: 11px;
 }
 .sizing-tabs button.active,
 .input-mode-tabs button.active {
-  background: #22314a;
-  border-color: #4b668c;
-  color: #eff6ff;
+  background: var(--surface-raised);
+  border-color: var(--line);
+  color: var(--text);
 }
 .ticket-form-v2 .ticket-label {
   margin-top: 10px;
@@ -104,22 +104,22 @@
 .quick-close-presets button {
   flex: 1;
   padding: 8px 3px;
-  background: #141e2b;
-  border: 1px solid #30415a;
-  color: #d2e0ef;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--text);
   border-radius: 4px;
   font-size: 11px;
 }
 .quick-close-presets button.active {
-  background: #294261;
-  border-color: #5c8cbe;
+  background: #3869fc26;
+  border-color: var(--accent-solid);
 }
 .close-preview {
   display: grid;
   gap: 7px;
   padding: 13px;
-  background: #101b29;
-  border: 1px solid #293d56;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 4px;
   margin: 10px 0;
   font-size: 12px;
@@ -155,7 +155,7 @@
   margin: 16px 0;
 }
 .position-detail-grid dt {
-  color: #8297b0;
+  color: var(--muted);
   margin-bottom: 4px;
 }
 .position-detail-grid dd {
@@ -200,16 +200,16 @@
   padding: 10px 0;
 }
 .protection-toolbar small {
-  color: #8a9db5;
+  color: var(--muted);
 }
 .account-activity-filter {
   font-size: 10px;
-  color: #8499b1;
+  color: var(--muted);
 }
 .dialog button:focus-visible,
 .order-ticket button:focus-visible,
 .order-ticket input:focus-visible {
-  outline: 2px solid #80b4fb;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 @media (max-height: 800px) and (min-width: 901px) {

@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from "next/link";
+import { ecosystemCount } from "@/lib/ecosystem-catalog";
 import {
   ArrowUpRight,
   ChatCircleDots,
@@ -10,6 +12,7 @@ import {
 import platformSources from "../../../public/marketing/platforms/sources.json";
 import "./trading-platforms.css";
 import { FlowTracks } from "./flow-tracks";
+import { LogoLoop } from "./logo-loop";
 
 const platformCatalog = platformSources;
 const wideLogos = new Set(["tradovate", "esignal", "cqg"]);
@@ -17,6 +20,41 @@ const darkLogoSurfaces = new Set(["quantower", "tradovate"]);
 const featuredPlatforms = platformCatalog.filter((platform) =>
   ["metatrader-5", "ctrader", "tradelocker"].includes(platform.slug),
 );
+
+function PlatformLogoItem({
+  platform,
+  duplicate = false,
+}: {
+  platform: (typeof platformCatalog)[number];
+  duplicate?: boolean;
+}) {
+  return (
+    <li className="az-logo-item">
+      <a
+        className="pc-platform"
+        href={platform.website}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`${platform.name} official website (opens in a new tab)`}
+        tabIndex={duplicate ? -1 : undefined}
+      >
+        <div
+          className={`pc-logo${darkLogoSurfaces.has(platform.slug) ? " pc-logo-dark" : ""}${wideLogos.has(platform.slug) ? " pc-logo-wide" : ""}`}
+        >
+          <Image
+            src={`/marketing/platforms/${platform.file}`}
+            alt={duplicate ? "" : `${platform.name} logo`}
+            width={wideLogos.has(platform.slug) ? 116 : 48}
+            height={48}
+            unoptimized
+            data-platform-logo={duplicate ? undefined : platform.slug}
+          />
+        </div>
+        <span className="pc-platform-name">{platform.name}</span>
+      </a>
+    </li>
+  );
+}
 
 function PlatformArchitecture() {
   return (
@@ -122,9 +160,9 @@ export function TradingPlatforms() {
             Platform integration catalog
           </span>
           <h2 id="pc-heading">
-            Your trading platforms.
+            Connect your
             <br />
-            <span>One portal.</span>
+            <span>existing stack.</span>
           </h2>
           <p>
             Built to bring your trading stack together. Manage accounts, trades
@@ -136,40 +174,41 @@ export function TradingPlatforms() {
       </div>
 
       <div className="pc-catalog-heading">
-        <span>{platformCatalog.length} platforms in the catalog</span>
+        <span>
+          {platformCatalog.length} trading platforms · {ecosystemCount}{" "}
+          platforms & tools in the ecosystem
+        </span>
         <span>Choose the tools your team already knows</span>
       </div>
-      <div className="pc-catalog" aria-label="Trading platform catalog">
-        {platformCatalog.map((platform) => (
-          <a
-            key={platform.slug}
-            className="pc-platform"
-            href={platform.website}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${platform.name} official website (opens in a new tab)`}
-          >
-            <div
-              className={`pc-logo${darkLogoSurfaces.has(platform.slug) ? " pc-logo-dark" : ""}${wideLogos.has(platform.slug) ? " pc-logo-wide" : ""}`}
-            >
-              <Image
-                src={`/marketing/platforms/${platform.file}`}
-                alt={`${platform.name} logo`}
-                width={wideLogos.has(platform.slug) ? 116 : 48}
-                height={48}
-                unoptimized
-                data-platform-logo={platform.slug}
-              />
-            </div>
-            <span className="pc-platform-name">{platform.name}</span>
-            <ArrowUpRight
-              className="pc-platform-arrow"
-              size={14}
-              aria-hidden="true"
-            />
-          </a>
+      <LogoLoop
+        label="Trading platform catalog"
+        duplicate={platformCatalog.map((platform) => (
+          <PlatformLogoItem key={platform.slug} platform={platform} duplicate />
         ))}
-      </div>
+      >
+        {platformCatalog.map((platform) => (
+          <PlatformLogoItem key={platform.slug} platform={platform} />
+        ))}
+      </LogoLoop>
+      <details className="az-logo-details">
+        <summary>
+          See all {platformCatalog.length} platforms{" "}
+          <ArrowUpRight size={16} aria-hidden="true" />
+        </summary>
+        <ul className="az-logo-directory">
+          {platformCatalog.map((platform) => (
+            <li key={platform.slug}>
+              <a
+                href={platform.website}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {platform.name} <ArrowUpRight size={12} aria-hidden="true" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </details>
       <div className="pc-catalog-note">
         <PlugsConnected size={19} weight="regular" aria-hidden="true" />
         <p>
@@ -178,6 +217,16 @@ export function TradingPlatforms() {
           catalog describes the platform ecosystem; the local preview uses
           simulated execution. Logos belong to their respective owners.
         </p>
+      </div>
+      <div className="pc-catalog-actions">
+        <Link href="/integrations" className="az-text-link">
+          Browse all {ecosystemCount} platforms & tools
+          <ArrowUpRight size={16} />
+        </Link>
+        <a href="/contact" className="az-text-link">
+          Can’t find your platform? Request an Integration{" "}
+          <ArrowUpRight size={16} />
+        </a>
       </div>
     </section>
   );

@@ -24,14 +24,11 @@ test("the landing page introduces direct MT5 deposits and opens the dedicated pa
     .getByRole("link", { name: "Azuriya home" })
     .click();
   await expect(page).toHaveURL(/\/$/);
-  await page
-    .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("link", { name: "MT5 deposits", exact: true })
-    .click();
+  await page.locator(".mdh-hero-link").click();
   await expect(page).toHaveURL(/\/mt5-deposits$/);
 });
 
-test("MT5 deposits has its own metadata and preserves the portal registration journey", async ({
+test("MT5 deposits has its own metadata and opens workspace planning without signup links", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -48,20 +45,14 @@ test("MT5 deposits has its own metadata and preserves the portal registration jo
       name: "Deposit directly from MetaTrader 5.",
     }),
   ).toBeVisible();
+  await expect(page.locator(".az-header .az-login")).toHaveCount(0);
+  await expect(page.locator('a[href*="mode=register"]')).toHaveCount(0);
   await page
-    .locator("header")
-    .getByRole("link", { name: "Get started", exact: true })
+    .getByRole("link", { name: "Plan your workspace", exact: true })
+    .last()
     .click();
-  await expect(page).toHaveURL(/\/terminal\?mode=register$/);
-  await expect(
-    page.getByRole("heading", { name: "Create your workspace" }),
-  ).toBeVisible();
-  await expect(
-    page.getByLabel("Workspace name", { exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Create simulated account" }),
-  ).toBeVisible();
+  await expect(page).toHaveURL(/\/contact$/);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
   expect(errors).toEqual([]);
 });
 
@@ -199,18 +190,13 @@ test("mobile navigation returns to landing sections and opens MT5 deposits again
   });
   await expect(
     navigation.getByRole("link", { name: "MT5 deposits", exact: true }),
-  ).toHaveAttribute("aria-current", "page");
-  await navigation
-    .getByRole("link", { name: "Solutions", exact: true })
-    .click();
-  await expect(page).toHaveURL(/\/#solutions$/);
-  await expect(page.locator("#solutions")).toBeInViewport();
+  ).toHaveCount(0);
+  await navigation.getByRole("link", { name: "Products", exact: true }).click();
+  await expect(page).toHaveURL(/\/#products$/, { timeout: 20_000 });
+  await expect(page.locator("#products")).toBeInViewport();
   await expect(navigation).toHaveCount(0);
 
-  await page.getByRole("button", { name: "Open navigation" }).click();
-  await navigation
-    .getByRole("link", { name: "MT5 deposits", exact: true })
-    .click();
+  await page.locator(".mdh-hero-link").click();
   await expect(page).toHaveURL(/\/mt5-deposits$/);
   await expect(navigation).toHaveCount(0);
   await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
@@ -218,7 +204,7 @@ test("mobile navigation returns to landing sections and opens MT5 deposits again
   await page.setViewportSize({ width: 1512, height: 982 });
   await page
     .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("link", { name: "Trading platforms", exact: true })
+    .getByRole("link", { name: "Integrations", exact: true })
     .click();
   await expect(page).toHaveURL(/\/#trading-platforms$/);
   await expect(page.locator("#trading-platforms")).toBeInViewport();

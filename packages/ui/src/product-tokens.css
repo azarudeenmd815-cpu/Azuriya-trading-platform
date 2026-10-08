@@ -1,17 +1,39 @@
 /* Additive product tokens; existing terminal tokens retain their own scope. */
-:root, html[data-product-theme="dark"] {
- color-scheme: dark;
- --product-canvas:#0f1014; --product-surface:#191a21; --product-raised:#303238;
- --product-sidebar:#1e1f25; --product-border:#2e3038; --product-text:#ffffff;
- --product-muted:#9b9da6; --product-blue:#3869fc; --product-link:#9aafff;
- --product-positive:#36d69d; --product-negative:#fd606c; --product-warning:#e6ba76;
- --product-comparison:#e3defd; --product-on-blue:#fff; --product-tool:#fff; --product-tool-text:#14151c;
+:root,
+html[data-product-theme="dark"] {
+  color-scheme: dark;
+  --product-canvas: #000000;
+  --product-surface: #141414;
+  --product-raised: #242424;
+  --product-sidebar: #0b0b0b;
+  --product-border: #333333;
+  --product-text: #f5f5f5;
+  --product-muted: #b8b8b8;
+  --product-blue: #3869fc;
+  --product-link: #9aafff;
+  --product-positive: #36d69d;
+  --product-negative: #fd606c;
+  --product-warning: #e6ba76;
+  --product-comparison: #e3defd;
+  --product-on-blue: #fff;
+  --product-tool: #242424;
+  --product-tool-text: #f5f5f5;
+  --product-tool-hover: #333333;
 }
 html[data-product-theme="light"] {
- color-scheme: light;
- --product-canvas:#fff; --product-surface:#f7f8fb; --product-raised:#eef0f5;
- --product-sidebar:#f7f8fb; --product-border:#dfe2e9; --product-text:#172235;
- --product-muted:#56657a; --product-link:#2e5df0;
- --product-positive:#16724f; --product-negative:#b23f54; --product-warning:#8b6321;
+  color-scheme: light;
+  --product-canvas: #fff;
+  --product-surface: #f7f8fb;
+  --product-raised: #eef0f5;
+  --product-sidebar: #f7f8fb;
+  --product-border: #dfe2e9;
+  --product-text: #172235;
+  --product-muted: #56657a;
+  --product-link: #2e5df0;
+  --product-positive: #16724f;
+  --product-negative: #b23f54;
+  --product-warning: #8b6321;
+  --product-tool: #fff;
+  --product-tool-text: #14151c;
+  --product-tool-hover: #dce7ff;
 }
-

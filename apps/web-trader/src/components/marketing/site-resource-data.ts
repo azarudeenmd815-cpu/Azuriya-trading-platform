@@ -30,7 +30,7 @@ export const resourcePages: SitePage[] = [
         title: "Turn a following into a connected trading workspace.",
         paragraphs: [
           "A trading community needs more than a place to post updates. Members need account visibility, a clear funding journey and a way to understand who can help. Operators need a consistent view of accounts, program rules and the systems behind them.",
-          "Azuriya’s proposition is free brokerage and prop firm solutions for influencers, with a shared portal for the entire team. The visitor experience shows how those workflows can fit together before a production configuration is agreed.",
+          "Azuriya’s proposition is free brokerage and prop firm solutions for trading communities, with a shared portal for the entire team. The visitor experience shows how those workflows can fit together before a production configuration is agreed.",
         ],
         links: [
           {
@@ -960,7 +960,7 @@ export const resourcePages: SitePage[] = [
     navLabel: "Solutions",
     eyebrow: "Solutions",
     description:
-      "Free brokerage and prop firm solutions for influencers, with connected workflows for brokers, prop operators and trading educators.",
+      "Free brokerage and prop firm solutions for trading communities, with connected workflows for brokers, prop operators and trading educators.",
     kind: "index",
     visual: "network",
     highlights: [

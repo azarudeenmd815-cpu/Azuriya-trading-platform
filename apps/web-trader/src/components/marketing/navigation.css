@@ -1,7 +1,93 @@
 .az-desktop-nav {
+  align-items: center;
   gap: 23px;
   margin-left: 0;
   white-space: nowrap;
+}
+.az-marketing.az-ecosystem-page .az-brand-mark,
+.az-marketing.az-pricing-page .az-brand-mark {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  transform: none;
+  background: url("/brand/azuriya-mark-blue.png") center / contain no-repeat;
+}
+.az-marketing.az-ecosystem-page .az-brand-mark svg,
+.az-marketing.az-pricing-page .az-brand-mark svg {
+  display: none;
+}
+@media (max-width: 374px) {
+  .az-marketing.az-ecosystem-page .az-header-inner,
+  .az-marketing.az-pricing-page .az-header-inner {
+    gap: 4px;
+  }
+  .az-marketing.az-ecosystem-page .az-header .az-brand-mark,
+  .az-marketing.az-pricing-page .az-header .az-brand-mark {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+  }
+}
+.az-products-menu {
+  position: relative;
+}
+.az-products-menu summary {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  list-style: none;
+  cursor: pointer;
+  font-size: 13px;
+  padding-block: 20px;
+}
+.az-products-menu summary::after {
+  content: "⌄";
+}
+.az-products-menu summary::-webkit-details-marker {
+  display: none;
+}
+.az-products-menu > div {
+  position: absolute;
+  top: 100%;
+  left: -20px;
+  width: 300px;
+  padding: 12px;
+  background: var(--az-surface, #141414);
+  border: 1px solid var(--az-line, #30343d);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px #0004;
+}
+.az-products-menu > div a {
+  display: block;
+  padding: 14px;
+  border-radius: 8px;
+}
+.az-products-menu > div a:hover {
+  background: #416aff15;
+}
+.az-products-menu small {
+  display: block;
+  margin-top: 7px;
+  color: var(--az-muted, #8e97a8);
+  font-size: 12px;
+  white-space: normal;
+  line-height: 1.5;
+}
+.az-header .az-launch-nav {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 10px 14px;
+  background: #3564ff;
+  color: #fff;
+  border-radius: 7px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+@media (max-width: 1300px) {
+  .az-header .az-launch-nav {
+    display: none;
+  }
 }
 @media (max-width: 1199px) {
   .az-marketing .az-header .az-mobile-nav {

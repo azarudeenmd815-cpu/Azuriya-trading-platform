@@ -1,0 +1,159 @@
+.az-marketing .az-logo-loop {
+  min-width: 0;
+  margin-block: 24px;
+}
+.az-logo-viewport {
+  overflow: auto hidden;
+  scrollbar-width: none;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 4%,
+    #000 96%,
+    transparent
+  );
+}
+.az-logo-viewport::-webkit-scrollbar {
+  display: none;
+}
+.az-logo-track {
+  display: flex;
+  width: max-content;
+  animation: az-logo-travel 85s linear infinite;
+}
+.az-marketing .az-logo-group {
+  display: flex;
+  gap: 24px;
+  flex: none;
+  list-style: none;
+  margin: 0;
+  padding: 8px 24px 8px 0;
+}
+.az-marketing .az-logo-item {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex: 0 0 104px;
+  width: 104px;
+  gap: 12px;
+}
+.az-marketing .az-logo-item .pc-platform {
+  background: transparent;
+  padding: 0;
+  gap: 12px;
+  min-height: 0;
+  width: 100%;
+}
+.az-marketing .az-logo-item .pc-logo,
+.az-marketing .az-logo-item > .ln-logo-crop {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  flex: 0 0 80px;
+  padding: 10px;
+  border: 1px solid var(--az-line);
+  border-radius: 14px;
+  background: #fff;
+  --ln-logo-height: 54px;
+}
+.az-marketing .az-logo-item .pc-logo-dark {
+  background: #1f1f1f;
+}
+.az-marketing .az-logo-item .pc-logo img {
+  max-width: 60px;
+  max-height: 54px;
+  width: auto;
+  height: auto;
+}
+.az-marketing .az-logo-item .pc-platform-name,
+.az-marketing .az-logo-item .ln-provider-name {
+  color: var(--az-muted);
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+  min-height: 34px;
+}
+.az-marketing .az-logo-pause {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 16px auto 0;
+  padding: 8px 12px;
+  border: 1px solid var(--az-line);
+  border-radius: 999px;
+  color: var(--az-muted);
+  font-size: 12px;
+}
+.az-logo-loop:is(:hover, :focus-within, [data-paused="true"]) .az-logo-track,
+.az-logo-loop[data-in-view="false"] .az-logo-track,
+.af-motion-paused .az-logo-track {
+  animation-play-state: paused;
+}
+.az-logo-viewport:focus-within .az-logo-track {
+  animation: none;
+}
+.az-marketing .az-logo-details {
+  margin-top: 24px;
+}
+.az-logo-details summary {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  width: fit-content;
+  margin-inline: auto;
+  padding: 14px 24px;
+  border-radius: 999px;
+  background: var(--az-blue);
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  list-style: none;
+}
+.az-logo-details summary::-webkit-details-marker {
+  display: none;
+}
+.az-logo-directory {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  padding: 24px 0 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--az-muted);
+}
+.az-logo-directory a {
+  color: var(--az-text);
+}
+@keyframes az-logo-travel {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (max-width: 767px) {
+  .az-marketing .az-logo-group {
+    gap: 16px;
+    padding-right: 16px;
+  }
+  .az-marketing .az-logo-item {
+    flex-basis: 88px;
+    width: 88px;
+  }
+  .az-marketing .az-logo-item .pc-logo,
+  .az-marketing .az-logo-item > .ln-logo-crop {
+    width: 68px;
+    height: 68px;
+    flex-basis: 68px;
+    --ln-logo-height: 44px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .az-logo-track {
+    animation: none;
+  }
+  .az-logo-duplicate,
+  .az-logo-pause {
+    display: none !important;
+  }
+}

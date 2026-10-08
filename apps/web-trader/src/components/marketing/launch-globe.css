@@ -1,0 +1,133 @@
+.az-launch-globe {
+  --globe-land: #2859c5;
+  --globe-ocean: #e6edf8;
+  --globe-line: #b8c9e6;
+  --globe-control: #2859c5;
+  --globe-control-surface: #ffffff;
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1;
+  isolation: isolate;
+}
+
+html[data-marketing-theme="dark"] .az-launch-globe {
+  --globe-land: #b7caff;
+  --globe-ocean: #07142e;
+  --globe-line: #243b70;
+  --globe-control: #b7caff;
+  --globe-control-surface: #10182a;
+}
+
+.az-launch-globe-art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.az-launch-globe-static,
+.az-launch-globe-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.az-launch-globe-static {
+  transition: opacity 300ms ease;
+}
+
+.az-launch-globe-ocean {
+  fill: var(--globe-ocean);
+}
+
+.az-launch-globe-graticule,
+.az-launch-globe-rim {
+  fill: none;
+  stroke: var(--globe-line);
+  stroke-width: 0.8;
+}
+
+.az-launch-globe-graticule {
+  opacity: 0.45;
+}
+
+.az-launch-globe-land {
+  fill: var(--globe-land);
+  opacity: 0.9;
+}
+
+.az-launch-globe-frame {
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+  mask-image: radial-gradient(closest-side, #000 76%, transparent 99%);
+  transition: opacity 400ms ease;
+}
+
+.az-launch-globe[data-globe-state="animated"] .az-launch-globe-frame {
+  opacity: 1;
+}
+
+.az-launch-globe[data-globe-state="animated"] .az-launch-globe-static {
+  opacity: 0;
+}
+
+.az-launch-globe-orbit {
+  position: absolute;
+  inset: 7%;
+  border: 1px solid var(--globe-line);
+  border-radius: 50%;
+  transform: rotate(-24deg) scaleY(0.38);
+  opacity: 0.5;
+}
+
+.az-launch-globe-motion {
+  position: absolute;
+  right: 7%;
+  bottom: 7%;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--globe-control);
+  background: var(--globe-control-surface);
+  border: 1px solid var(--globe-line);
+  border-radius: 50%;
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease;
+}
+
+.az-launch-globe-motion:hover {
+  border-color: var(--globe-control);
+}
+
+.az-launch-globe-motion:focus-visible {
+  outline: 2px solid var(--globe-control);
+  outline-offset: 4px;
+}
+
+@media (max-width: 600px) {
+  .az-launch-globe {
+    max-width: 300px;
+    margin-inline: auto;
+  }
+
+  .az-launch-globe-motion {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .az-launch-globe-static,
+  .az-launch-globe-frame,
+  .az-launch-globe-motion {
+    transition: none;
+  }
+}

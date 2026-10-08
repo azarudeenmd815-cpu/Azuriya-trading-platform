@@ -34,7 +34,7 @@ export function useChartTrading(accountId: string, symbol: string) {
         kind: "ENTRY",
         price: position.open_price,
         label: `${position.side} ${position.quantity}`,
-        color: position.side === "BUY" ? "#43c9a0" : "#ed7c85",
+        color: position.side === "BUY" ? "#36d69d" : "#fd606c",
         editable: false,
       });
       if (position.stop_loss)
@@ -44,7 +44,7 @@ export function useChartTrading(accountId: string, symbol: string) {
           kind: "SL",
           price: position.stop_loss,
           label: `SL · ${position.quantity}`,
-          color: "#ed7c85",
+          color: "#fd606c",
           editable,
         });
       if (position.take_profit)
@@ -54,7 +54,7 @@ export function useChartTrading(accountId: string, symbol: string) {
           kind: "TP",
           price: position.take_profit,
           label: `TP · ${position.quantity}`,
-          color: "#43c9a0",
+          color: "#36d69d",
           editable,
         });
     }

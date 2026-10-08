@@ -5,8 +5,9 @@ import {
   GlobeHemisphereWest,
   ShieldCheck,
 } from "@phosphor-icons/react/dist/ssr";
-import { MarketingBrand } from "./brand";
-import { PrivacyPreferences } from "./site-privacy-preferences";
+import { FooterBrand } from "./footer-brand-mark";
+import { FooterAccess } from "./footer-access";
+import { SitePreferences } from "./site-preferences";
 import "./site-footer.css";
 
 export const footerGroups = [
@@ -17,6 +18,7 @@ export const footerGroups = [
       ["Copy trading", "/copy-trading"],
       ["Team & community", "/community"],
       ["Trading platforms", "/trading-platforms"],
+      ["Platform & tool directory", "/integrations"],
       ["Funding & withdrawals", "/funding"],
       ["MT5 deposits", "/mt5-deposits"],
       ["Risk management", "/risk-management"],
@@ -89,18 +91,19 @@ export function SiteFooter() {
         </div>
         <div className="sf-brand-row">
           <Link href="/" aria-label="Azuriya home">
-            <MarketingBrand />
+            <FooterBrand />
           </Link>
           <p>
             Brokerage and prop firm solutions.
             <br />
-            Built around your audience.
+            Built around your community.
           </p>
           <Link href="/platform">
             <GlobeHemisphereWest size={17} /> Explore the platform{" "}
             <ArrowRight size={15} />
           </Link>
         </div>
+        <FooterAccess />
         <div className="sf-link-grid">
           {footerGroups.map((group) => (
             <nav
@@ -156,10 +159,7 @@ export function SiteFooter() {
           <div>
             <Link href="/legal/privacy">Privacy</Link>
             <Link href="/legal/terms">Terms</Link>
-            <PrivacyPreferences />
-            <span className="sf-language">
-              <GlobeHemisphereWest size={14} /> English
-            </span>
+            <SitePreferences />
           </div>
         </div>
       </div>

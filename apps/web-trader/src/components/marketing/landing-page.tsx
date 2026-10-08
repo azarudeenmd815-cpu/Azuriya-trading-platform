@@ -1,5 +1,4 @@
 import Link from "next/link";
-import Image from "next/image";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -10,7 +9,6 @@ import {
   DiamondsFour,
   GlobeHemisphereWest,
   LockKey,
-  PlayCircle,
   Plus,
   ShieldCheck,
   SlidersHorizontal,
@@ -18,10 +16,9 @@ import {
   UsersThree,
   Wallet,
 } from "@phosphor-icons/react/dist/ssr";
-import { MarketingBrand } from "./brand";
 import { MarketingNavigation } from "./navigation";
 import { SiteFooter } from "./site-footer";
-import { TradingRoomDemo } from "./dashboard";
+import { DashboardLaptopMock } from "./dashboard";
 import { CopyTradingDemo } from "./copy-demo";
 import { RevenueCalculator } from "./revenue-calculator";
 import { LiquidityNetwork } from "./liquidity-network";
@@ -39,6 +36,20 @@ import { MarketingMotion } from "./marketing-motion";
 import { FlowTracks } from "./flow-tracks";
 import { FeaturedArticles } from "./article-insights";
 import { TradingConditions } from "./trading-conditions";
+import { LandingHeroCopy } from "./landing-hero-copy";
+import { LaunchPricing } from "./launch-pricing";
+import { LaunchGlobe } from "./launch-globe";
+import { FooterBrand } from "./footer-brand-mark";
+import { AutomationEcosystem, EcosystemPreview } from "./ecosystem-preview";
+import {
+  BrandOwnership,
+  LaunchSteps,
+  CoreEcosystem,
+  BusinessJourneys,
+  BusinessEconomics,
+  BuildComparison,
+  MigrationAndTrust,
+} from "./launch-sections";
 import "./marketing.css";
 import "./brokerage.css";
 import "./hero-graphic.css";
@@ -49,8 +60,56 @@ import "./landing-polish.css";
 
 const questions = [
   [
+    "Is Azuriya really free to launch?",
+    "The standard Azuriya package has a $0 fixed monthly subscription and a 35% share of eligible revenue. Third-party licensing, provider charges and custom work are scoped separately. Review pricing and confirm the revenue basis and settlement terms before launch.",
+  ],
+  [
+    "What is included in the standard package?",
+    "The $0 monthly package brings your branded trading platform, CRM and client portal together under a 35% revenue-share arrangement. Your proposal should identify included modules, branding, connections, onboarding and support. Bespoke development and external platform licenses are scoped separately.",
+  ],
+  [
+    "Are there monthly minimums or usage fees?",
+    "The standard Azuriya package has no fixed monthly subscription. A 35% share of eligible revenue applies. Your written schedule and agreement define eligible revenue, settlement, external provider costs and any services outside the standard package.",
+  ],
+  [
+    "Do I need MT5?",
+    "No. You can explore Azuriya’s own simulated trading terminal. MT5 is an optional connection for businesses that require it; access, licensing and production integration must be arranged for your deployment.",
+  ],
+  [
+    "Can I connect my existing MT5 or keep my CRM?",
+    "Discuss your existing server, CRM, API access and provider permissions with the team. Connection availability and migration scope are confirmed after reviewing your systems.",
+  ],
+  [
+    "Can an existing prop firm use Azuriya?",
+    "Yes, the offer includes an integration path for existing operations. Challenge rules, accounts, trader records and payout workflows should be mapped and validated before migration.",
+  ],
+  [
+    "Can I use my own domain and branding?",
+    "The white-label offer is designed around your identity: logo, branding and domain. Agree the exact branding surfaces, domain setup and onboarding requirements in your launch scope.",
+  ],
+  [
+    "Who handles licensing and regulatory requirements?",
+    "The operator is responsible for confirming the permissions, licensing and legal requirements that apply to its business. Technology access does not provide authorization to offer financial services.",
+  ],
+  [
+    "Which countries can I operate in?",
+    "Availability depends on your operating entity, business model, providers and applicable restrictions. Confirm target jurisdictions and provider eligibility before launch; this preview does not publish a universal country list.",
+  ],
+  [
+    "Can I set my own spreads and commissions?",
+    "Configured account groups can use agreed pricing and commission rules. Available controls depend on the platform, liquidity route, permissions and commercial arrangement.",
+  ],
+  [
+    "How quickly can I launch?",
+    "Timing depends on branding, integrations, provider onboarding, readiness checks and your operating requirements. The team confirms a launch plan after reviewing your scope.",
+  ],
+  [
+    "Can I export my data or migrate away?",
+    "Confirm export formats, access rights, retention, offboarding support and any migration charges in your contract. This preview does not promise an unverified production export workflow.",
+  ],
+  [
     "Who is Azuriya built for?",
-    "Azuriya is built for influencers, educators and community leaders who want a free brokerage or prop firm solution with one portal for their team, trading accounts and business operations.",
+    "Azuriya is built for trading brands, educators, introducing brokers, founders and existing brokerages or prop firms that want to run their operation through connected infrastructure.",
   ],
   [
     "What does A-book mean for our community?",
@@ -98,117 +157,82 @@ export function LandingPage() {
       </a>
       <MarketingNavigation />
       <main id="main-content">
-        <div className="ab-routing-banner">
-          <div className="az-container">
-            <span>
-              <GlobeHemisphereWest size={18} /> No more B-Book.{" "}
-              <strong>Only A-book.</strong>
-            </span>
-            <a href="#liquidity">
-              Direct liquidity provider connections <ArrowUpRight size={15} />
-            </a>
-          </div>
-        </div>
         <section
           className="az-hero az-container ab-hero"
           aria-labelledby="hero-title"
         >
           <div className="az-hero-grid">
-            <div className="ab-hero-editorial">
-              <div className="az-hero-eyebrow">
-                <span className="az-eyebrow-line" />
-                YOUR AUDIENCE. YOUR BROKERAGE.
-              </div>
-              <h1 id="hero-title">
-                Free brokerage &amp;
-                <br />
-                prop firm solutions.
-                <br />
-                <span>Built for influencers.</span>
-              </h1>
-              <div className="az-hero-copy">
-                <p>
-                  Turn your community into a complete trading business. Bring
-                  platforms, accounts, copy trading, payments and your entire
-                  team together in one portal.
-                </p>
-                <div className="az-hero-actions">
-                  <Link href="/terminal?mode=register" className="az-button">
-                    Explore your portal <ArrowUpRight size={18} />
-                  </Link>
-                  <a href="#solutions" className="az-explore">
-                    <PlayCircle size={19} />
-                    See the complete solution
-                  </a>
-                </div>
-                <Link href="/mt5-deposits" className="mdh-hero-link">
-                  <Image
-                    src="/marketing/platforms/metatrader-5.png"
-                    alt=""
-                    width={19}
-                    height={19}
-                  />
-                  Deposit directly from MT5 · Desktop &amp; mobile
-                  <ArrowUpRight size={14} />
-                </Link>
-              </div>
-            </div>
+            <LandingHeroCopy />
             <HeroGraphic />
           </div>
           <div className="az-hero-capabilities">
             <span>
               <GlobeHemisphereWest size={16} />
-              A-book liquidity
+              Web trading & CRM
             </span>
             <span>
               <Copy size={16} />
-              Cross-account copy trading
+              Back office & copy trading
             </span>
             <span>
               <Wallet size={16} />
-              Direct MT5 deposits
+              Payments & platform connections
             </span>
             <span>
               <SlidersHorizontal size={16} />
-              Admin &amp; MT5 Manager
+              Prop technology & APIs
             </span>
           </div>
         </section>
 
-        <TradingConditions />
+        <LaunchPricing />
 
         <section
-          className="az-audience az-container"
-          aria-label="Solutions for influencers"
+          className="az-section az-container az-split-section"
+          id="revenue"
+          aria-labelledby="revenue-title"
         >
-          <p>
-            Built around your audience.
-            <br />
-            <strong>Run the business your way.</strong>
-          </p>
-          <div>
-            <span>
-              <DiamondsFour />
-              Free brokerage solutions
-            </span>
-            <span>
-              <GlobeHemisphereWest />
-              Prop firm solutions
-            </span>
-            <span>
-              <ChartLineUp />
-              Influencers &amp; educators
-            </span>
-            <span>
-              <UsersThree />
-              Your entire team
+          <div className="az-section-copy">
+            <div className="az-eyebrow">
+              <ChartLineUp size={17} /> YOUR COMMUNITY. YOUR BUSINESS.
+            </div>
+            <h2 id="revenue-title">
+              Your commission markup.
+              <br />
+              <span>Your commercial model.</span>
+            </h2>
+            <p>
+              Set your community’s commission markup from the Admin Portal. See
+              how eligible trading volume translates into revenue with a simple
+              per-lot example.
+            </p>
+            <div className="az-revenue-features">
+              <span>
+                <SlidersHorizontal size={20} />
+                <div>
+                  <strong>Flexible by design</strong>
+                  <p>Pricing by team, instrument or member.</p>
+                </div>
+              </span>
+              <span>
+                <ChartLineUp size={20} />
+                <div>
+                  <strong>Visible from the start</strong>
+                  <p>Trading activity and revenue in one view.</p>
+                </div>
+              </span>
+            </div>
+            <CommissionGraphic />
+            <span className="az-small-note">
+              The calculator is an example, not a forecast or guarantee.
             </span>
           </div>
+          <RevenueCalculator />
         </section>
 
-        <MT5DepositHighlight />
-        <LiquidityNetwork />
-        <TradingPlatforms />
+        <BusinessJourneys />
+        <BuildComparison />
+        <BrandOwnership />
 
         <section
           className="az-section az-container ab-portal-section"
@@ -218,21 +242,21 @@ export function LandingPage() {
           <div className="ab-section-heading">
             <div>
               <div className="az-eyebrow">
-                <SquaresFour size={17} /> ONE PLACE FOR THE ENTIRE TEAM
+                <SquaresFour size={17} /> YOUR BUSINESS, ON SCREEN
               </div>
               <h2 id="solutions-title">
-                Every part of your business.
+                See your brokerage
                 <br />
-                <span>One portal to run it.</span>
+                <span>before you launch it.</span>
               </h2>
             </div>
             <p>
-              Manage your trading platform backends, accounts, trades and people
-              from the same place. Give your team a shared view and your
-              community head complete oversight.
+              Explore a working portal with accounts, funding, copy trading and
+              risk controls in one place. This interactive preview uses sample
+              data; the trading terminal uses simulated funds and execution.
             </p>
           </div>
-          <TradingRoomDemo />
+          <DashboardLaptopMock />
           <div className="az-preview-footnote">
             <span>Explore the interactive brokerage portal demo.</span>
             <a href="/terminal">
@@ -240,6 +264,17 @@ export function LandingPage() {
             </a>
           </div>
         </section>
+
+        <LaunchSteps />
+        <CoreEcosystem />
+        <TradingPlatforms />
+        <EcosystemPreview />
+        <AutomationEcosystem />
+        <MigrationAndTrust />
+        <TradingConditions />
+        <LiquidityNetwork />
+        <BusinessEconomics />
+        <MT5DepositHighlight />
 
         <section
           className="az-section az-container"
@@ -386,49 +421,6 @@ export function LandingPage() {
         <AdministrationPreview />
 
         <section
-          className="az-section az-container az-split-section"
-          id="revenue"
-          aria-labelledby="revenue-title"
-        >
-          <div className="az-section-copy">
-            <div className="az-eyebrow">
-              <ChartLineUp size={17} /> YOUR COMMUNITY. YOUR BUSINESS.
-            </div>
-            <h2 id="revenue-title">
-              Your commission markup.
-              <br />
-              <span>Your commercial model.</span>
-            </h2>
-            <p>
-              Set your community’s commission markup from the Admin Portal. See
-              how eligible trading volume translates into revenue with a simple
-              per-lot example.
-            </p>
-            <div className="az-revenue-features">
-              <span>
-                <SlidersHorizontal size={20} />
-                <div>
-                  <strong>Flexible by design</strong>
-                  <p>Pricing by team, instrument or member.</p>
-                </div>
-              </span>
-              <span>
-                <ChartLineUp size={20} />
-                <div>
-                  <strong>Visible from the start</strong>
-                  <p>Trading activity and revenue in one view.</p>
-                </div>
-              </span>
-            </div>
-            <CommissionGraphic />
-            <span className="az-small-note">
-              The calculator is an example, not a forecast or guarantee.
-            </span>
-          </div>
-          <RevenueCalculator />
-        </section>
-
-        <section
           className="az-container az-risk-section"
           id="risk"
           aria-labelledby="risk-title"
@@ -510,30 +502,31 @@ export function LandingPage() {
 
         <FeaturedArticles />
 
-        <section className="az-final-cta az-container">
-          <span className="az-cta-mark">
-            <MarketingBrand compact />
-          </span>
-          <h2>
-            Your audience is ready.
-            <br />
-            <span>Give them a complete trading business.</span>
-          </h2>
-          <p>
-            Free brokerage and prop firm solutions. One portal for the entire
-            team.
-          </p>
-          <div>
-            <Link className="az-button" href="/terminal?mode=register">
-              Explore your portal <ArrowUpRight size={18} />
-            </Link>
-            <Link className="az-button az-button-secondary" href="/terminal">
-              Explore the terminal <ArrowRight size={17} />
-            </Link>
+        <section className="az-final-cta az-container az-globe-cta">
+          <div className="az-globe-cta-copy">
+            <span className="az-cta-mark">
+              <FooterBrand compact />
+            </span>
+            <h2>
+              Your brand could be live next.
+              <br />
+              <span>Build your own trading business.</span>
+            </h2>
+            <p>
+              $0 per month. 35% revenue share. Your business, backed by a
+              connected operating stack.
+            </p>
+            <div>
+              <Link className="az-button" href="/contact">
+                Launch Your Business <ArrowUpRight size={18} />
+              </Link>
+              <Link className="az-button az-button-secondary" href="/terminal">
+                Explore the terminal <ArrowRight size={17} />
+              </Link>
+            </div>
+            <small>Explore the interactive preview at your own pace.</small>
           </div>
-          <small>
-            Start with a simulated account. Explore at your own pace.
-          </small>
+          <LaunchGlobe />
         </section>
       </main>
       <SiteFooter />

@@ -102,7 +102,7 @@ export function SitePageTemplate({
         path: "/",
         label: "Azuriya home",
         description:
-          "The complete introduction to free brokerage and prop firm solutions for influencers.",
+          "The complete introduction to free brokerage and prop firm solutions for trading communities.",
         category: "Company",
       },
       {

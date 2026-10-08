@@ -934,17 +934,17 @@ export const productPages: SitePage[] = [
   },
   {
     path: "/pricing",
-    title: "Start with the solution. Agree the operating costs.",
-    navLabel: "Offer & commercial scope",
+    title: "$0 per month. Built around your growth.",
+    navLabel: "Pricing & revenue share",
     eyebrow: "Pricing & launch planning",
     description:
-      "Azuriya introduces free brokerage and prop firm solutions for influencers. Define the platform, provider and setup scope before committing to an operation.",
+      "Explore Azuriya's $0 fixed monthly subscription with a 35% share of eligible revenue, limited launch allocation, package scope and published platform-cost references.",
     kind: "product",
     visual: "commercial",
     highlights: [
       {
-        title: "Free solution offer",
-        text: "An entry point for influencers exploring a brokerage or prop firm workspace.",
+        title: "$0 monthly subscription",
+        text: "The standard Azuriya package uses a 35% share of eligible business revenue.",
       },
       {
         title: "Explicit external costs",
@@ -958,10 +958,10 @@ export const productPages: SitePage[] = [
     sections: [
       {
         id: "pricing-free-offer",
-        title: "Understand what the offer describes.",
+        title: "$0 per month with a 35% revenue share.",
         paragraphs: [
-          "The free solution offer introduces the Azuriya workspace concept for influencers. It is not a promise that running a brokerage or prop firm has no external or operational costs.",
-          "Your launch scope should identify the services included, the configuration work required and any ongoing commercial obligations. Those details need a written agreement before a deployment.",
+          "The standard Azuriya package has a $0 fixed monthly subscription and a 35% share of eligible revenue. External platform licences, provider charges and custom services are scoped separately.",
+          "Your agreement defines eligible revenue, reporting, refunds, taxes and settlement. The launch allocation is 97 of 100 slots, with 3 remaining; onboarding is subject to eligibility and readiness.",
         ],
       },
       {
@@ -1021,9 +1021,9 @@ export const productPages: SitePage[] = [
           "No. It is the calculator's total commission example, using a $2.00 base and $5.00 extra markup. It does not guarantee trading volume, earnings or margin.",
       },
       {
-        question: "Is there a fixed deployment price on this page?",
+        question: "What is the monthly subscription and revenue share?",
         answer:
-          "No fixed deployment price is published here. A quote needs the platform, provider, configuration and operating scope of your proposed launch.",
+          "The standard package has a $0 fixed monthly subscription with a 35% share of eligible revenue. The agreement defines the included package, revenue basis and settlement, with external services scoped separately.",
       },
     ],
     related: ["/brokerage", "/prop-firm", "/solutions/influencers"],

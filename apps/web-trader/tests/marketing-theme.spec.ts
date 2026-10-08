@@ -15,10 +15,25 @@ async function expectVisitorTheme(page: Page, theme: Theme) {
     "data-marketing-theme",
     theme,
   );
+  const isLanding = (await page.locator(".az-landing-page").count()) > 0;
   await expect(page.locator(".az-marketing").first()).toHaveCSS(
     "background-color",
-    theme === "dark" ? "rgb(15, 16, 20)" : "rgb(255, 255, 255)",
+    theme === "dark"
+      ? isLanding
+        ? "rgb(0, 0, 0)"
+        : "rgb(0, 0, 0)"
+      : "rgb(255, 255, 255)",
   );
+  if (isLanding && theme === "dark") {
+    await expect(page.locator(".az-header")).toHaveCSS(
+      "background-color",
+      "rgb(0, 0, 0)",
+    );
+    await expect(page.locator(".sf-footer")).toHaveCSS(
+      "background-color",
+      "rgb(0, 0, 0)",
+    );
+  }
   await expect(page.locator(".az-marketing").first()).toHaveCSS(
     "color-scheme",
     theme,
@@ -63,10 +78,7 @@ test("theme choice persists across reload and visitor navigation without resetti
   ).toBe("light");
   await page.reload();
   await expectVisitorTheme(page, "light");
-  await page
-    .getByRole("navigation", { name: "Main navigation" })
-    .getByRole("link", { name: "MT5 deposits", exact: true })
-    .click();
+  await page.locator(".mdh-hero-link").click();
   await expect(page).toHaveURL(/\/mt5-deposits$/);
   await expectVisitorTheme(page, "light");
   await page.getByRole("button", { name: "Switch to dark theme" }).click();
@@ -130,7 +142,7 @@ for (const theme of ["light", "dark"] as const) {
       );
       await expect(dashboard).toHaveCSS(
         "background-color",
-        theme === "dark" ? "rgb(15, 16, 20)" : "rgb(255, 255, 255)",
+        theme === "dark" ? "rgb(0, 0, 0)" : "rgb(255, 255, 255)",
       );
       await expect(dashboard).toHaveCSS("color-scheme", theme);
       const colors = await dashboard.evaluate((el) => ({
@@ -264,7 +276,9 @@ test("theme changes from another tab remain synchronized through terminal naviga
   const otherTab = await context.newPage();
   await otherTab.goto("/insights");
   await expectVisitorTheme(otherTab, "dark");
-  await page.getByRole("link", { name: "Log in", exact: true }).click();
+  await page
+    .getByRole("link", { name: "Explore the terminal", exact: true })
+    .click();
   await expect(page).toHaveURL(/\/terminal$/);
   await otherTab.getByRole("button", { name: "Switch to light theme" }).click();
   await expectVisitorTheme(otherTab, "light");

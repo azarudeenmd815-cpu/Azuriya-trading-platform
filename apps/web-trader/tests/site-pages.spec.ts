@@ -89,12 +89,9 @@ test("site directory filters, searches, handles empty results and opens pages", 
   await expect(directory.locator(".sp-directory-entry")).toHaveCount(9);
   const search = directory.getByRole("searchbox", { name: "Search pages" });
   await search.fill("privacy");
-  await expect(directory.locator(".sp-directory-entry")).toHaveCount(2);
+  await expect(directory.locator(".sp-directory-entry")).toHaveCount(1);
   await expect(
     directory.locator('.sp-directory-entry[href="/legal/privacy"]'),
-  ).toBeVisible();
-  await expect(
-    directory.locator('.sp-directory-entry[href="/legal/cookies"]'),
   ).toBeVisible();
   await search.fill("nothing-matches-this-query");
   await expect(
@@ -118,55 +115,52 @@ test("site directory filters, searches, handles empty results and opens pages", 
   ).toBeVisible();
 });
 
-test("privacy preference uses opt-in storage, preserves workspace and supports keyboard closing", async ({
+test("language and cookie preferences are opt-in, preserve workspace and support keyboard closing", async ({
   page,
 }) => {
   await page.goto("/legal/cookies");
   await page.evaluate(() => {
-    localStorage.removeItem("azuriya:privacy-preferences");
+    localStorage.removeItem("azuriya:site-consent");
     localStorage.setItem("azuriya:workspace:test", "workspace-example");
   });
-  const trigger = page.getByRole("button", {
-    name: "Privacy preferences",
-    exact: true,
+  await page.reload();
+  const trigger = page.locator(".sf-preferences-trigger");
+  const dialog = page.locator(".sf-visitor-dialog");
+  await expect(dialog).toBeVisible();
+  const optional = dialog.getByRole("checkbox", {
+    name: "Optional cookies",
   });
-  await trigger.click();
-  const dialog = page.getByRole("dialog", { name: "Privacy preferences" });
-  const remember = dialog.getByRole("checkbox", {
-    name: "Remember my privacy choice on this device",
-  });
-  await expect(remember).not.toBeChecked();
+  await expect(optional).not.toBeChecked();
   await expect(
     dialog.getByText(
-      "No optional tracking scripts are enabled in this preview.",
+      "Optional analytics and advertising. None are active in this preview.",
     ),
   ).toBeVisible();
-  await remember.check();
-  await dialog.getByRole("button", { name: "Save preference" }).click();
-  await expect(dialog).toHaveCount(0);
+  await optional.check();
+  await dialog.locator("select").selectOption("pt");
+  await dialog
+    .getByRole("button", { name: "Aceitar cookies opcionais" })
+    .click();
   expect(
     await page.evaluate(() =>
-      JSON.parse(localStorage.getItem("azuriya:privacy-preferences")!),
+      JSON.parse(localStorage.getItem("azuriya:site-consent")!),
     ),
-  ).toEqual({ optionalAnalytics: false, rememberPreference: true });
-  await page.reload();
-  await trigger.click();
-  await expect(remember).toBeChecked();
-  await remember.uncheck();
-  await dialog.getByRole("button", { name: "Save preference" }).click();
-  expect(
-    await page.evaluate(() =>
-      localStorage.getItem("azuriya:privacy-preferences"),
-    ),
-  ).toBeNull();
+  ).toMatchObject({ essential: true, optionalAnalytics: true });
+  await expect
+    .poll(() => page.evaluate(() => document.documentElement.lang))
+    .toBe("pt");
+  await expect
+    .poll(() => page.evaluate(() => document.cookie))
+    .toContain("azuriya_site_consent=");
   expect(
     await page.evaluate(() => localStorage.getItem("azuriya:workspace:test")),
   ).toBe("workspace-example");
   await trigger.click();
-  await dialog
-    .getByRole("button", { name: "Close privacy preferences" })
-    .press("Escape");
-  await expect(dialog).toHaveCount(0);
+  const reopened = page.getByRole("dialog", {
+    name: "Personalize a Azuriya",
+  });
+  await reopened.press("Escape");
+  await expect(reopened).toHaveCount(0);
   await expect(trigger).toBeFocused();
 });
 
@@ -238,7 +232,7 @@ test("public reference layouts fit phones, tablets and desktops", async ({
         await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
         await expect(page.locator(".sp-page")).toHaveCSS(
           "background-color",
-          theme === "dark" ? "rgb(15, 16, 20)" : "rgb(255, 255, 255)",
+          theme === "dark" ? "rgb(0, 0, 0)" : "rgb(255, 255, 255)",
         );
         // Outer clipping must not hide a hero button expanding the grid.
         for (const button of await page
@@ -300,11 +294,11 @@ test("phone search, long inquiry drafts and short-height privacy dialogs remain 
         ),
       ).toBe(true);
       const trigger = page.getByRole("button", {
-        name: "Privacy preferences",
+        name: "Language & privacy",
         exact: true,
       });
       await trigger.click();
-      const dialog = page.getByRole("dialog", { name: "Privacy preferences" });
+      const dialog = page.getByRole("dialog", { name: "Make Azuriya yours" });
       const bounds = await dialog.boundingBox();
       expect(bounds!.x).toBeGreaterThanOrEqual(0);
       expect(bounds!.y).toBeGreaterThanOrEqual(0);
@@ -317,10 +311,12 @@ test("phone search, long inquiry drafts and short-height privacy dialogs remain 
       ).toBe(true);
       await dialog
         .getByRole("checkbox", {
-          name: "Remember my privacy choice on this device",
+          name: "Optional cookies",
         })
         .check();
-      await dialog.getByRole("button", { name: "Save preference" }).click();
+      await dialog
+        .getByRole("button", { name: "Accept optional cookies" })
+        .click();
       await expect(dialog).toHaveCount(0);
       await expect(trigger).toBeFocused();
       expect(

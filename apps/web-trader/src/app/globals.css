@@ -53,7 +53,7 @@ select {
 input:focus,
 select:focus-visible {
   border-color: var(--accent-solid);
-  box-shadow: 0 0 0 2px #497beb17;
+  box-shadow: 0 0 0 2px #3869fc26;
 }
 input {
   min-width: 0;
@@ -75,7 +75,7 @@ a {
 }
 label {
   display: block;
-  color: #bac6d6;
+  color: var(--text);
   font-size: 12px;
 }
 label input {
@@ -83,14 +83,14 @@ label input {
   margin-top: 9px;
 }
 ::selection {
-  background: #497beb60;
+  background: #3869fc60;
 }
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2a3645;
+  background: var(--line);
   border-radius: 4px;
 }
 .positive {
@@ -106,7 +106,7 @@ label input {
   display: flex;
   align-items: center;
   gap: 11px;
-  color: #eef3fc;
+  color: var(--text);
 }
 .brand > span {
   font-size: 22px;
@@ -118,7 +118,7 @@ label input {
   display: block;
   font-size: 8px;
   letter-spacing: 3.35px;
-  color: #8b9db3;
+  color: var(--muted);
   font-weight: 400;
   margin-top: 6px;
 }
@@ -177,7 +177,7 @@ label input {
 .primary-button {
   background: var(--accent-solid);
   color: white;
-  border: 1px solid #608af2;
+  border: 1px solid var(--line);
 }
 .secondary-button {
   background: var(--surface-raised);
@@ -192,16 +192,16 @@ label input {
   margin: 10px 0;
 }
 .error-box {
-  background: #ed7c850a;
-  border: 1px solid #ed7c8538;
+  background: #fd606c0a;
+  border: 1px solid #fd606c38;
   color: #f0a4aa;
 }
 .success-box {
   display: flex;
   align-items: flex-start;
   gap: 9px;
-  background: #43c9a00a;
-  border: 1px solid #43c9a035;
+  background: #36d69d0a;
+  border: 1px solid #36d69d35;
   color: var(--buy);
 }
 .success-box svg {
@@ -225,7 +225,7 @@ label input {
   gap: 23px;
   padding: 0 22px;
   border-bottom: 1px solid var(--line);
-  background: #111722;
+  background: var(--surface);
   flex-shrink: 0;
 }
 .topbar-divider {
@@ -242,16 +242,16 @@ label input {
   color: var(--muted);
 }
 .workspace-name svg:first-child {
-  color: #a7b7cd;
+  color: var(--muted);
 }
 .simulation-badge {
-  border: 1px solid #d7b3733b;
+  border: 1px solid #e6ba763b;
   border-radius: 4px;
   padding: 4px 7px;
   color: var(--warning);
   letter-spacing: 1px;
   font-size: 8px;
-  background: #d7b37308;
+  background: #e6ba7608;
 }
 .topbar-right {
   margin-left: auto;
@@ -283,8 +283,8 @@ label input {
   place-items: center;
   font-size: 11px;
   border-radius: 50%;
-  color: #b5c9ed;
-  background: #28394f;
+  color: var(--accent);
+  background: var(--surface-hover);
 }
 .account-bar {
   min-height: 86px;
@@ -293,7 +293,7 @@ label input {
   align-items: center;
   gap: 27px;
   border-bottom: 1px solid var(--line);
-  background: #0e141d;
+  background: var(--surface);
 }
 .account-selector {
   display: flex;
@@ -306,9 +306,9 @@ label input {
 .account-icon {
   width: 34px;
   height: 34px;
-  color: #94acd1;
-  background: #1a2536;
-  border: 1px solid #2b3a50;
+  color: var(--accent);
+  background: var(--surface-raised);
+  border: 1px solid var(--line);
   border-radius: 7px;
   display: grid;
   place-items: center;
@@ -323,7 +323,7 @@ label input {
   font-size: 12px;
 }
 select option {
-  background: #151c26;
+  background: var(--surface-raised);
   color: var(--text);
 }
 .account-selector span {
@@ -401,7 +401,7 @@ select option {
   display: flex;
   justify-content: space-between;
   padding: 9px 22px;
-  background: #40242a;
+  background: #fd606c26;
   color: #f0a4aa;
   font-size: 12px;
 }
@@ -456,7 +456,7 @@ select option {
 .search-field kbd {
   font-size: 10px;
   margin-right: 10px;
-  background: #1a2330;
+  background: var(--surface-raised);
   border: 1px solid var(--line);
   padding: 1px 4px;
   border-radius: 3px;
@@ -473,8 +473,8 @@ select option {
   padding: 5px 12px;
 }
 .market-filters button.active {
-  background: #26334b;
-  color: #b9d0f8;
+  background: var(--surface-hover);
+  color: var(--accent);
 }
 .watch-heading {
   display: grid;
@@ -499,11 +499,11 @@ select option {
   border-left: 2px solid transparent;
 }
 .watch-row:hover {
-  background: #162132;
+  background: var(--surface-hover);
 }
 .watch-row.selected {
-  background: #1c2d452f;
-  border-left-color: #729ffb;
+  background: #3869fc1f;
+  border-left-color: var(--accent-solid);
 }
 .watch-symbol strong {
   font-size: 11px;
@@ -554,18 +554,18 @@ select option {
   padding: 17px 13px;
   border: 1px solid var(--line);
   border-radius: 7px;
-  background: #121b28;
+  background: var(--surface);
 }
 .session-card > div {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #8091a8;
+  color: var(--muted);
   font-size: 8px;
   letter-spacing: 0.9px;
 }
 .session-card .small-dot {
-  color: #769ad4;
+  color: var(--accent);
 }
 .session-card strong {
   display: block;
@@ -584,7 +584,7 @@ select option {
   align-items: center;
   gap: 6px;
   font-size: 9px;
-  color: #9dafc8;
+  color: var(--muted);
 }
 
 /* Chart */
@@ -617,13 +617,13 @@ select option {
   gap: 9px;
 }
 .instrument-mark {
-  color: #b7c9e1;
-  border: 1px solid #354052;
+  color: var(--text);
+  border: 1px solid var(--line);
   width: 31px;
   height: 31px;
   display: grid;
   place-items: center;
-  background: #1c2634;
+  background: var(--surface-raised);
   border-radius: 50%;
   font-size: 14px;
 }
@@ -652,8 +652,8 @@ select option {
   border-radius: 4px;
 }
 .chart-tools button.active {
-  background: #233048;
-  color: #b3ccfa;
+  background: var(--surface-hover);
+  color: var(--accent);
 }
 .toolbar-divider {
   height: 16px;
@@ -680,7 +680,7 @@ select option {
   gap: 10px;
   margin-left: 5px;
   font-size: 9px;
-  color: #b8c5d5;
+  color: var(--text);
   letter-spacing: 0;
   font-variant-numeric: tabular-nums;
 }
@@ -781,10 +781,10 @@ select option {
 }
 .trade-sides button {
   text-align: left;
-  border: 1px solid #303441;
+  border: 1px solid var(--line);
   border-radius: 6px;
   padding: 10px 12px;
-  background: #161e29;
+  background: var(--surface-raised);
 }
 .trade-sides .sell {
   color: var(--sell);
@@ -794,11 +794,11 @@ select option {
 }
 .trade-sides .sell.selected {
   border-color: #ab525e;
-  background: #34212b;
+  background: #fd606c1a;
 }
 .trade-sides .buy.selected {
   border-color: #2b957c;
-  background: #162e2b;
+  background: #36d69d1a;
 }
 .trade-sides span {
   font-size: 8px;
@@ -829,7 +829,7 @@ select option {
 .order-type-tabs {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  background: #0b111a;
+  background: var(--canvas);
   border: 1px solid var(--line-soft);
   padding: 3px;
   border-radius: 6px;
@@ -842,15 +842,15 @@ select option {
   border-radius: 4px;
 }
 .order-type-tabs button.active {
-  background: #233045;
-  color: #d8e3f3;
+  background: var(--surface-hover);
+  color: var(--text);
   box-shadow: 0 1px 4px #0004;
 }
 .order-ticket form {
   padding: 0 17px;
 }
 .ticket-label {
-  color: #b7c3d2;
+  color: var(--text);
   font-size: 10px;
   position: relative;
   margin-bottom: 12px;
@@ -879,8 +879,8 @@ select option {
 }
 .quantity-presets button.active {
   color: var(--accent);
-  border-color: #476595;
-  background: #1d2d46;
+  border-color: #3869fc66;
+  background: #3869fc26;
 }
 .protection-toggle {
   display: flex;
@@ -890,7 +890,7 @@ select option {
   border-top: 1px solid var(--line-soft);
   border-bottom: 1px solid var(--line-soft);
   font-size: 10px;
-  color: #acb9cb;
+  color: var(--text);
 }
 .protection-toggle > span {
   display: flex;
@@ -915,7 +915,7 @@ select option {
 .switch > span {
   position: absolute;
   inset: 0;
-  background: #303c4b;
+  background: var(--surface-hover);
   border-radius: 10px;
 }
 .switch > span:after {
@@ -924,7 +924,7 @@ select option {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background: #abbaca;
+  background: var(--muted);
   left: 3px;
   top: 3px;
   transition: transform 0.15s;
@@ -984,11 +984,11 @@ select option {
   font-weight: 600;
 }
 .submit-order.buy {
-  background: #39b992;
+  background: var(--buy);
   color: #051e17;
 }
 .submit-order.sell {
-  background: #dd7680;
+  background: var(--sell);
   color: #2b0b11;
 }
 .order-disclaimer {
@@ -1050,12 +1050,12 @@ select option {
   padding-top: 2px;
 }
 .activity-tabs button.active {
-  color: #d1dff4;
-  border-bottom-color: #83adff;
+  color: var(--text);
+  border-bottom-color: var(--accent);
 }
 .activity-tabs button > span {
   font-size: 8px;
-  background: #223149;
+  background: var(--surface-hover);
   padding: 2px 5px;
   border-radius: 3px;
 }
@@ -1079,7 +1079,7 @@ table {
   white-space: nowrap;
 }
 th {
-  background: #111924;
+  background: var(--surface);
   position: sticky;
   top: 0;
   z-index: 1;
@@ -1097,7 +1097,7 @@ td {
   border-bottom: 1px solid var(--line-soft);
 }
 tbody tr:hover {
-  background: #142030;
+  background: var(--surface-hover);
 }
 .symbol-cell {
   font-weight: 600;
@@ -1118,15 +1118,15 @@ tbody tr:hover {
 }
 .side-tag.buy {
   color: var(--buy);
-  background: #43c9a012;
+  background: #36d69d12;
 }
 .side-tag.sell {
   color: var(--sell);
-  background: #ed7c8512;
+  background: #fd606c12;
 }
 .protection-cell {
   color: var(--muted);
-  border-bottom: 1px dotted #41516b;
+  border-bottom: 1px dotted var(--line);
   padding: 2px 0;
   min-width: 20px;
   text-align: left;
@@ -1138,11 +1138,11 @@ tbody tr:hover {
 }
 .table-button {
   font-size: 9px;
-  border: 1px solid #344255;
-  background: #1a2534;
+  border: 1px solid var(--line);
+  background: var(--surface-raised);
   border-radius: 4px;
   padding: 5px 8px;
-  color: #aebbd0;
+  color: var(--text);
 }
 .status-tag {
   color: var(--warning);
@@ -1167,15 +1167,15 @@ tbody tr:hover {
   border-radius: 10px;
   display: grid;
   place-items: center;
-  color: #6e87ac;
-  border: 1px solid #27364b;
-  background: #172030;
+  color: var(--accent);
+  border: 1px solid var(--line);
+  background: var(--surface-raised);
   margin-bottom: 14px;
 }
 .empty-state strong {
   font-size: 12px;
   font-weight: 400;
-  color: #b8c6d9;
+  color: var(--text);
 }
 .empty-state > span {
   margin-top: 8px;
@@ -1233,7 +1233,7 @@ tbody tr:hover {
   flex-direction: column;
   border-right: 1px solid var(--line);
   position: relative;
-  background: #111a27;
+  background: var(--surface);
   overflow: hidden;
 }
 .story-copy {
@@ -1243,7 +1243,7 @@ tbody tr:hover {
 }
 .story-copy .eyebrow {
   font-size: 9px;
-  color: #879bb8;
+  color: var(--muted);
 }
 .story-copy h1 {
   font-size: clamp(40px, 4.7vw, 70px);
@@ -1255,7 +1255,7 @@ tbody tr:hover {
   z-index: 1;
 }
 .story-copy p {
-  color: #879bb8;
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.9;
   position: relative;
@@ -1265,7 +1265,7 @@ tbody tr:hover {
   display: flex;
   align-items: center;
   gap: 9px;
-  color: #6c809d;
+  color: var(--muted);
   font-size: 10px;
 }
 .auth-market-art {
@@ -1277,7 +1277,7 @@ tbody tr:hover {
   display: flex;
   align-items: end;
   opacity: 0.32;
-  border-bottom: 1px solid #34455a;
+  border-bottom: 1px solid var(--line);
   transform: rotate(-6deg);
 }
 .auth-market-art i {
@@ -1393,7 +1393,7 @@ tbody tr:hover {
   font-size: 11px;
 }
 .auth-form-wrap input {
-  background: #121b27;
+  background: var(--surface);
   padding: 14px;
   font-size: 12px;
 }
@@ -1439,7 +1439,7 @@ tbody tr:hover {
 .dialog-backdrop {
   position: fixed;
   inset: 0;
-  background: #04080dd1;
+  background: #000000d1;
   z-index: 100;
   display: grid;
   place-items: center;
@@ -1449,8 +1449,8 @@ tbody tr:hover {
 .dialog {
   width: 420px;
   max-width: 100%;
-  background: #141d29;
-  border: 1px solid #344052;
+  background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: 12px;
   padding: 25px;
   box-shadow: 0 20px 100px #0009;

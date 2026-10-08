@@ -5,11 +5,27 @@ import { getSiteOrigin, isPublicIndexingEnabled } from "@/lib/seo";
 import { marketingThemeBootstrap } from "@/components/marketing/marketing-theme-config";
 import { MarketingThemeSync } from "@/components/marketing/marketing-theme";
 import "./globals.css";
-const euclid = localFont({ src: [{ path: "./fonts/EuclidSquare-Regular.woff2", weight: "400", style: "normal" }, { path: "./fonts/EuclidSquare-Medium.woff2", weight: "500", style: "normal" }, { path: "./fonts/EuclidSquare-Bold.woff2", weight: "700", style: "normal" }], variable: "--font-euclid", display: "swap" });
+const euclid = localFont({
+  src: [
+    {
+      path: "./fonts/EuclidSquare-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "./fonts/EuclidSquare-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    { path: "./fonts/EuclidSquare-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-euclid",
+  display: "swap",
+});
 export const metadata: Metadata = {
-  title: "Azuriya | Free brokerage & prop firm solutions for influencers",
+  title: "Azuriya | Brokerage & prop firm solutions for trading communities",
   description:
-    "Free brokerage and prop firm solutions for influencers. A-book liquidity, trading platforms, copy trading, direct MT5 deposits, withdrawals, community chat and admin controls in one portal.",
+    "Free brokerage and prop firm solutions for trading communities. A-book liquidity, trading platforms, copy trading, direct MT5 deposits, withdrawals, community chat and admin controls in one portal.",
   ...(getSiteOrigin() ? { metadataBase: new URL(getSiteOrigin()!) } : {}),
   applicationName: "Azuriya",
   robots: { index: isPublicIndexingEnabled(), follow: true },

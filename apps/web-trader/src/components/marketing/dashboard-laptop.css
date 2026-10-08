@@ -1,0 +1,319 @@
+.az-marketing .az-laptop-preview {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.az-marketing .az-laptop-device {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  aspect-ratio: 1216 / 735;
+  margin-inline: auto;
+  --az-dashboard-scale: 1;
+  perspective: 1400px;
+  perspective-origin: 50% 47.5%;
+  transform-style: preserve-3d;
+}
+
+.az-marketing .az-laptop-lid {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  transform-origin: 50% 93.8%;
+  transform-style: preserve-3d;
+  clip-path: inset(0 0 6.2% 0);
+  transform: rotateX(var(--az-laptop-lid-angle, 90deg));
+}
+
+.az-marketing .az-laptop-lid::before {
+  position: absolute;
+  z-index: 7;
+  top: 5.15%;
+  left: 50%;
+  width: 3.6%;
+  height: 1.25%;
+  border-radius: 0 0 2px 2px;
+  background: #030303;
+  box-shadow: inset 0 -1px 0 rgb(255 255 255 / 7%);
+  content: "";
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.az-marketing .az-laptop-lid::after {
+  position: absolute;
+  z-index: 6;
+  top: 6.2%;
+  left: 10.8%;
+  width: 78.4%;
+  height: 83.77%;
+  border: 1px solid rgb(105 139 255 / 28%);
+  border-radius: 9px 9px 0 0;
+  background:
+    linear-gradient(135deg, rgb(83 116 255 / 28%), transparent 54%),
+    linear-gradient(180deg, rgb(18 27 53 / 48%), rgb(10 12 20 / 24%));
+  box-shadow: inset 0 0 32px rgb(88 124 255 / 14%);
+  content: "";
+  opacity: var(--az-laptop-closed-progress, 1);
+  pointer-events: none;
+}
+
+.az-marketing .az-laptop-base-frame {
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  pointer-events: none;
+}
+
+.az-marketing .az-laptop-base-frame .az-laptop-frame-base {
+  clip-path: inset(93.7% 0 0 0);
+}
+
+.az-marketing .az-laptop-frame {
+  position: absolute;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.az-marketing .az-laptop-frame-lid {
+  z-index: 4;
+}
+
+.az-marketing .az-laptop-dashboard-iframe {
+  position: absolute;
+  z-index: 5;
+  top: 6.2%;
+  left: 10.8%;
+  width: 1200px;
+  height: 775px;
+  max-width: none;
+  border: 0;
+  border-radius: 12px 12px 0 0;
+  background: transparent;
+  clip-path: inset(0 round 12px 12px 0 0);
+  transform: scale(var(--az-dashboard-scale));
+  transform-origin: top left;
+}
+
+/* The supplied PNG retains its transparent display, physical bezel and camera. */
+.az-marketing .az-laptop-device-macbook {
+  aspect-ratio: 3944 / 2564;
+}
+
+.az-marketing .az-laptop-device-macbook .az-laptop-lid {
+  transform-origin: 50% 93.1%;
+  clip-path: inset(0 0 6.9% 0);
+}
+
+.az-marketing .az-laptop-device-macbook .az-laptop-lid::before {
+  content: none;
+}
+
+.az-marketing .az-laptop-device-macbook .az-laptop-lid::after {
+  z-index: 2;
+  top: 11.7005%;
+  left: 11.6633%;
+  width: 76.6734%;
+  height: 76.1695%;
+}
+
+.az-marketing .az-laptop-device-macbook .az-laptop-frame {
+  object-fit: contain;
+}
+
+.az-marketing
+  .az-laptop-device-macbook
+  .az-laptop-base-frame
+  .az-laptop-frame-base {
+  clip-path: inset(93.1% 0 0 0);
+}
+
+.az-marketing .az-laptop-device-macbook .az-laptop-dashboard-iframe {
+  z-index: 1;
+  top: 11.7005%;
+  left: 11.6633%;
+}
+
+.az-marketing .az-laptop-scroll-hint {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 4% 0 0;
+  color: var(--dash-muted, #788295);
+  font-size: 11px;
+}
+
+.az-marketing .az-laptop-scroll-hint::before {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #4f70ff;
+  box-shadow: 0 0 0 4px #4f70ff1c;
+  content: "";
+  animation: az-laptop-scroll-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes az-laptop-scroll-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .az-marketing .az-laptop-lid {
+    transform: rotateX(7deg);
+  }
+  .az-marketing .az-laptop-lid::after {
+    opacity: 0;
+  }
+  .az-marketing .az-laptop-scroll-hint::before {
+    animation: none;
+  }
+}
+
+/* The iframe keeps a desktop-sized layout viewport at every device width. */
+.az-dashboard-embed-page {
+  width: 1200px;
+  height: 775px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+}
+
+.az-dashboard-embed-page.az-marketing .az-demo-shell[data-dashboard-theme] {
+  width: 1200px;
+  height: 775px;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.az-dashboard-embed-page .az-demo-caption,
+.az-dashboard-embed-page .az-laptop-frame,
+.az-dashboard-embed-page .az-laptop-scroll-hint {
+  display: none !important;
+}
+
+.az-dashboard-embed-page .az-dashboard-embed-surface {
+  width: 1200px;
+  height: 775px;
+  aspect-ratio: auto;
+  margin: 0;
+}
+
+.az-dashboard-embed-page
+  .az-demo-shell
+  .az-dashboard-embed-surface
+  .az-dashboard.az-laptop-screen {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  grid-template-rows: minmax(0, 1fr);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+}
+
+.az-dashboard-embed-page
+  .az-demo-shell
+  .az-dashboard-embed-surface
+  .az-dashboard.az-laptop-screen::before {
+  display: none;
+}
+
+.az-dashboard-embed-page
+  .az-demo-shell
+  .az-dashboard-embed-surface
+  .az-dashboard.az-laptop-screen[data-scroll-reveal-item="visual"]
+  .az-dash-sidebar {
+  position: relative !important;
+  top: auto !important;
+  grid-row: 1;
+  height: 100% !important;
+  max-height: none !important;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.az-dashboard-embed-page
+  .az-demo-shell
+  .az-dashboard-embed-surface
+  .az-dashboard.az-laptop-screen[data-scroll-reveal-item="visual"]
+  .az-dash-sidebar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.az-dashboard-embed-page .az-demo-shell .az-dash-main {
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  grid-row: 1;
+  grid-template-rows: 51px minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.az-dashboard-embed-page .az-demo-shell .az-dash-topbar {
+  position: relative;
+  top: auto;
+  z-index: 2;
+}
+
+.az-dashboard-embed-page .az-demo-shell .az-dash-preview-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  margin: 0 6px 24px;
+  color: var(--dash-text);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.az-dashboard-embed-page .az-dash-preview-brand > svg {
+  flex: 0 0 30px;
+  color: var(--dash-link);
+}
+
+.az-dashboard-embed-page .az-demo-shell .az-dash-content {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-color: #59627a transparent;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .az-dashboard-embed-page .az-demo-shell .az-dash-content {
+    scroll-behavior: auto;
+  }
+}

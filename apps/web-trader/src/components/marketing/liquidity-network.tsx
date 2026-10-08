@@ -11,6 +11,7 @@ import "./liquidity-network.css";
 import "./liquidity-logos.css";
 import { FlowTracks } from "./flow-tracks";
 import { DiagramMotionToggle } from "./marketing-motion";
+import { LogoLoop } from "./logo-loop";
 
 const accountPlatforms = [
   {
@@ -391,13 +392,18 @@ export function LiquidityNetwork() {
             {providers.length} provider options
           </span>
         </div>
-        <ul
-          className="ln-provider-grid"
-          aria-label="Liquidity provider options"
+        <LogoLoop
+          label="Liquidity provider options"
+          duplicate={providers.map((provider) => (
+            <li className="az-logo-item" key={provider.name}>
+              <SuppliedProviderLogo provider={provider} />
+              <span className="ln-provider-name">{provider.name}</span>
+            </li>
+          ))}
         >
           {providers.map((provider) => (
             <li
-              className="ln-provider"
+              className="az-logo-item"
               key={provider.name}
               data-liquidity-logo={provider.name}
             >
@@ -405,16 +411,18 @@ export function LiquidityNetwork() {
               <span className="ln-provider-name">{provider.name}</span>
             </li>
           ))}
-          <li className="ln-directory-explore">
-            <a href="#infrastructure">
-              <PlugsConnected size={28} aria-hidden="true" />
-              <strong>Your execution setup</strong>
-              <span>
-                Explore the infrastructure <ArrowUpRight size={14} />
-              </span>
-            </a>
-          </li>
-        </ul>
+        </LogoLoop>
+        <details className="az-logo-details">
+          <summary>
+            See all {providers.length} providers{" "}
+            <ArrowUpRight size={16} aria-hidden="true" />
+          </summary>
+          <ul className="az-logo-directory">
+            {providers.map((provider) => (
+              <li key={provider.name}>{provider.name}</li>
+            ))}
+          </ul>
+        </details>
       </div>
       <p className="ln-provider-note">
         Provider availability and connection terms depend on your configured

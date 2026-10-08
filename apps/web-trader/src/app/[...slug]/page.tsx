@@ -10,7 +10,11 @@ import { StructuredData } from "../../components/marketing/structured-data";
 export const dynamicParams = false;
 export function generateStaticParams() {
   return sitePages
-    .filter((page) => !page.path.startsWith("/insights"))
+    .filter(
+      (page) =>
+        !page.path.startsWith("/insights") &&
+        !["/pricing", "/integrations"].includes(page.path),
+    )
     .map((page) => ({ slug: page.path.slice(1).split("/") }));
 }
 type PageProps = { params: Promise<{ slug: string[] }> };

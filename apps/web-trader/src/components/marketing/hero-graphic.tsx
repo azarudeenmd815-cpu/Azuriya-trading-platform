@@ -23,9 +23,9 @@ export function HeroGraphic() {
           <PlugsConnected size={20} />
         </span>
         <span>
-          <small>EXECUTION MODEL</small>
+          <small>WHITE-LABEL INFRASTRUCTURE</small>
           <strong>
-            A-book liquidity <ArrowUpRight size={15} />
+            Your brand. Your business. <ArrowUpRight size={15} />
           </strong>
         </span>
       </div>

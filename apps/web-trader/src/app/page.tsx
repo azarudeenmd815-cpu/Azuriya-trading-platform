@@ -4,9 +4,9 @@ import { getSeoMetadata } from "@/lib/seo";
 import { getWebsiteStructuredData } from "@/lib/site-structured-data";
 
 export const metadata = getSeoMetadata({
-  title: "Azuriya | Free brokerage & prop firm solutions for influencers",
+  title: "Azuriya | Launch your own brokerage or prop firm",
   description:
-    "Brokerage and prop firm solutions for influencers. Manage trading accounts, A-book routing, copy trading, MT5 deposits and your community in one portal.",
+    "Built to power your trading business. Launch your own brokerage or prop firm with a $0 monthly Azuriya package and 35% revenue share. Explore trading, CRM, back office and platform connections.",
   path: "/",
 });
 export default function Page() {

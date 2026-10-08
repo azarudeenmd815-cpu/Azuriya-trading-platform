@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("desktop navigation reaches each product section and registration CTA opens the form", async ({
+test("desktop navigation reaches integrations and the platform CTA opens the preview", async ({
   page,
 }) => {
   const errors: string[] = [];
@@ -9,47 +9,49 @@ test("desktop navigation reaches each product section and registration CTA opens
   await expect(
     page.getByRole("heading", {
       level: 1,
-      name: "Free brokerage & prop firm solutions. Built for influencers.",
+      name: "Launch your own brokerage or prop firm.",
     }),
   ).toBeVisible();
+  await expect(
+    page.getByText("Built to power your trading business.", { exact: true }),
+  ).toBeVisible();
+  await expect(page.locator("#hero-title")).not.toContainText(
+    "No development cost.",
+  );
+  await expect(page.locator(".az-header .az-login")).toHaveCount(0);
+  await expect(page.locator('a[href*="mode=register"]')).toHaveCount(0);
 
   const navigation = page.getByRole("navigation", { name: "Main navigation" });
-  for (const [label, target] of [
-    ["Solutions", "solutions"],
-    ["A-book liquidity", "liquidity"],
-    ["Trading platforms", "trading-platforms"],
-    ["Copy trading", "copy-trading"],
-  ]) {
-    await navigation.getByRole("link", { name: label, exact: true }).click();
-    await expect(page).toHaveURL(new RegExp(`#${target}$`));
-    await expect(page.locator(`#${target}`)).toBeInViewport();
-  }
+  await navigation
+    .getByRole("link", { name: "Integrations", exact: true })
+    .click();
+  await expect(page).toHaveURL(/\/integrations$/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "Your connected world.",
+  );
+  await page.goto("/");
 
   await page
-    .getByRole("link", { name: "Explore your portal", exact: true })
+    .getByRole("link", { name: "Explore the Platform", exact: true })
     .first()
     .click();
-  await expect(page).toHaveURL(/\/terminal\?mode=register$/);
-  await expect(
-    page.getByRole("heading", { name: "Create your workspace" }),
-  ).toBeVisible();
-  await expect(
-    page.getByLabel("Workspace name", { exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Create simulated account" }),
-  ).toBeVisible();
+  await expect(page).toHaveURL(/#platform$/);
+  await expect(page.locator("#platform")).toBeInViewport();
   expect(errors).toEqual([]);
 });
 
 test("brokerage positioning includes the hero illustration, working platform logos and supplied liquidity references", async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   const routingPromise = page.locator(".ab-routing-banner");
-  await expect(routingPromise).toBeVisible();
-  await expect(routingPromise).toContainText("No more B-Book.");
-  await expect(routingPromise).toContainText("Only A-book");
+  await expect(routingPromise).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", {
+      name: "Execution built for serious brokerages.",
+    }),
+  ).toBeVisible();
 
   const heroIllustration = page.locator("img[data-hero-illustration]");
   await expect(heroIllustration).toBeVisible();
@@ -346,10 +348,12 @@ test("mobile layout has no page overflow and navigation closes after choosing a 
     page.getByRole("button", { name: "Close navigation" }),
   ).toHaveAttribute("aria-expanded", "true");
   await navigation
-    .getByRole("link", { name: "Copy trading", exact: true })
+    .getByRole("link", { name: "Integrations", exact: true })
     .click();
-  await expect(page).toHaveURL(/#copy-trading$/);
-  await expect(page.locator("#copy-trading")).toBeInViewport();
+  await expect(page).toHaveURL(/\/integrations$/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(
+    "Your connected world.",
+  );
   await expect(navigation).toHaveCount(0);
   await expect(
     page.getByRole("button", { name: "Open navigation" }),

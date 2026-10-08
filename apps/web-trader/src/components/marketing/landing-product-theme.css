@@ -2,15 +2,15 @@
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.hg-liquidity-card, .hg-platform-card, .hg-community-card) {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 20px;
   color: #ffffff;
   box-shadow: none;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .hg-card-icon {
-  background: #303238;
+  background: var(--az-raised);
   color: #9aafff;
   border-radius: 12px;
 }
@@ -34,7 +34,7 @@ html[data-marketing-theme="dark"]
 }
 
 html[data-marketing-theme="dark"] .az-marketing .hg-platform-logos {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .hg-platform-logos img {
@@ -44,8 +44,8 @@ html[data-marketing-theme="dark"] .az-marketing .hg-platform-logos img {
 
 /* Native MT5 funding highlight and interactive desktop/mobile walkthrough. */
 html[data-marketing-theme="dark"] .az-marketing .mdh-section {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 24px;
 }
 
@@ -76,7 +76,7 @@ html[data-marketing-theme="dark"]
   .az-marketing
   :is(.mdh-benefits svg, a.mdh-link, a.mdh-hero-link) {
   color: #9aafff;
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .mdh-product-dot {
@@ -85,24 +85,24 @@ html[data-marketing-theme="dark"] .az-marketing .mdh-product-dot {
 
 html[data-marketing-theme="dark"] .az-marketing .fw-walkthrough {
   color: #ffffff;
-  background: #1a1c22;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 24px;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .fw-heading {
   color: var(--az-muted);
-  border-color: #303238;
-  background: #1a1c22;
+  border-color: var(--az-line);
+  background: var(--az-surface);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .fw-heading-divider {
-  background: #303238;
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .fw-desktop {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 20px;
   box-shadow: none;
 }
@@ -110,14 +110,14 @@ html[data-marketing-theme="dark"] .az-marketing .fw-desktop {
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.fw-desktop-topbar, .fw-terminal-nav, .fw-terminal-footer) {
-  background: #1a1c22;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   color: var(--az-muted);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .fw-terminal-nav > strong {
   color: #e3defd;
-  background: #303238;
+  background: var(--az-raised);
   border-radius: 999px;
 }
 
@@ -125,15 +125,15 @@ html[data-marketing-theme="dark"]
   .az-marketing
   :is(.fw-payment-icon, .fw-checkout-icon) {
   color: #9aafff;
-  background: #303238;
+  background: var(--az-raised);
   border-radius: 14px;
 }
 
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.fw-amount-display, .fw-methods button) {
-  border-color: #303238;
-  background: #303238;
+  border-color: var(--az-line);
+  background: var(--az-raised);
   border-radius: 14px;
   color: #ffffff;
 }
@@ -142,7 +142,7 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .fw-methods
   button[aria-pressed="true"] {
-  background: #303238;
+  background: var(--az-raised);
   border-color: #3869fc;
   color: #e3defd;
 }
@@ -172,7 +172,7 @@ html[data-marketing-theme="dark"]
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.fw-provider-step .fw-detail-row, .fw-preview-actions) {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .fw-preview-actions button {
@@ -197,13 +197,13 @@ html[data-marketing-theme="dark"]
 
 html[data-marketing-theme="dark"] .az-marketing .fw-mobile {
   color: #ffffff;
-  background: #1a1c22;
-  border-color: #090a0e;
+  background: var(--az-surface);
+  border-color: #000000;
   box-shadow: none;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .fw-mobile-camera {
-  background: #090a0e;
+  background: #000000;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .fw-mobile-home {
@@ -211,7 +211,7 @@ html[data-marketing-theme="dark"] .az-marketing .fw-mobile-home {
 }
 
 html[data-marketing-theme="dark"] .az-marketing .fw-mobile-summary {
-  background: #303238;
+  background: var(--az-raised);
   border-radius: 14px;
 }
 
@@ -229,7 +229,7 @@ html[data-marketing-theme="dark"]
 }
 
 html[data-marketing-theme="dark"] .az-marketing .fw-mobile-flow > div > span {
-  background: #303238;
+  background: var(--az-raised);
   color: var(--az-muted);
   border-radius: 50%;
 }
@@ -254,28 +254,28 @@ html[data-marketing-theme="dark"]
 }
 
 html[data-marketing-theme="dark"] .az-marketing .fw-mobile-security {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .fw-walkthrough-controls {
-  background: #1a1c22;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
   .az-marketing
   .fw-walkthrough-controls
   button {
-  background: #1a1c22;
+  background: var(--az-surface);
   color: var(--az-muted);
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
   .az-marketing
   .fw-walkthrough-controls
   button[aria-pressed="true"] {
-  background: #303238;
+  background: var(--az-raised);
   color: #e3defd;
 }
 
@@ -284,7 +284,7 @@ html[data-marketing-theme="dark"]
   .fw-walkthrough-controls
   button
   > span {
-  border-color: #303238;
+  border-color: var(--az-line);
   border-radius: 50%;
 }
 
@@ -302,8 +302,8 @@ html[data-marketing-theme="dark"]
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.ln-route, .ln-directory, .pc-architecture) {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 24px;
   box-shadow: none;
 }
@@ -349,8 +349,8 @@ html[data-marketing-theme="dark"]
     .pc-architecture-platform,
     .pc-architecture-service
   ) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 16px;
   color: #ffffff;
   box-shadow: none;
@@ -367,8 +367,8 @@ html[data-marketing-theme="dark"] .az-marketing .ln-account-node > img {
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ln-route .af-motion-control {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 999px;
   color: #e3defd;
 }
@@ -377,14 +377,14 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .ln-route
   .af-motion-control:hover {
-  background: #303238;
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.ln-routing-hub, .pc-architecture-hub) {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 22px;
   box-shadow: none;
 }
@@ -411,7 +411,7 @@ html[data-marketing-theme="dark"] .az-marketing .pc-architecture-hub-mark {
 }
 
 html[data-marketing-theme="dark"] .az-marketing .pc-architecture-hub-tags span {
-  background: #303238;
+  background: var(--az-raised);
   color: #e3defd;
   border-radius: 999px;
 }
@@ -419,7 +419,7 @@ html[data-marketing-theme="dark"] .az-marketing .pc-architecture-hub-tags span {
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.ln-routing-legend, .pc-architecture-footnote) {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -433,8 +433,8 @@ html[data-marketing-theme="dark"]
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ln-directory-count {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 999px;
   color: #9aafff;
 }
@@ -443,8 +443,8 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .ln-provider-grid
   > .ln-provider {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 18px;
   box-shadow: none;
 }
@@ -453,8 +453,8 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .ln-provider-grid
   > .ln-provider:hover {
-  border-color: #303238;
-  background: #303238;
+  border-color: var(--az-line);
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ln-provider-name {
@@ -490,8 +490,8 @@ html[data-marketing-theme="dark"] .az-marketing .ln-provider-grid::after {
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ln-directory-explore {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 18px;
 }
 
@@ -502,13 +502,13 @@ html[data-marketing-theme="dark"]
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ln-reference-details {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 20px;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ln-reference-image {
-  border-color: #303238;
+  border-color: var(--az-line);
   border-radius: 12px;
 }
 
@@ -517,19 +517,19 @@ html[data-marketing-theme="dark"] .az-marketing .ln-reference-number {
 }
 
 html[data-marketing-theme="dark"] .az-marketing .pc-catalog {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 24px;
   overflow: hidden;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .pc-platform {
-  background: #191a21;
+  background: var(--az-surface);
   color: #ffffff;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .pc-platform:hover {
-  background: #303238;
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .pc-logo {
@@ -557,8 +557,8 @@ html[data-marketing-theme="dark"]
 
 /* Master, copy engine and all follower tracks keep their existing geometry. */
 html[data-marketing-theme="dark"] .az-marketing .wg-copy.az-copy-visual {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 24px;
   color: #ffffff;
   box-shadow: none;
@@ -568,7 +568,7 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .wg-copy
   .az-copy-visual-header {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -599,8 +599,8 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .wg-copy
   :is(.az-master-ticket, .az-follower-tickets > .wg-follower) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 20px;
   box-shadow: none;
 }
@@ -673,16 +673,16 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .wg-copy.wg-paused
   .wg-route-hub {
-  background: #303238;
+  background: var(--az-raised);
   color: var(--az-muted);
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
   .az-marketing
   .wg-copy.wg-paused
   .wg-route-packet {
-  background: #9b9da6;
+  background: var(--az-muted);
   box-shadow: none;
 }
 
@@ -700,7 +700,7 @@ html[data-marketing-theme="dark"]
   .az-copy-visual-footer
   > button {
   background: #ffffff;
-  color: #0f1014;
+  color: #000000;
   border-color: #ffffff;
   border-radius: 999px;
 }
@@ -709,8 +709,8 @@ html[data-marketing-theme="dark"]
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.og-operations .ab-operation-card, .og-administration .ab-admin-preview) {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 24px;
   box-shadow: none;
 }
@@ -735,9 +735,9 @@ html[data-marketing-theme="dark"]
     .og-operations .ab-preview-heading,
     .og-administration .ab-preview-heading
   ) {
-  background: #1a1c22;
+  background: var(--az-surface);
   color: #ffffff;
-  border-color: #303238;
+  border-color: var(--az-line);
   border-radius: 20px;
   box-shadow: none;
 }
@@ -754,8 +754,8 @@ html[data-marketing-theme="dark"]
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.og-funding-network, .og-community-presence, .og-backend-network) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -763,8 +763,8 @@ html[data-marketing-theme="dark"]
   .og-operations
   .og-payment-rails
   > span {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: #9aafff;
   border-radius: 16px;
   box-shadow: none;
@@ -821,7 +821,7 @@ html[data-marketing-theme="dark"]
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ab-funding-row {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ab-funding-icon {
@@ -831,7 +831,7 @@ html[data-marketing-theme="dark"] .az-marketing .ab-funding-icon {
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ab-funding-icon.ab-outgoing {
-  background: #303238;
+  background: var(--az-raised);
   color: #9aafff;
 }
 
@@ -848,8 +848,8 @@ html[data-marketing-theme="dark"]
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.og-operations .ab-preview-note, .ab-admin-bottom) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: var(--az-muted);
 }
 
@@ -861,8 +861,8 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .og-operations
   .og-member-orbit {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -876,8 +876,8 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .og-operations
   .og-orbit-member {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 16px;
   box-shadow: none;
 }
@@ -887,9 +887,9 @@ html[data-marketing-theme="dark"]
   .og-operations
   .og-avatar-stack
   > span {
-  background: #303238;
+  background: var(--az-raised);
   color: #ffffff;
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -897,7 +897,7 @@ html[data-marketing-theme="dark"]
   .og-operations
   .og-avatar-stack
   > span:nth-child(2) {
-  background: #303238;
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"]
@@ -905,7 +905,7 @@ html[data-marketing-theme="dark"]
   .og-operations
   .og-avatar-stack
   > span:nth-child(3) {
-  background: #303238;
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"]
@@ -913,9 +913,9 @@ html[data-marketing-theme="dark"]
   .og-operations
   .og-avatar-stack
   > span:last-child {
-  background: #191a21;
+  background: var(--az-surface);
   color: var(--az-muted);
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -932,8 +932,8 @@ html[data-marketing-theme="dark"]
   .ab-chat-message
   > div
   > span {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 16px;
   color: #ffffff;
 }
@@ -944,22 +944,22 @@ html[data-marketing-theme="dark"]
   .ab-chat-message:nth-of-type(5)
   > div
   > span {
-  background: #303238;
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"]
   .az-marketing
   .og-operations
   .ab-chat-compose {
-  background: #1a1c22;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   color: var(--az-muted);
   border-radius: 999px;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ab-admin-tabs span {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: var(--az-muted);
   border-radius: 999px;
 }
@@ -968,8 +968,8 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .ab-admin-tabs
   span:first-child {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: #e3defd;
 }
 
@@ -977,8 +977,8 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .og-administration
   .og-admin-hub {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 999px;
   color: #e3defd;
   box-shadow: none;
@@ -993,7 +993,7 @@ html[data-marketing-theme="dark"]
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ab-admin-settings > div {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -1001,7 +1001,7 @@ html[data-marketing-theme="dark"]
   .og-administration
   .ab-admin-settings
   > :is(div:nth-child(2), div:nth-child(3)) {
-  background: #303238;
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"]
@@ -1027,8 +1027,8 @@ html[data-marketing-theme="dark"]
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.ig-workspace, .ig-source-viewer) {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 24px;
   box-shadow: none;
 }
@@ -1036,8 +1036,8 @@ html[data-marketing-theme="dark"]
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.ig-view-selector > button, .ig-zones > button) {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 20px;
   color: #ffffff;
 }
@@ -1048,21 +1048,21 @@ html[data-marketing-theme="dark"]
     .ig-view-selector > button[aria-pressed="true"],
     .ig-zones > button[aria-pressed="true"]
   ) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.ig-mini, .ig-platform-stack > div, .ig-zone-destination) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 16px;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ig-mini > span {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: #e3defd;
   border-radius: 12px;
 }
@@ -1071,20 +1071,20 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .ig-mini
   :is(.ig-mini-core, .ig-mini-total) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.ig-workspace-bar, .ig-workspace-footer) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ig-router {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 20px;
 }
 
@@ -1097,8 +1097,8 @@ html[data-marketing-theme="dark"] .az-marketing .ig-router > span {
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.ig-section select, .ig-markup-control button, .ig-native-heading > div) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 999px;
   color: #ffffff;
 }
@@ -1113,14 +1113,14 @@ html[data-marketing-theme="dark"]
     .ig-native-heading button[aria-pressed="true"],
     .ig-markup-control button[aria-pressed="true"]
   ) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: #e3defd;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ig-route-providers > span {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 16px;
 }
 
@@ -1128,33 +1128,33 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .ig-route-providers
   > .ig-provider-enabled {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.ig-aggregation-result, .ig-commission-equation) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 18px;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ig-commercial-summary {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 16px;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ig-group-mark {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: #e3defd;
   border-radius: 16px;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .ig-source-list article {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 16px;
 }
 
@@ -1179,8 +1179,8 @@ html[data-marketing-theme="dark"] .az-marketing .ig-source-list a {
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.az-feature, .az-hierarchy-owner, .az-hierarchy-teams > div) {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 20px;
   color: #ffffff;
   box-shadow: none;
@@ -1189,7 +1189,7 @@ html[data-marketing-theme="dark"]
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.az-hierarchy-owner, .az-hierarchy-teams > div) {
-  background: #303238;
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"]
@@ -1212,8 +1212,8 @@ html[data-marketing-theme="dark"]
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.pd-account, .pd-commission, .az-risk-visual) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   border-radius: 20px;
   color: #ffffff;
   box-shadow: none;
@@ -1252,7 +1252,7 @@ html[data-marketing-theme="dark"]
     .pd-position,
     .pd-account-footer
   ) {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -1268,13 +1268,13 @@ html[data-marketing-theme="dark"] .az-marketing .pd-instrument {
 }
 
 html[data-marketing-theme="dark"] .az-marketing .pd-instrument-fx {
-  background: #303238;
+  background: var(--az-raised);
   color: #9aafff;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .pd-shield {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: #9aafff;
   box-shadow: none;
 }
@@ -1297,7 +1297,7 @@ html[data-marketing-theme="dark"] .az-marketing .pd-risk-meter strong {
 }
 
 html[data-marketing-theme="dark"] .az-marketing .pd-meter-rail {
-  background: #303238;
+  background: var(--az-raised);
   border-radius: 999px;
 }
 
@@ -1323,7 +1323,7 @@ html[data-marketing-theme="dark"]
     .pd-commission-bar > span:first-child,
     .pd-commission-legend > span:first-child i
   ) {
-  background: #303238;
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"]
@@ -1336,15 +1336,15 @@ html[data-marketing-theme="dark"]
 }
 
 html[data-marketing-theme="dark"] .az-marketing .az-risk-section {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 24px;
 }
 
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.az-policy-row, .az-policy-footer) {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -1367,8 +1367,8 @@ html[data-marketing-theme="dark"] .az-marketing .az-risk-visual-top > svg {
 
 /* Stable calculator markup avoids coupling this theme to CSS module hashes. */
 html[data-marketing-theme="dark"] .az-marketing [data-revenue-calculator] {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 24px;
   color: #ffffff;
   box-shadow: none;
@@ -1378,8 +1378,8 @@ html[data-marketing-theme="dark"]
   .az-marketing
   [data-revenue-calculator]
   > div:first-child {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: var(--az-muted);
 }
 
@@ -1412,8 +1412,8 @@ html[data-marketing-theme="dark"]
   fieldset
   label
   > span {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: var(--az-muted);
   border-radius: 999px;
 }
@@ -1434,7 +1434,7 @@ html[data-marketing-theme="dark"]
   fieldset
   input:checked
   + span {
-  background: #303238;
+  background: var(--az-raised);
   border-color: #3869fc;
   color: #e3defd;
 }
@@ -1472,7 +1472,7 @@ html[data-marketing-theme="dark"]
   [data-revenue-calculator]
   > div:nth-child(2)
   > div:last-of-type {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -1497,14 +1497,14 @@ html[data-marketing-theme="dark"]
   .az-marketing
   [data-revenue-calculator]
   input[type="range"]::-webkit-slider-runnable-track {
-  background: #303238;
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"]
   .az-marketing
   [data-revenue-calculator]
   input[type="range"]::-moz-range-track {
-  background: #303238;
+  background: var(--az-raised);
 }
 
 html[data-marketing-theme="dark"]
@@ -1512,7 +1512,7 @@ html[data-marketing-theme="dark"]
   [data-revenue-calculator]
   input[type="range"]::-webkit-slider-thumb {
   background: #3869fc;
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -1520,7 +1520,7 @@ html[data-marketing-theme="dark"]
   [data-revenue-calculator]
   input[type="range"]::-moz-range-thumb {
   background: #3869fc;
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"]
@@ -1549,7 +1549,7 @@ html[data-marketing-theme="dark"]
 
 /* Dedicated MT5 deposits page uses the same surface and control language. */
 html[data-marketing-theme="dark"] .az-marketing.md-page {
-  background: #0f1014;
+  background: #000000;
   color: #ffffff;
 }
 
@@ -1630,24 +1630,24 @@ html[data-marketing-theme="dark"]
     .md-reference,
     .md-faq-list details
   ) {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .md-flow-number {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: #e3defd;
   border-radius: 50%;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .md-control-band {
-  background: #1a1c22;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .md-wallet-controls {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 24px;
   color: #ffffff;
   box-shadow: none;
@@ -1656,8 +1656,8 @@ html[data-marketing-theme="dark"] .az-marketing .md-wallet-controls {
 html[data-marketing-theme="dark"]
   .az-marketing
   :is(.md-wallet-header, .md-wallet-note) {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .md-wallet-note {
@@ -1665,12 +1665,12 @@ html[data-marketing-theme="dark"] .az-marketing .md-wallet-note {
 }
 
 html[data-marketing-theme="dark"] .az-marketing .md-wallet-group {
-  border-color: #303238;
+  border-color: var(--az-line);
 }
 
 html[data-marketing-theme="dark"] .az-marketing .md-currency-options > span {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: #e3defd;
   border-radius: 999px;
 }
@@ -1679,7 +1679,7 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .md-currency-options
   > span:last-child {
-  background: #303238;
+  background: var(--az-raised);
   color: var(--az-muted);
 }
 
@@ -1699,15 +1699,15 @@ html[data-marketing-theme="dark"]
   .az-marketing
   .md-reference-disclosure
   > summary {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: #ffffff;
   border-radius: 999px;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .md-reference-images a {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 20px;
 }
 
@@ -1716,14 +1716,14 @@ html[data-marketing-theme="dark"] .az-marketing .md-reference-images a > span {
 }
 
 html[data-marketing-theme="dark"] .az-marketing .md-final-cta {
-  background: #191a21;
-  border-color: #303238;
+  background: var(--az-surface);
+  border-color: var(--az-line);
   border-radius: 24px;
 }
 
 html[data-marketing-theme="dark"] .az-marketing .md-final-cta-icon {
-  background: #303238;
-  border-color: #303238;
+  background: var(--az-raised);
+  border-color: var(--az-line);
   color: #9aafff;
   border-radius: 18px;
 }

@@ -20,3 +20,6 @@ docs
 **/*.log
 **/*.exe
 **/*.dump
+/*.png
+/*.py
+apps/web-trader/.tmp-*

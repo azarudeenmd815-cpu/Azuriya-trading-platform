@@ -1,4 +1,4 @@
-import { TradingRoomDemo } from "./dashboard";
+import { DashboardLaptopMock } from "./dashboard";
 import { CommunityView } from "./dashboard-community";
 import { CopyTradingDemo } from "./copy-demo";
 import { LiquidityNetwork } from "./liquidity-network";
@@ -17,7 +17,7 @@ export function PageExperience({ path }: { path: string }) {
       label: "EXPLORE THE PORTAL",
       title: "See the whole workspace in action.",
       text: "Switch between Overview, Teams, Community, Brokerage, Prop firm and Administration. All values and interactions are examples.",
-      content: <TradingRoomDemo />,
+      content: <DashboardLaptopMock />,
     },
     "/community": {
       label: "TEAM COMMUNICATION",

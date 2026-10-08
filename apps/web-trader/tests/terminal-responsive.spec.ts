@@ -1,5 +1,10 @@
 import { expect, test, type Page } from "@playwright/test";
-import type { Instrument, Position, TradingAccount } from "@azuriya/api-types";
+import type {
+  EffectiveConfiguration,
+  Instrument,
+  Position,
+  TradingAccount,
+} from "@azuriya/api-types";
 
 const viewports = [
   { width: 320, height: 640 },
@@ -124,6 +129,46 @@ test("read-only terminal keeps quotes, ticket, dialogs and multi-chart layouts w
         timestamp: new Date().toISOString(),
       }));
     else if (path.endsWith("/positions")) data = [position];
+    else if (path.endsWith("/effective-settings"))
+      data = {
+        account_id: account.id,
+        symbol:
+          new URL(route.request().url()).searchParams.get("symbol") || "EURUSD",
+        trading_group_id: "responsive-group",
+        trading_group_revision: 1,
+        profile_revisions: {},
+        effective_leverage: "100",
+        session_status: "OPEN",
+        pricing: {
+          unit: "POINTS",
+          bid_markup: "0",
+          ask_markup: "0",
+          minimum_spread: "0",
+          maximum_spread: "0",
+        },
+        commission: { mode: "NONE", amount: "0", currency: "USD" },
+        swap: {
+          enabled: false,
+          long_rate: "0",
+          short_rate: "0",
+          currency: "USD",
+          timezone: "UTC",
+          rollover_time: "00:00",
+          triple_swap_day: 3,
+          catch_up_days: 1,
+        },
+        margin: {
+          margin_call_level: "100",
+          stop_out_level: "50",
+          stop_out_enabled: true,
+        },
+        execution: {
+          latency_mode: "NONE",
+          base_latency_ms: 0,
+          slippage_mode: "NONE",
+        },
+        session: { timezone: "UTC", default_status: "OPEN", windows: [] },
+      } satisfies EffectiveConfiguration;
     else if (route.request().method() !== "GET")
       return route.fulfill({
         status: 422,

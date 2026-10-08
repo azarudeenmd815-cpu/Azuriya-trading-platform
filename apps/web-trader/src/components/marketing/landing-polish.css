@@ -1,4 +1,25 @@
 /* Landing-only refinements; the working terminal and broker applications keep their styles. */
+html[data-marketing-theme]
+  .az-marketing.az-landing-page
+  .ab-hero-editorial
+  > .az-hero-tagline {
+  max-width: 24ch;
+  margin: 20px 0 0;
+  color: var(--az-link, #9aafff);
+  font-size: clamp(22px, 2.1vw, 30px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.22;
+  text-wrap: balance;
+}
+
+html[data-marketing-theme="light"]
+  .az-marketing.az-landing-page
+  .ab-hero-editorial
+  > .az-hero-tagline {
+  color: #3869fc;
+}
+
 html[data-marketing-theme="light"] .az-marketing.az-landing-page {
   --az-muted: #48566d;
   --sp-muted: #48566d;
@@ -9,9 +30,23 @@ html[data-marketing-theme="light"] .az-marketing.az-landing-page {
 }
 
 html[data-marketing-theme="dark"] .az-marketing.az-landing-page {
-  --az-muted: #b8becd;
-  --sp-muted: #b8becd;
-  --subtle: #b8becd;
+  --az-bg: #000000;
+  --az-muted: #b8b8b8;
+  --sp-muted: #b8b8b8;
+  --subtle: #b8b8b8;
+  background: #000000;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing.az-landing-page
+  :is(.az-header, .sf-footer) {
+  background: #000000;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing.az-landing-page
+  :is(.az-mobile-nav, .ab-routing-banner) {
+  background: #141414;
 }
 
 html[data-marketing-theme]
@@ -260,5 +295,243 @@ html[data-marketing-theme]
 
   .az-marketing.az-landing-page .az-demo-shell[data-dashboard-theme] .az-stat {
     min-height: 136px;
+  }
+}
+
+/* Final visual QA: isolate visitor refinements from the trading applications. */
+html[data-marketing-theme="light"]
+  .az-marketing.az-landing-page
+  :is(.launch-number, .launch-brand-strip span) {
+  color: #2859c5;
+}
+
+.az-marketing.az-landing-page .az-hero-capabilities {
+  border-bottom: 0;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing.az-landing-page
+  :is(.az-revenue-features strong, .az-faq h2 > span) {
+  color: var(--az-text);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing.az-landing-page
+  :is(
+    .az-revenue-features p,
+    .az-small-note,
+    .az-visual-caption,
+    .az-role-chip,
+    .az-copy-note,
+    .az-faq > div:first-child > p,
+    .az-preview-footnote
+  ) {
+  color: var(--az-muted);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing.az-landing-page
+  :is(.az-revenue-features svg, .az-faq-items summary svg) {
+  color: var(--az-blue);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing.az-landing-page
+  .az-preview-footnote
+  a {
+  color: var(--az-blue);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing.az-landing-page
+  :is(.az-role-chip, .az-copy-note) {
+  border-color: var(--az-line);
+}
+
+.az-marketing.az-landing-page .az-logo-details summary {
+  min-height: 48px;
+  background: #3869fc;
+  color: #ffffff;
+  font-weight: 600;
+  transition: background 180ms ease;
+}
+
+.az-marketing.az-landing-page .az-logo-details summary:hover {
+  background: #2e5df0;
+}
+
+.az-marketing.az-landing-page .launch-table :is(th, td) {
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 18px 20px;
+}
+
+.az-marketing.az-landing-page .launch-table thead th {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.az-marketing.az-landing-page .launch-table tbody th {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing.az-landing-page
+  .launch-table
+  th {
+  background: var(--az-surface);
+  color: var(--az-text);
+}
+
+html[data-marketing-theme="dark"]
+  .az-marketing.az-landing-page
+  .launch-table
+  tr
+  > :last-child {
+  background: #3869fc0f;
+  color: var(--az-blue);
+}
+
+@media (min-width: 601px) and (max-width: 900px) {
+  .az-marketing.az-landing-page #launch-offer .launch-card:last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 767px) {
+  .az-marketing.az-landing-page .az-preview-footnote {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .az-marketing.az-landing-page .az-preview-footnote > span {
+    max-width: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .az-marketing.az-landing-page .launch-table {
+    min-width: 0;
+    table-layout: fixed;
+  }
+
+  .az-marketing.az-landing-page .launch-table :is(th, td) {
+    padding: 14px 10px;
+    font-size: 12px;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+
+  .az-marketing.az-landing-page .launch-table thead th {
+    font-size: 10px;
+    letter-spacing: 0.04em;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .az-marketing.az-landing-page .az-logo-details summary {
+    transition: none;
+  }
+}
+
+@media (max-width: 374px) {
+  .az-marketing.az-landing-page .az-header-inner {
+    gap: 4px;
+  }
+  .az-marketing.az-landing-page .az-header .az-brand-mark {
+    width: 28px;
+    height: 28px;
+    flex-basis: 28px;
+  }
+}
+
+/* Closing composition: one editorial message beside the supplied Framer globe. */
+.az-marketing.az-landing-page .az-logo-item {
+  padding: 14px 0 10px;
+  border: 1px solid var(--az-line);
+  border-radius: 18px;
+  background: var(--az-surface);
+}
+.az-marketing.az-landing-page .az-logo-item .pc-platform {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.pc-catalog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 28px;
+  margin-top: 24px;
+}
+.az-marketing.az-landing-page .az-globe-cta {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  align-items: center;
+  gap: 48px;
+  padding: 52px 48px;
+  text-align: left;
+}
+.az-marketing.az-landing-page .az-globe-cta > .az-globe-cta-copy {
+  display: block;
+  grid-column: 1;
+  margin: 0;
+  min-width: 0;
+  text-align: left;
+}
+.az-marketing.az-landing-page .az-globe-cta-copy .az-cta-mark {
+  display: block;
+  margin-bottom: 30px;
+}
+.az-marketing.az-landing-page .az-globe-cta-copy > p {
+  max-width: 480px;
+  font-size: 15px;
+  line-height: 1.75;
+  margin: 22px 0 26px;
+}
+.az-marketing.az-landing-page .az-globe-cta-copy > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.az-marketing.az-landing-page .az-globe-cta-copy > small {
+  display: block;
+  color: var(--az-muted);
+  margin-top: 20px;
+  text-align: left;
+}
+.az-marketing.az-landing-page .az-globe-cta > .az-launch-globe {
+  display: block;
+  grid-column: 2;
+  min-width: 0;
+  margin: 0;
+  justify-self: center;
+}
+
+.az-marketing.az-landing-page #azuriya-core .launch-heading {
+  max-width: 1000px;
+}
+@media (max-width: 900px) {
+  .az-marketing.az-landing-page .az-globe-cta {
+    gap: 24px;
+    padding: 36px;
+  }
+}
+@media (max-width: 767px) {
+  .az-marketing.az-landing-page .az-globe-cta {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 32px 24px;
+    gap: 32px;
+  }
+  .az-marketing.az-landing-page .az-globe-cta > .az-launch-globe {
+    grid-column: 1;
+  }
+  .az-marketing.az-landing-page .az-globe-cta-copy > div {
+    flex-direction: column;
+    align-items: stretch;
   }
 }

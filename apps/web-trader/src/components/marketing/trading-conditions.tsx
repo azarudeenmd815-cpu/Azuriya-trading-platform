@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   ArrowUpRight,
@@ -5,10 +7,13 @@ import {
   Coins,
   GlobeHemisphereWest,
   Lightning,
-} from "@phosphor-icons/react/dist/ssr";
+} from "@phosphor-icons/react";
+import { localizedUi } from "@/lib/site-language";
+import { useSiteLanguage } from "@/lib/site-language-client";
 import "./trading-conditions.css";
 
 export function TradingConditions() {
+  const copy = localizedUi[useSiteLanguage()];
   return (
     <section
       className="atc-conditions"
@@ -16,53 +21,47 @@ export function TradingConditions() {
     >
       <div className="az-container">
         <div className="atc-heading">
-          <h2 id="trading-conditions-title">Trading conditions at a glance.</h2>
+          <h2 id="trading-conditions-title">{copy.conditionsTitle}</h2>
           <Link href="/pricing">
-            Explore pricing <ArrowUpRight size={15} aria-hidden="true" />
+            {copy.pricingLink} <ArrowUpRight size={15} aria-hidden="true" />
           </Link>
         </div>
         <dl className="atc-grid">
           <div>
             <dt>
-              <Lightning size={18} aria-hidden="true" /> Execution latency
+              <Lightning size={18} aria-hidden="true" /> {copy.latency}
             </dt>
             <dd>
               0.05 <span>s</span>
             </dd>
-            <dd className="atc-detail">50 milliseconds</dd>
+            <dd className="atc-detail">Target execution · not a guarantee</dd>
           </div>
           <div>
             <dt>
-              <ArrowsHorizontal size={18} aria-hidden="true" /> Spreads from
+              <ArrowsHorizontal size={18} aria-hidden="true" /> {copy.spreads}
             </dt>
             <dd>
               0.00 <span>pips</span>
             </dd>
-            <dd className="atc-detail">Variable liquidity provider pricing</dd>
+            <dd className="atc-detail">{copy.variablePricing}</dd>
           </div>
           <div>
             <dt>
-              <Coins size={18} aria-hidden="true" /> Base commission
+              <Coins size={18} aria-hidden="true" /> Pricing controls
             </dt>
-            <dd>
-              $2.00 <span>/ lot</span>
-            </dd>
-            <dd className="atc-detail">Optional markup up to $5.00 / lot</dd>
+            <dd>Custom</dd>
+            <dd className="atc-detail">Commission & spread configuration</dd>
           </div>
           <div>
             <dt>
-              <GlobeHemisphereWest size={18} aria-hidden="true" /> Execution
-              model
+              <GlobeHemisphereWest size={18} aria-hidden="true" />{" "}
+              {copy.executionModel}
             </dt>
             <dd className="atc-routing">A-book</dd>
-            <dd className="atc-detail">Direct liquidity provider routing</dd>
+            <dd className="atc-detail">{copy.directRouting}</dd>
           </div>
         </dl>
-        <p className="atc-note">
-          Conditions vary by instrument, account and liquidity route. Commission
-          is shown before optional markup; charging basis follows your account
-          terms. Local preview execution is simulated.
-        </p>
+        <p className="atc-note">{copy.conditionsNote}</p>
       </div>
     </section>
   );
