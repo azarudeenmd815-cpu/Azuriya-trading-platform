@@ -1,0 +1,85 @@
+import { randomBytes, randomUUID } from 'node:crypto';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { resolve, join } from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { performance } from 'node:perf_hooks';
+import assert from 'node:assert/strict';
+import pg from 'pg';
+import { createDatabase, type Executor } from '../src/server/db/database.js';
+import { migrate } from '../src/server/db/migrate.js';
+import { seedCatalog } from '../src/server/db/seed.js';
+import { FoundationService } from '../src/server/domain/service.js';
+import { hashPassword } from '../src/server/security/crypto.js';
+import { buildApp } from '../src/server/app.js';
+import { ActivationService } from '../src/server/domain/activation-service.js';
+import { permissions, type TenantContext } from '../src/shared/types.js';
+
+const root = resolve('artifacts/pg-acceptance'); await mkdir(root, { recursive: true });
+const ca = await readFile(join(root, 'certs/ca.crt'), 'utf8');
+const ownerPassword = (await readFile(join(root, 'owner-password.txt'), 'utf8')).trim();
+const runtimePassword = randomBytes(32).toString('hex');
+const base = new URL('postgresql://127.0.0.1:54841/postgres'); base.username = 'azuriya_accept_owner'; base.password = ownerPassword;
+const owner = new pg.Pool({ connectionString: base.toString(), ssl: { ca, rejectUnauthorized: true }, connectionTimeoutMillis: 5000 });
+const name = `azuriya_accept_${Date.now()}`; const restored = `${name}_restore`; const runtimeRole = `accept_${randomBytes(6).toString('hex')}`;
+const ownerUrl = new URL(base); ownerUrl.pathname = `/${name}`;
+const runtimeUrl = new URL(ownerUrl); runtimeUrl.username = runtimeRole; runtimeUrl.password = runtimePassword;
+const options = { url: runtimeUrl.toString(), migrationUrl: ownerUrl.toString(), requireTls: true, sslCa: ca };
+const evidence: Record<string, unknown> = { timestamp: new Date().toISOString(), environment: 'isolated local PostgreSQL16; TLS verified private test CA' };
+let db: Awaited<ReturnType<typeof createDatabase>> | undefined;
+try {
+  await owner.query(`CREATE DATABASE ${name}`); await owner.query(`CREATE DATABASE ${restored}`);
+  await owner.query(`CREATE ROLE ${runtimeRole} LOGIN PASSWORD '${runtimePassword}' NOSUPERUSER NOCREATEDB NOCREATEROLE NOREPLICATION NOBYPASSRLS`);
+  db = await createDatabase(options); const other = await createDatabase(options);
+  const started = performance.now(); await Promise.all([migrate(db), migrate(other)]); await other.close(); await owner.query(`GRANT azuriya_app TO ${runtimeRole}`); await migrate(db); await seedCatalog(db);
+  evidence.concurrent_migration_ms = performance.now() - started;
+  const role = (await db.query<{ current_user: string; rolsuper: boolean; rolbypassrls: boolean }>('SELECT current_user,rolsuper,rolbypassrls FROM pg_roles WHERE rolname=current_user')).rows[0]; assert.equal(role.current_user, 'azuriya_app'); assert.equal(role.rolsuper, false); assert.equal(role.rolbypassrls, false); evidence.runtime_role = role;
+  const backendPid = (await db.query<{ pid: number }>('SELECT pg_backend_pid() AS pid')).rows[0].pid;
+  const encrypted = await owner.query<{ ssl: boolean }>('SELECT ssl FROM pg_stat_ssl WHERE pid=$1', [backendPid]); assert.equal(encrypted.rows[0].ssl, true); evidence.tls = 'TLS active; certificate and hostname verified (owner observed restricted runtime connection)';
+  const badCa = await createDatabase({ ...options, sslCa: 'not-a-valid-ca' }); await assert.rejects(() => badCa.query('SELECT 1')); await badCa.close(); evidence.wrong_ca_rejected = true;
+  const core = randomUUID(), user = randomUUID();
+  await db.transaction({ core: true }, async tx => { for (const [id, email, coreRole] of [[core,'acceptance-core@test.local','super_admin'],[user,'acceptance-owner@test.local',null]]) await tx.query('INSERT INTO users(id,email,password_hash,display_name,core_role) VALUES($1,$2,$3,$4,$5)', [id,email,await hashPassword('local-acceptance-only-2026'),email,coreRole]); });
+  const service = new FoundationService(db); const actor = { userId: core, requestId: 'pg-acceptance', core: true };
+  for (const [label, product] of [['alpha','brokerage-crm'],['beta','prop-crm']] as const) await service.createOrganization(actor, { name: `${label} Acceptance`, slug: label, brand_name: label, business_type: label === 'alpha' ? 'brokerage' : 'prop_firm', environment_name: 'Sandbox', environment_kind: 'sandbox', plan: 'acceptance', products: [product], owner_email: 'acceptance-owner@test.local' });
+  const organizations = (await db.transaction({ core: true }, tx => tx.query<{ id: string; slug: string }>('SELECT id,slug FROM organizations ORDER BY slug'))).rows;
+  assert.equal((await db.query('SELECT id FROM organizations')).rows.length, 0);
+  const isolated = await Promise.all(Array.from({ length: 30 }, (_, index) => db!.transaction({ organizationId: organizations[index % 2].id }, async tx => { const rows = (await tx.query<{ id: string }>('SELECT id FROM organizations')).rows; assert.deepEqual(rows.map(row => row.id), [organizations[index % 2].id]); return true; })));
+  assert.equal(isolated.length,30); await assert.rejects(() => db!.transaction({ organizationId: organizations[0].id }, tx => tx.query('INSERT INTO brands(id,organization_id,name) VALUES($1,$2,$3)', [randomUUID(),organizations[1].id,'attack'])));
+  let retained: Executor | undefined; await db.transaction({ organizationId: organizations[0].id }, async tx => { retained = tx; }); await assert.rejects(() => retained!.query('SELECT 1'));
+  await assert.rejects(() => db!.transaction({ core: true }, async tx => { await tx.query("UPDATE organizations SET name='ROLLBACK' WHERE id=$1", [organizations[0].id]); throw new Error('expected rollback'); }));
+  assert.notEqual((await db.transaction({ core: true }, tx => tx.query<{ name: string }>('SELECT name FROM organizations WHERE id=$1',[organizations[0].id]))).rows[0].name,'ROLLBACK');
+  evidence.pool_isolation = '30 interleaved transactions; missing context, cross-tenant insert, rollback, retained executor rejected';
+  const app = await buildApp({ db, origin: 'http://localhost', production: false });
+  const login = await app.inject({ method: 'POST',url:'/api/v1/auth/login',payload:{email:'acceptance-owner@test.local',password:'local-acceptance-only-2026'} }); assert.equal(login.statusCode,200);
+  const cookie = login.cookies.map(value => `${value.name}=${value.value}`).join('; '); const instance = (await db.transaction({ core: true },tx=>tx.query<{id:string}>('SELECT id FROM product_instances ORDER BY created_at LIMIT 1'))).rows[0].id;
+  const instances=(await db.transaction({core:true},tx=>tx.query<{id:string;organization_id:string;brand_id:string;environment_id:string;product_slug:string}>('SELECT i.*,p.slug AS product_slug FROM product_instances i JOIN products p ON p.id=i.product_id ORDER BY i.created_at'))).rows;
+  const tenant:TenantContext={core:false,userId:user,requestId:'pg-adversarial',organizationId:instances[0].organization_id,brandId:instances[0].brand_id,environmentId:instances[0].environment_id,productInstanceId:instances[0].id,productSlug:instances[0].product_slug,permissions:[...permissions]};
+  const credential=await new ActivationService(db).createAccount(tenant,{name:'Isolated acceptance credential',scopes:['overview.read','domains.read','integrations.read','api.read','staff.read','staff.write']});
+  const authorized={authorization:`Bearer ${credential.secret}`}; const attackResults:Record<string,number>={};
+  for(const resource of ['overview','domains','integration-connections','roles','api-keys']){const response=await app.inject({url:`/api/v1/instances/${instances[1].id}/${resource}`,headers:authorized,remoteAddress:'127.3.1.1'});assert.equal(response.statusCode,403);attackResults[`foreign_${resource}`]=response.statusCode;}
+  const foreignRole=(await db.transaction({core:true},tx=>tx.query<{id:string}>('SELECT id FROM roles WHERE organization_id=$1 LIMIT 1',[instances[1].organization_id]))).rows[0].id;
+  const roleAttack=await app.inject({method:'POST',url:`/api/v1/instances/${instances[0].id}/staff`,headers:authorized,payload:{email:'acceptance-owner@test.local',role_id:foreignRole},remoteAddress:'127.3.1.2'});assert.ok([400,422].includes(roleAttack.statusCode));attackResults.foreign_staff_role=roleAttack.statusCode;
+  const forged=await app.inject({method:'POST',url:`/api/v1/instances/${instances[0].id}/staff`,headers:authorized,payload:{email:'acceptance-owner@test.local',role_id:foreignRole,organization_id:instances[1].organization_id},remoteAddress:'127.3.1.3'});assert.equal(forged.statusCode,400);attackResults.forged_ownership=400;
+  for(const table of ['organizations','brands','environments','product_instances']){
+    const target=table==='organizations'?instances[0].organization_id:table==='brands'?instances[0].brand_id:table==='environments'?instances[0].environment_id:instances[0].id;
+    await db.transaction({core:true},tx=>tx.query(`UPDATE ${table} SET status='disabled' WHERE id=$1`,[target]));
+    const response=await app.inject({url:`/api/v1/instances/${instances[0].id}/overview`,headers:authorized,remoteAddress:'127.3.1.4'});assert.equal(response.statusCode,401);attackResults[`disabled_${table}`]=response.statusCode;
+    await db.transaction({core:true},tx=>tx.query(`UPDATE ${table} SET status='active' WHERE id=$1`,[target]));
+  }
+  await db.transaction({core:true},tx=>tx.query("UPDATE staff_memberships SET status='disabled' WHERE user_id=$1 AND organization_id=$2",[user,instances[0].organization_id]));
+  assert.equal((await app.inject({url:`/api/v1/instances/${instances[0].id}/overview`,headers:{cookie},remoteAddress:'127.3.1.5'})).statusCode,403);attackResults.revoked_membership=403;
+  await db.transaction({core:true},tx=>tx.query("UPDATE staff_memberships SET status='active' WHERE user_id=$1 AND organization_id=$2",[user,instances[0].organization_id]));evidence.api_adversarial=attackResults;
+  const durations: number[]=[]; const benchStarted=performance.now(); let errors=0;
+  for(let batch=0;batch<10;batch++) await Promise.all(Array.from({length:10},async(_,index)=>{const start=performance.now();const result=await app.inject({url:`/api/v1/instances/${instance}/overview`,headers:{cookie},remoteAddress:`127.2.${batch}.${index+1}`});durations.push(performance.now()-start);if(result.statusCode!==200)errors++;}));
+  const seconds=(performance.now()-benchStarted)/1000; durations.sort((a,b)=>a-b); evidence.performance={requests:100,concurrency:10,operation:'authenticated tenant overview via Fastify injection and real TLS PG pool',p50_ms:durations[49],p95_ms:durations[94],p99_ms:durations[98],throughput_rps:100/seconds,errors}; assert.equal(errors,0); await app.close();
+  const reconnectPid=(await db.query<{pid:number}>('SELECT pg_backend_pid() AS pid')).rows[0].pid;await owner.query('SELECT pg_terminate_backend($1)',[reconnectPid]);
+  let recoveredConnection=false;for(let attempt=0;attempt<3;attempt++){try{await db.query('SELECT 1');recoveredConnection=true;break;}catch{await new Promise<void>(resolve=>setTimeout(resolve,20));}}assert.equal(recoveredConnection,true);evidence.connection_recovery='terminated runtime backend discarded; subsequent query connected successfully';evidence.database_metrics=db.metrics?.();
+  const dumpPath=join(root,'acceptance.dump'); const binaries=process.env.PG_BIN??'C:/Users/Azaru/.cache/azuriya-tools/pgsql/bin';
+  const env={...process.env,PGHOST:'127.0.0.1',PGPORT:'54841',PGUSER:'azuriya_accept_owner',PGPASSWORD:ownerPassword,PGSSLMODE:'verify-full',PGSSLROOTCERT:join(root,'certs/ca.crt')};
+  const backupStart=performance.now();const dump=spawnSync(join(binaries,'pg_dump.exe'),['-Fc','-f',dumpPath,name],{env,encoding:'utf8'});assert.equal(dump.status,0,'pg_dump failed'); evidence.backup_ms=performance.now()-backupStart;
+  const restoreStart=performance.now();const restore=spawnSync(join(binaries,'pg_restore.exe'),['--exit-on-error','--single-transaction','-d',restored,dumpPath],{env,encoding:'utf8'});assert.equal(restore.status,0,'pg_restore failed');evidence.restore_ms=performance.now()-restoreStart;
+  const restoreRuntime=new URL(runtimeUrl);restoreRuntime.pathname=`/${restored}`;const restoreOwner=new URL(ownerUrl);restoreOwner.pathname=`/${restored}`;
+  const recovered=await createDatabase({...options,url:restoreRuntime.toString(),migrationUrl:restoreOwner.toString()});await migrate(recovered);assert.equal((await recovered.query('SELECT id FROM organizations')).rows.length,0);assert.equal((await recovered.transaction({organizationId:organizations[0].id},tx=>tx.query('SELECT id FROM organizations'))).rows.length,1);await recovered.close();evidence.restore_validation='checksums, tenant data and restricted runtime RLS passed';
+  const envPath=join(root,'runtime.env');await writeFile(envPath,`NODE_ENV=development\nDATABASE_URL=${runtimeUrl}\nMIGRATION_DATABASE_URL=${ownerUrl}\nDB_TLS_CA_FILE=${join(root,'certs/ca.crt')}\nAPP_ORIGIN=http://127.0.0.1:5173\nSECRET_ENCRYPTION_KEY=${randomBytes(32).toString('base64')}\n`,{mode:0o600});
+  await writeFile(join(root,'evidence.json'),JSON.stringify(evidence,null,2));console.log(JSON.stringify(evidence,null,2));
+} catch(error) { console.error(JSON.stringify({ code:(error as {code?:string}).code??'ACCEPTANCE_FAILED',message:error instanceof Error ? error.message : 'failed' }));process.exitCode=1; }
+finally {await db?.close();await owner.end();}

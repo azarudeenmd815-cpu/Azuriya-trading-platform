@@ -1,0 +1,12 @@
+ALTER TABLE domains ADD COLUMN verification_expires_at timestamptz NOT NULL DEFAULT(now()+interval '24 hours');
+ALTER TABLE domains ADD COLUMN challenge_version integer NOT NULL DEFAULT 1;
+ALTER TABLE domains ADD COLUMN verification_attempts integer NOT NULL DEFAULT 0;
+ALTER TABLE domains ADD COLUMN certificate_issuer text;
+ALTER TABLE domains ADD COLUMN certificate_reference text;
+ALTER TABLE domains ADD COLUMN certificate_expires_at timestamptz;
+ALTER TABLE domains ADD COLUMN certificate_last_attempt_at timestamptz;
+ALTER TABLE domains ADD COLUMN edge_reference text;
+ALTER TABLE domains ADD COLUMN provider_last_checked_at timestamptz;
+ALTER TABLE domains DROP CONSTRAINT domains_ssl_status_check;
+ALTER TABLE domains ADD CONSTRAINT domains_ssl_status_check CHECK(ssl_status IN('pending','requested','validating','issued','renewing','active','failed','revoked','disabled'));
+CREATE INDEX domains_certificate_renewal ON domains(certificate_expires_at) WHERE status='active';

@@ -1,0 +1,17 @@
+import { ArrowRight, Cable, Plus, Search } from 'lucide-react';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+import type { Page, Row } from '../../shared/types';
+import { useApi } from '../api';
+import { Badge, EmptyState, ErrorState, Loading, Notice, PageHeading } from '../components/ui';
+import { str, words } from '../values';
+
+export function Integrations({ apiBase, routeBase, canRequest, requestProvider }: { apiBase: string; routeBase: string; canRequest: boolean; requestProvider: (provider?: Row) => void }) {
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState('');
+  const result = useApi<Page>(`${apiBase}/integrations?limit=100&search=${encodeURIComponent(search)}`);
+  const providers = result.data?.data ?? [];
+  const categories = Array.from(new Set(providers.map(provider => str(provider.category, '')).filter(Boolean))).sort();
+  const visible = category ? providers.filter(provider => provider.category === category) : providers;
+  return <><PageHeading eyebrow="Shared integration catalog" title="100+ One-Click Integrations" description="Discover the shared provider catalog and request the integrations your business needs." actions={canRequest && <button className="button primary" onClick={() => requestProvider()}><Plus size={16} />Request Integration</button>} /><Notice>The catalog currently contains {result.data?.pagination.total ?? 'the seeded'} provider definitions. External connectors are request-only in this foundation; provider listings do not indicate a live connection.</Notice><div className="catalog-toolbar"><div className="search-field"><Search size={17} /><input type="search" placeholder="Search providers…" aria-label="Search integration providers" value={search} onChange={event => setSearch(event.target.value)} /></div><select aria-label="Filter providers by category" value={category} onChange={event => setCategory(event.target.value)}><option value="">All categories</option>{categories.map(item => <option key={item} value={item}>{words(item)}</option>)}</select><Link className="text-link" to={`${routeBase}/integration-requests`}>My requests<ArrowRight size={14} /></Link><Link className="text-link" to={`${routeBase}/integration-connections`}>Connections<ArrowRight size={14} /></Link></div>{result.loading ? <Loading label="Loading integration providers" /> : result.error ? <ErrorState error={result.error} retry={result.reload} /> : !visible.length ? <EmptyState title="No matching providers" description="Adjust your filters or request a provider that is missing from the shared catalog." /> : <div className="provider-grid">{visible.map(provider => <article className="provider-card" key={str(provider.id)}><div className="provider-top"><span className="provider-icon"><Cable size={23} strokeWidth={1.6} /></span><Badge value={provider.connector_available === true ? str(provider.status, 'available') : 'request_only'} /></div><h2>{str(provider.name)}</h2><p className="provider-category">{words(str(provider.category))}</p><p className="provider-description">{str(provider.description, 'Provider catalog definition. Submit a request for evaluation and future connection support.')}</p><div className="provider-footer"><span>{provider.managed === true ? 'Managed catalog' : 'External provider'}</span>{canRequest && <button className="button secondary small" onClick={() => requestProvider(provider)}>Request<ArrowRight size={14} /></button>}</div></article>)}</div>}</>;
+}

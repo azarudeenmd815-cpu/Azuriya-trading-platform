@@ -1,0 +1,10 @@
+import type { Row } from '../../shared/types';
+import { useApi } from '../api';
+import { ResourceView } from '../components/ResourceView';
+import { ErrorState,Loading } from '../components/ui';
+
+export function CoreProviderHealth(){
+ const result=useApi<{data:{connections:Row[];metrics:Row[]}}>('/core/connector-health');
+ if(result.loading)return <Loading label="Loading provider health"/>;if(result.error)return <ErrorState error={result.error} retry={result.reload}/>;
+ return <><ResourceView path="/core/connector-health/connections" title="Provider health" description="Connection health across brokerage workspaces. Provider credentials remain private." columns={[{key:'provider',label:'Provider',sortable:false},{key:'organization_name',label:'Business',sortable:false},{key:'brand_name',label:'Brand',sortable:false},{key:'environment',label:'Provider environment',sortable:false},{key:'status',label:'Health',type:'status',sortable:false},{key:'connector_version',label:'Connector version',sortable:false},{key:'errors_last_24h',label:'Health failures in 24 hours',sortable:false},{key:'last_outage',label:'Last health failure',type:'date',sortable:false},{key:'last_successful_request_at',label:'Last successful request',type:'date',sortable:false}]} detailKeys={['provider','organization_name','brand_name','status','environment','connector_version','error_code','last_successful_request_at','last_event_at','last_reconciliation_at','last_outage','errors_last_24h']}/>{result.data?.data.metrics.length? <section className="panel"><div className="panel-heading"><h2>Connector request measurements</h2></div><div className="table-scroll" tabIndex={0} role="region" aria-label="Connector measurements"><table><thead><tr><th>Provider</th><th>Operation</th><th>Requests</th><th>Failed attempts</th><th>Retries</th></tr></thead><tbody>{result.data.data.metrics.map((row,index)=><tr key={index}><td>{String(row.provider)}</td><td>{String(row.operation).replaceAll('.',' ')}</td><td>{String(row.requests)}</td><td>{String(row.errors)}</td><td>{String(row.retries)}</td></tr>)}</tbody></table></div></section>:null}</>;
+}

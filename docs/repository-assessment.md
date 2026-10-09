@@ -1,0 +1,5 @@
+# Repository assessment — 2026-10-02
+
+The requested workspace was inspected before implementation using a complete file inventory, hidden-directory listing, Git status, and Git history. It contains only `.git`, an unborn `master` branch, and no commits. There are no application files, framework manifests, backend services, database schemas, authentication, tenancy concepts, admin pages, trading functionality, tests, or dead code. There is no working functionality to preserve or duplicate. Neighboring directories were not imported because they are outside this repository and no relationship was established.
+
+Node 24.11.0 and npm 11.8.0 are available. PostgreSQL CLI and Docker are not available. The foundation therefore uses real embedded PostgreSQL for local development and tests, with a node-postgres adapter for a PostgreSQL server. Production startup requires PostgreSQL and HTTPS. New implementation debt and deployment limitations are tracked explicitly in the architecture documentation.

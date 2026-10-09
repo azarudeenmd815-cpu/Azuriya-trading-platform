@@ -1,0 +1,14 @@
+ALTER TABLE sessions ADD COLUMN origin_host text;
+ALTER TABLE sessions ADD COLUMN mfa_verified_at timestamptz;
+CREATE TABLE mfa_accounts(user_id uuid PRIMARY KEY REFERENCES users(id),secret_encrypted text NOT NULL,enabled boolean NOT NULL DEFAULT false,last_counter bigint NOT NULL DEFAULT -1,recovery_hashes jsonb NOT NULL DEFAULT '[]',created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE mfa_challenges(id uuid PRIMARY KEY,user_id uuid NOT NULL REFERENCES users(id),token_hash text NOT NULL UNIQUE,purpose text NOT NULL CHECK(purpose IN('login','enroll')),origin_host text NOT NULL,expires_at timestamptz NOT NULL,attempts integer NOT NULL DEFAULT 0,consumed_at timestamptz,created_at timestamptz NOT NULL DEFAULT now());
+CREATE TABLE invitations(id uuid PRIMARY KEY,organization_id uuid NOT NULL REFERENCES organizations(id),brand_id uuid NOT NULL,environment_id uuid NOT NULL,product_instance_id uuid NOT NULL,email text NOT NULL,kind text NOT NULL CHECK(kind IN('staff','client')),role_id uuid,created_by uuid NOT NULL REFERENCES users(id),token_hash text NOT NULL UNIQUE,token_encrypted text,expires_at timestamptz NOT NULL,accepted_at timestamptz,revoked_at timestamptz,created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now(),FOREIGN KEY(organization_id,brand_id,environment_id,product_instance_id) REFERENCES product_instances(organization_id,brand_id,environment_id,id),FOREIGN KEY(organization_id,role_id) REFERENCES roles(organization_id,id),CHECK((kind='staff' AND role_id IS NOT NULL) OR(kind='client' AND role_id IS NULL)));
+ALTER TABLE mfa_accounts ENABLE ROW LEVEL SECURITY; ALTER TABLE mfa_accounts FORCE ROW LEVEL SECURITY;
+ALTER TABLE mfa_challenges ENABLE ROW LEVEL SECURITY; ALTER TABLE mfa_challenges FORCE ROW LEVEL SECURITY;
+ALTER TABLE invitations ENABLE ROW LEVEL SECURITY; ALTER TABLE invitations FORCE ROW LEVEL SECURITY;
+CREATE POLICY mfa_accounts_core ON mfa_accounts TO azuriya_app USING(current_setting('azuriya.core',true)='true') WITH CHECK(current_setting('azuriya.core',true)='true');
+CREATE POLICY mfa_challenges_core ON mfa_challenges TO azuriya_app USING(current_setting('azuriya.core',true)='true') WITH CHECK(current_setting('azuriya.core',true)='true');
+CREATE POLICY invitations_scope ON invitations TO azuriya_app USING(current_setting('azuriya.core',true)='true' OR organization_id::text=NULLIF(current_setting('azuriya.organization_id',true),'')) WITH CHECK(current_setting('azuriya.core',true)='true' OR organization_id::text=NULLIF(current_setting('azuriya.organization_id',true),''));
+GRANT SELECT,INSERT,UPDATE,DELETE ON mfa_accounts,mfa_challenges,invitations TO azuriya_app;
+CREATE INDEX mfa_challenges_expiration ON mfa_challenges(expires_at);
+CREATE INDEX invitations_scope_time ON invitations(organization_id,product_instance_id,created_at);

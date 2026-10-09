@@ -1,0 +1,58 @@
+import { randomUUID } from 'node:crypto';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createDatabase, type Database } from '../src/server/db/database.js';
+import { migrate } from '../src/server/db/migrate.js';
+import { seedCatalog } from '../src/server/db/seed.js';
+import { FoundationService } from '../src/server/domain/service.js';
+import { ActivationService } from '../src/server/domain/activation-service.js';
+import { OutboxWorker } from '../src/server/domain/outbox-worker.js';
+import { fanoutWebhooks, WebhookWorker } from '../src/server/domain/webhook-worker.js';
+import { verifyWebhook } from '../src/server/security/webhook-http.js';
+import { permissions, type TenantContext } from '../src/shared/types.js';
+describe('durable signed webhook delivery', () => {
+  let db: Database; let actor: TenantContext; const user = randomUUID(); const key = Buffer.alloc(32,42).toString('base64');
+  const resolveEndpoint = async (value: string) => ({ url: new URL(value), address: '93.184.215.14', family: 4 });
+  beforeAll(async () => {
+    db = await createDatabase(); await migrate(db); await seedCatalog(db);
+    await db.transaction({ core: true }, tx => tx.query('INSERT INTO users(id,email,password_hash,display_name) VALUES($1,$2,$3,$4)', [user,'webhook-owner@test.local','unused','Webhook owner']));
+    await new FoundationService(db).createOrganization({ core: true,userId: user,requestId: 'test' }, { name: 'Webhook business',slug:'webhook-business',business_type:'brokerage',brand_name:'Webhook',environment_name:'Sandbox',environment_kind:'sandbox',products:['brokerage-crm'],plan:'test',owner_email:'webhook-owner@test.local' });
+    const instance = (await db.transaction({ core:true },tx => tx.query<{ id:string;organization_id:string;brand_id:string;environment_id:string }>('SELECT * FROM product_instances'))).rows[0];
+    actor = { core:false,userId:user,requestId:'test',organizationId:instance.organization_id,brandId:instance.brand_id,environmentId:instance.environment_id,productInstanceId:instance.id,productSlug:'brokerage-crm',permissions:[...permissions] };
+  });
+  afterAll(async () => db?.close());
+  it('fans out once, signs exact bytes, retries 500, replays the same event, rotates secrets, and retains every completed attempt', async () => {
+    const service = new ActivationService(db,key,resolveEndpoint);
+    const endpoint = await service.createWebhook(actor,{ name:'Receiver',url:'https://receiver.example/events',events:['branding.updated'] });
+    await db.transaction({ organizationId:actor.organizationId },async tx => { await service.audit(tx,actor,'branding.updated','brand',actor.brandId); });
+    const outbox = new OutboxWorker(db,{}, { fanout:fanoutWebhooks });
+    for(let i=0;i<15;i++) if(!await outbox.runOnce()) break;
+    const row = (await db.transaction({ core:true },tx => tx.query<{ id:string;event_id:string;payload:unknown }>('SELECT * FROM webhook_deliveries'))).rows[0];
+    expect(row.event_id).toBeTruthy();
+    let calls=0; const received: { body:string;headers:Record<string,string> }[]=[];
+    const worker = new WebhookWorker(db,async (_url,body,headers) => { received.push({body,headers}); return { status:++calls===1 ? 500 : 204 }; },key);
+    expect(await worker.runOnce()).toBe(true); expect(await worker.runOnce()).toBe(false);
+    await db.transaction({ core:true },tx => tx.query("UPDATE webhook_deliveries SET next_attempt_at=now()-interval '1 second' WHERE id=$1",[row.id]));
+    expect(await worker.runOnce()).toBe(true);
+    for(const message of received) expect(verifyWebhook(endpoint.secret,Number(message.headers['X-Azuriya-Timestamp']),row.id,message.body,message.headers['X-Azuriya-Signature'])).toBe(true);
+    const rotated=await service.updateWebhook(actor,String(endpoint.endpoint.id),'active',true); expect(rotated.secret).toBeTruthy();
+    await service.replayDelivery(actor,row.id); expect(await worker.runOnce()).toBe(true);
+    const last=received[2]; expect(last.headers['X-Azuriya-Event']).toBe(row.event_id); expect(last.headers['X-Azuriya-Delivery']).toBe(row.id);
+    expect(verifyWebhook(rotated.secret!,Number(last.headers['X-Azuriya-Timestamp']),row.id,last.body,last.headers['X-Azuriya-Signature'])).toBe(true);
+    expect(verifyWebhook(endpoint.secret,Number(last.headers['X-Azuriya-Timestamp']),row.id,last.body,last.headers['X-Azuriya-Signature'])).toBe(false);
+    const attempts=await db.transaction({ core:true },tx => tx.query('SELECT * FROM webhook_attempts WHERE delivery_id=$1',[row.id])); expect(attempts.rows).toHaveLength(3);
+    await expect(db.transaction({ core:true },tx => tx.query('DELETE FROM webhook_attempts WHERE delivery_id=$1',[row.id]))).rejects.toThrow();
+    await expect(service.replayDelivery({...actor,productInstanceId:randomUUID()},row.id)).rejects.toMatchObject({code:'TENANT_UNAVAILABLE'});
+  });
+  it('stops inactive tenant deliveries and dead-letters permanent receiver rejection', async () => {
+    const service=new ActivationService(db,key,resolveEndpoint); await service.createWebhook(actor,{name:'Rejected receiver',url:'https://receiver.example/reject',events:['staff.changed'],disable_after_failures:1});
+    await db.transaction({ organizationId:actor.organizationId },tx => service.audit(tx,actor,'staff.changed','staff',user));
+    const outbox=new OutboxWorker(db,{}, {fanout:fanoutWebhooks}); for(let i=0;i<15;i++) if(!await outbox.runOnce()) break;
+    await db.transaction({ core:true },tx => tx.query("UPDATE organizations SET status='disabled' WHERE id=$1",[actor.organizationId]));
+    let sends=0; const worker=new WebhookWorker(db,async()=>{sends++;return {status:410};},key);
+    expect(await worker.runOnce()).toBe(false); expect(sends).toBe(0);
+    await db.transaction({ core:true },tx => tx.query("UPDATE organizations SET status='active' WHERE id=$1",[actor.organizationId]));
+    expect(await worker.runOnce()).toBe(true);
+    const row=(await db.transaction({core:true},tx=>tx.query<{status:string;response_status:number}>("SELECT * FROM webhook_deliveries WHERE event_type='staff.changed'"))).rows[0]; expect(row).toMatchObject({status:'dead_letter',response_status:410});
+    expect((await db.transaction({core:true},tx=>tx.query<{status:string}>("SELECT status FROM webhook_endpoints WHERE name='Rejected receiver'"))).rows[0].status).toBe('disabled');
+  });
+});
