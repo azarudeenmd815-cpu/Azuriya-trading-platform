@@ -33,3 +33,7 @@ Each worker receives one major task, works only on its branch, and stops after r
 W01 integrates completed branches one at a time. After each merge it runs migrations, the full test suite, typecheck, lint, production build, applicable PostgreSQL acceptance, tenant-isolation checks and shared-contract checks. A worker receives another major task only after that gate passes.
 
 Workers must consume existing canonical shared contracts where available. If a proposal is required, document the smallest interface in the handoff and leave canonical resolution to W01. No worker may modify migrations `001`–`021` or use another worker's range.
+
+## Worktree plan
+
+The repository is a single Git checkout with no remote and no duplicate copies. Keep W01 on the attached `codex/integration` checkout. When a worker starts, create one managed Git worktree for its branch under the host's managed worktree location, attach it to that worker, and remove/archive it when the worker hands off. Never copy the repository directory or create an unmanaged nested clone. If managed worktrees are unavailable, keep the branch ref prepared and let the worker use an explicitly isolated checkout supplied by the host.
