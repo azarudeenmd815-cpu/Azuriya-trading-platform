@@ -4,12 +4,13 @@ This directory is the lightweight coordination record for the ten-worker model.
 
 ## Baseline
 
-- Prompt 3 checkpoint commit: `ed3a8fb560d64a413580ac4e2fec2ca99dca4f95`
-- Tag: `azuriya-prompt3-complete`
+- Prompt 3 source checkpoint commit: `ed3a8fb560d64a413580ac4e2fec2ca99dca4f95`
+- Source checkpoint tag: `azuriya-prompt3-complete`
+- Verified parallel baseline: the integration branch tip after the coordination and dependency-security commits; tag it `azuriya-prompt3-complete-verified`.
 - Integration authority: `codex/integration` (W01)
 - All development branches start at the tagged checkpoint and must preserve Core tenancy, security, RLS, RBAC, and Prompt 1–3 behavior.
 
-The checkout contained migrations `001`–`020` before bootstrap, although the supplied Prompt 3 summary named `001`–`015`. Migration `021_prompt3_schema_repair.sql` is a forward-only baseline repair for the connector trading-observation column. Migrations `001`–`021` are immutable after this checkpoint.
+The checkout contained migrations `001`–`020` before bootstrap, although the supplied Prompt 3 summary named `001`–`015`. Migration `021_prompt3_schema_repair.sql` is a forward-only baseline repair for the connector trading-observation column. Migrations `001`–`021` are immutable after the verified baseline. The verified baseline also pins `concurrently` to `10.0.6`, which removes the audited critical `shell-quote` vulnerability.
 
 ## Workers and branches
 
