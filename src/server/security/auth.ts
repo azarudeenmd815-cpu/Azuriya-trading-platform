@@ -6,7 +6,7 @@ import { hashPassword, hashSecret, newSecret, verifyPassword } from './crypto.js
 import { MfaService } from './mfa.js';
 
 export interface UserRecord { id: string; email: string; display_name: string; core_role: string | null; status: string; password_hash: string; mfa_required: boolean }
-export interface ApiPrincipal { id: string; organization_id: string; brand_id: string; environment_id: string; product_instance_id: string; scopes: string[]; created_by: string }
+export interface ApiPrincipal { id: string; organization_id: string; brand_id: string; environment_id: string; product_instance_id: string; product_slug?: string; scopes: string[]; created_by: string }
 export interface Principal { user: Omit<UserRecord, 'password_hash'>; kind: 'session' | 'api'; key?: ApiPrincipal; sessionId?: string }
 export class Auth {
   private cache = new WeakMap<FastifyRequest, Principal>();
@@ -57,7 +57,7 @@ export class Auth {
       const serviceAccount = secret.startsWith('azs_');
       const table = serviceAccount ? 'service_accounts' : 'api_keys';
       const key = await this.db.transaction({ core: true }, async tx => {
-        const result = await tx.query<ApiPrincipal>(`SELECT k.id,k.organization_id,k.brand_id,k.environment_id,k.product_instance_id,k.scopes,k.created_by FROM ${table} k JOIN users u ON u.id=k.created_by JOIN organizations o ON o.id=k.organization_id JOIN product_instances i ON i.id=k.product_instance_id JOIN brands b ON b.id=i.brand_id JOIN environments e ON e.id=i.environment_id JOIN products p ON p.id=i.product_id JOIN product_subscriptions s ON s.id=i.subscription_id LEFT JOIN api_applications a ON a.id=k.application_id AND a.organization_id=k.organization_id WHERE k.secret_hash=$1 AND k.revoked_at IS NULL AND (k.expires_at IS NULL OR k.expires_at>now()) AND u.status='active' AND u.core_role IS NULL AND o.status='active' AND b.status='active' AND e.status='active' AND p.status='active' AND i.status='active' AND s.status='active' ${serviceAccount ? "AND k.status='active'" : ''} AND(k.application_id IS NULL OR(a.status='active' AND a.brand_id=k.brand_id AND a.environment_id=k.environment_id AND a.product_instance_id=k.product_instance_id AND a.scopes @> k.scopes))`, [hashSecret(secret)]);
+        const result = await tx.query<ApiPrincipal>(`SELECT k.id,k.organization_id,k.brand_id,k.environment_id,k.product_instance_id,p.slug AS product_slug,k.scopes,k.created_by FROM ${table} k JOIN users u ON u.id=k.created_by JOIN organizations o ON o.id=k.organization_id JOIN product_instances i ON i.id=k.product_instance_id JOIN brands b ON b.id=i.brand_id JOIN environments e ON e.id=i.environment_id JOIN products p ON p.id=i.product_id JOIN product_subscriptions s ON s.id=i.subscription_id LEFT JOIN api_applications a ON a.id=k.application_id AND a.organization_id=k.organization_id WHERE k.secret_hash=$1 AND k.revoked_at IS NULL AND (k.expires_at IS NULL OR k.expires_at>now()) AND u.status='active' AND u.core_role IS NULL AND o.status='active' AND b.status='active' AND e.status='active' AND p.status='active' AND i.status='active' AND s.status='active' ${serviceAccount ? "AND k.status='active'" : ''} AND(k.application_id IS NULL OR(a.status='active' AND a.brand_id=k.brand_id AND a.environment_id=k.environment_id AND a.product_instance_id=k.product_instance_id AND a.scopes @> k.scopes))`, [hashSecret(secret)]);
         if (result.rows[0]) await tx.query(`UPDATE ${table} SET last_used_at=now() WHERE id=$1`, [result.rows[0].id]);
         return result.rows[0];
       });
