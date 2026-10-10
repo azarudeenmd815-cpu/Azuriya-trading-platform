@@ -171,6 +171,24 @@ describe('provider health runtime', () => {
     await expect(runtime.check(otherTenant)).resolves.toMatchObject({ state: 'UNAVAILABLE' });
   });
 
+  it('keeps delimiter-containing scopes distinct', async () => {
+    const registry = new ProviderCapabilityRegistry();
+    registry.register({ ...adapterDefinition({ provider: 'delimited' }), create: ({ scope: current }) => ({ operations: {}, initialize: async () => undefined, healthCheck: async () => ({ status: current.organizationId === 'org:a' ? 'healthy' as const : 'unavailable' as const }), shutdown: async () => undefined }) });
+    const runtime = new ProviderHealthRuntime(registry);
+    const first = scope('connection', 'org:a');
+    const second = { ...scope('connection', 'org'), brandId: 'a:brand-a' };
+    runtime.register(first, 'delimited', { token: 'first' });
+    runtime.register(second, 'delimited', { token: 'second' });
+    await expect(runtime.check(first)).resolves.toMatchObject({ state: 'HEALTHY' });
+    await expect(runtime.check(second)).resolves.toMatchObject({ state: 'UNAVAILABLE' });
+  });
+
+  it('rejects malformed runtime scope values with a typed error', () => {
+    const registry = createBuiltInProviderRegistry();
+    const runtime = new ProviderHealthRuntime(registry);
+    expect(() => runtime.register({ ...scope('malformed'), connectionId: 123 as never }, 'metatrader-5', {})).toThrowError(expect.objectContaining({ code: 'UNKNOWN_INSTANCE' }));
+  });
+
   it('redacts injected secrets, isolates failures, and shuts down idempotently', async () => {
     const shutdown = vi.fn(async () => undefined);
     const registry = new ProviderCapabilityRegistry();
@@ -184,5 +202,16 @@ describe('provider health runtime', () => {
     await runtime.shutdown(bad); await runtime.shutdown(bad);
     expect(shutdown).toHaveBeenCalledOnce();
     expect(runtime.observation(bad)).toMatchObject({ state: 'DISCONNECTED' });
+  });
+
+  it('redacts bearer and quoted secret diagnostics', async () => {
+    const registry = new ProviderCapabilityRegistry();
+    registry.register(adapterDefinition({ provider: 'diagnostic-safe', health: async () => { throw new ProviderAdapterError('TRANSPORT_FAILURE', 'ignored', false, 'Authorization: Bearer "bearer-secret" token="quoted-secret"'); } }));
+    const runtime = new ProviderHealthRuntime(registry);
+    const instance = scope('diagnostic-safe');
+    runtime.register(instance, 'diagnostic-safe', { token: 'unused' });
+    const observation = await runtime.check(instance);
+    expect(observation.diagnostic).not.toContain('bearer-secret');
+    expect(observation.diagnostic).not.toContain('quoted-secret');
   });
 });

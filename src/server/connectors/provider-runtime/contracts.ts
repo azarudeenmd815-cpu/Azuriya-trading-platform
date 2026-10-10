@@ -210,15 +210,20 @@ export interface ProviderAdapterDefinition {
 
 export function scopeKey(scope: ProviderInstanceScope): string {
   const parts = [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, scope.connectionId];
-  if (parts.some((part) => !part || part.length > 200 || part.includes(String.fromCharCode(0)) || /[\r\n]/.test(part))) {
+  if (parts.some((part) => typeof part !== 'string' || !part || part.length > 200 || part.includes(String.fromCharCode(0)) || /[\r\n]/.test(part))) {
     throw new ProviderAdapterError('UNKNOWN_INSTANCE', 'The provider instance scope is invalid.');
   }
-  return parts.join(':');
+  // Preserve field boundaries so attacker-controlled delimiters cannot alias
+  // two distinct tenant/connection scopes in the in-memory registry.
+  return JSON.stringify(parts);
 }
 
 export function sanitizeDiagnostic(value: unknown): string | undefined {
   if (typeof value !== 'string') return undefined;
-  const normalized = value.replace(/[\r\n\t]/g, ' ').replace(/(password|secret|token|authorization|api[-_ ]?key|credential)\s*[:=]\s*[^,; ]+/gi, '$1=[REDACTED]');
+  const normalized = value
+    .replace(/[\r\n\t]/g, ' ')
+    .replace(/(password|secret|token|authorization|api[-_ ]?key|credential)\s*["']?\s*[:=]\s*["']?\s*(?:bearer\s+)?["']?\s*[^\s,;}'"]+["']?/gi, '$1=[REDACTED]')
+    .replace(/(authorization)\s+(?:bearer\s+)?[^\s,;]+/gi, '$1=[REDACTED]');
   return normalized.slice(0, 160);
 }
 
