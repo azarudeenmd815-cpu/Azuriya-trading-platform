@@ -61,7 +61,7 @@ describe('native order cancellation lifecycle', () => {
     const replay = await service.cancel(scope, String(created.id), 'different reason');
     expect(replay).toMatchObject({ id: created.id, status: 'cancelled', cancellation_reason: 'user requested' });
     expect((await service.history(scope, String(created.id))).filter((event: { event_type: string }) => event.event_type === 'cancelled')).toHaveLength(1);
-    expect((await db.transaction(scope, tx => tx.query<{ count: string }>("SELECT count(*) FROM audit_events WHERE resource_id=$1 AND action='brokerage.order.cancelled'", [created.id]))).rows[0].count).toBe('1');
+    expect(String((await db.transaction(scope, tx => tx.query<{ count: string | number }>("SELECT count(*) FROM audit_events WHERE resource_id=$1 AND action='brokerage.order.cancelled'", [created.id]))).rows[0].count)).toBe('1');
   });
 
   it('rejects market, filled, partially filled, rejected, and expired orders', async () => {
@@ -78,6 +78,14 @@ describe('native order cancellation lifecycle', () => {
       await db.transaction(scope, tx => tx.query('UPDATE brokerage_orders SET status=$1 WHERE id=$2', [status, order.id]));
       await expect(service.cancel(scope, String(order.id))).rejects.toMatchObject({ code: 'ORDER_NOT_CANCELLABLE' });
     }
+  });
+
+  it('retains every partial-fill history event', async () => {
+    const order = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity: '3', limit_price: '1' });
+    await service.recordFill(scope, String(order.id), { quantity: '1', price: '1' });
+    await service.recordFill(scope, String(order.id), { quantity: '1', price: '1' });
+    expect((await service.history(scope, String(order.id))).filter((event: { event_type: string }) => event.event_type === 'partially_filled')).toHaveLength(2);
+    expect(await service.fills(scope, String(order.id))).toHaveLength(2);
   });
 
   it('locks cancellation against fills and hides cross-tenant and cross-account orders', async () => {

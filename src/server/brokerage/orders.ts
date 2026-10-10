@@ -6,7 +6,8 @@ import { serializable } from '../domain/utils.js';
 import type { TenantContext } from '../../shared/types.js';
 import { recordEvent, scopeValues, scopeWhere } from './common.js';
 
-const decimal = z.string().regex(/^(?:0|[1-9]\d*)(?:\.\d{1,8})?$/, 'Use a positive decimal with at most 8 fractional digits.');
+const decimalPattern = /^(?:0|[1-9]\d{0,19})(?:\.\d{1,8})?$/;
+const decimal = z.string().regex(decimalPattern, 'Use a positive decimal with at most 8 fractional digits.');
 export const orderTypes = ['limit', 'stop', 'market'] as const;
 export const orderSides = ['buy', 'sell'] as const;
 export const orderStatuses = ['pending', 'partially_filled', 'filled', 'rejected', 'expired', 'cancelled'] as const;
@@ -25,7 +26,7 @@ function transitionError(status: string): AppError {
   return new AppError(409, 'ORDER_NOT_CANCELLABLE', `An order in ${status} state cannot be cancelled.`);
 }
 function ensurePositive(value: string, label: string): void {
-  if (Number(value) <= 0 || !Number.isFinite(Number(value))) throw new AppError(422, 'INVALID_INPUT', `${label} must be greater than zero.`);
+  if (!decimalPattern.test(value) || /^0(?:\.0+)?$/.test(value)) throw new AppError(422, 'INVALID_INPUT', `${label} must be greater than zero.`);
 }
 
 export class BrokerageOrdersService {
@@ -91,9 +92,11 @@ export class BrokerageOrdersService {
     return this.db.transaction(scope, async tx => {
       const order = await this.load(tx, scope, id, undefined, true);
       if (['cancelled', 'rejected', 'expired', 'filled'].includes(order.status)) throw transitionError(order.status);
-      const remaining = Number(order.quantity) - Number(order.filled_quantity); if (Number(input.quantity) > remaining) throw new AppError(409, 'FILL_EXCEEDS_ORDER', 'The fill exceeds the remaining order quantity.');
+      // Keep quantity comparisons in PostgreSQL NUMERIC space. JavaScript Number
+      // cannot represent all values permitted by numeric(28,8) exactly.
+      const next = (await tx.query<OrderRow>(`UPDATE brokerage_orders SET filled_quantity=filled_quantity+$6,status=CASE WHEN filled_quantity+$6>=quantity THEN 'filled' ELSE 'partially_filled' END,updated_at=now(),version=version+1 WHERE ${scopeWhere()} AND id=$5 AND $6::numeric<=quantity-filled_quantity RETURNING *`, [...scopeValues(scope), id, input.quantity])).rows[0];
+      if (!next) throw new AppError(409, 'FILL_EXCEEDS_ORDER', 'The fill exceeds the remaining order quantity.');
       await tx.query(`INSERT INTO brokerage_order_fills(id,organization_id,brand_id,environment_id,product_instance_id,order_id,account_id,quantity,price) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`, [randomUUID(), ...scopeValues(scope), id, order.account_id, input.quantity, input.price]);
-      const next = (await tx.query<OrderRow>(`UPDATE brokerage_orders SET filled_quantity=filled_quantity+$6,status=CASE WHEN filled_quantity+$6>=quantity THEN 'filled' ELSE 'partially_filled' END,updated_at=now(),version=version+1 WHERE ${scopeWhere()} AND id=$5 RETURNING *`, [...scopeValues(scope), id, input.quantity])).rows[0];
       const event = next.status === 'filled' ? 'filled' : 'partially_filled';
       await tx.query(`INSERT INTO brokerage_order_history(id,organization_id,brand_id,environment_id,product_instance_id,order_id,event_type,from_status,to_status,actor_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT DO NOTHING`, [randomUUID(), ...scopeValues(scope), id, event, order.status, next.status, scope.userId]);
       return row(next);
