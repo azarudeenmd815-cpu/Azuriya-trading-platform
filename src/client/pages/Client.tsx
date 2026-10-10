@@ -8,6 +8,7 @@ import { useWorkspace } from '../shell/PortalShell';
 import { display, object, str, words } from '../values';
 import { Security } from './Security';
 import { BrokerageClient } from './BrokerageClient';
+import { TradingTerminalPage } from '../trading/TradingTerminalPage';
 
 export function ClientPage() {
   const { section = 'overview' } = useParams();
@@ -20,6 +21,7 @@ export function ClientPage() {
   const modules: JsonValue[] = Array.isArray(product.modules) ? product.modules : [];
   if (section === 'security') return <Security />;
   if (product.slug === 'brokerage-crm') return <BrokerageClient key={section} section={section} />;
+  if (product.slug === 'trading-terminal' && section === 'overview') return <TradingTerminalPage context={context} scopeKey={str(context.product_instance_id, str(instance.id, 'trading-terminal'))} />;
   if (section === 'profile') return <ClientProfile />;
   if (section === 'modules') return <><PageHeading title="Product modules" description={`Modules declared by ${str(product.name, 'this product')}.`} /><Notice>Your business has these product modules configured. Trading, balances and payments are not yet available.</Notice>{modules.length ? <div className="module-list">{modules.map((module, index) => <section className="panel module-panel" key={index}><span className="module-icon"><Blocks size={22} /></span><div><h2>{typeof module === 'string' ? words(module) : str(object(module).name, str(object(module).slug, 'Product module'))}</h2><p>Declared product module. Its operational workflow is a future implementation.</p></div><Badge value="foundation_only" /></section>)}</div> : <EmptyState title="No modules declared" description="Your provisioned product has no module definitions in the current catalog." />}</>;
   if (section !== 'overview') return <EmptyState title="Page unavailable" action={<Link className="button secondary" to={`${base}/overview`}>Open my workspace</Link>} />;
