@@ -21,6 +21,7 @@ import { brokerageContext } from './brokerage/common.js';
 import { registerConnectorRoutes } from './connectors/routes.js';
 import { registerProviderCallbacks } from './connectors/callbacks.js';
 import { registerKycDocumentRoutes } from './connectors/kyc-document-routes.js';
+import { registerExternalApiRoutes } from './external-api/routes.js';
 
 export interface AppOptions { db: Database; origin: string; production: boolean; logger?: boolean; webRoot?: string; strictHosts?: boolean; trustedProxies?: string[]; requireWorker?: boolean; requireCoreMfa?: boolean }
 export async function buildApp(options: AppOptions): Promise<FastifyInstance> {
@@ -77,6 +78,7 @@ export async function buildApp(options: AppOptions): Promise<FastifyInstance> {
   registerIdentityRoutes(app, options.db, auth, options.requireCoreMfa ?? options.production);
   registerInvitationRoutes(app, options.db, auth, tenancy, options.origin, options.production);
   registerBrokerageRoutes(app, options.db, auth, tenancy);
+  registerExternalApiRoutes(app, options.db, auth, tenancy);
   const connectorContext = brokerageContext(options.db, auth, tenancy);
   registerConnectorRoutes(app, connectorContext);
   registerKycDocumentRoutes(app, connectorContext);
