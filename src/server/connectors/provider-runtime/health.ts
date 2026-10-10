@@ -1,0 +1,128 @@
+import {
+  classifyProviderError,
+  ProviderAdapterError,
+  sanitizeDiagnostic,
+  scopeKey,
+  type ProviderAdapterInstance,
+  type ProviderHealthState,
+  type ProviderIdentifier,
+  type ProviderInstanceContext,
+  type ProviderInstanceScope,
+} from './contracts.js';
+import { ProviderCapabilityRegistry } from './registry.js';
+
+export interface ProviderHealthObservation {
+  readonly provider: ProviderIdentifier;
+  readonly state: ProviderHealthState;
+  readonly checkedAt: string;
+  readonly errorCode?: string;
+  readonly diagnostic?: string;
+}
+
+export interface ProviderHealthRuntimeOptions {
+  readonly timeoutMs?: number;
+  readonly clock?: () => number;
+}
+
+interface Entry {
+  readonly key: string;
+  readonly provider: ProviderIdentifier;
+  readonly adapter: ProviderAdapterInstance;
+  readonly context: ProviderInstanceContext;
+  readonly timeoutMs: number;
+  generation: number;
+  shutdown: boolean;
+  initialized: boolean;
+  observation: ProviderHealthObservation;
+  shutdownPromise?: Promise<void>;
+}
+
+function iso(clock: () => number): string { return new Date(clock()).toISOString(); }
+
+/** Deterministic, tenant-scoped state machine. It does not poll or make network calls by itself. */
+export class ProviderHealthRuntime {
+  private readonly entries = new Map<string, Entry>();
+  private readonly timeoutMs: number;
+  private readonly clock: () => number;
+
+  constructor(private readonly registry: ProviderCapabilityRegistry, options: ProviderHealthRuntimeOptions = {}) {
+    this.timeoutMs = Math.max(1, Math.min(120_000, Math.floor(options.timeoutMs ?? 10_000)));
+    this.clock = options.clock ?? Date.now;
+  }
+
+  register(scope: ProviderInstanceScope, provider: ProviderIdentifier, configuration: Readonly<Record<string, string>>, environment: ProviderInstanceContext['environment'] = 'sandbox'): void {
+    const key = scopeKey(scope);
+    if (this.entries.has(key)) throw new ProviderAdapterError('INSTANCE_ALREADY_REGISTERED', 'The provider connection instance is already registered.');
+    const definition = this.registry.resolve(provider);
+    const frozenConfiguration = Object.freeze({ ...configuration });
+    const context: ProviderInstanceContext = Object.freeze({ scope: Object.freeze({ ...scope }), environment, configuration: frozenConfiguration });
+    const observation: ProviderHealthObservation = Object.freeze({ provider, state: 'UNCONFIGURED', checkedAt: iso(this.clock) });
+    this.entries.set(key, { key, provider, adapter: definition.create(context), context, timeoutMs: this.timeoutMs, generation: 0, shutdown: false, initialized: false, observation });
+  }
+
+  observation(scope: ProviderInstanceScope): ProviderHealthObservation {
+    const entry = this.entry(scope);
+    return Object.freeze({ ...entry.observation });
+  }
+
+  async check(scope: ProviderInstanceScope): Promise<ProviderHealthObservation> {
+    const entry = this.entry(scope);
+    if (entry.shutdown) return this.observation(scope);
+    const generation = ++entry.generation;
+    entry.observation = Object.freeze({ provider: entry.provider, state: 'CONNECTING', checkedAt: iso(this.clock) });
+    const definition = this.registry.resolve(entry.provider);
+    try {
+      const configured = definition.isConfigured
+        ? definition.isConfigured(entry.context.configuration)
+        : definition.requiredConfiguration.every((field) => typeof entry.context.configuration[field.key] === 'string' && entry.context.configuration[field.key]!.length > 0);
+      if (!configured) {
+        const result: ProviderHealthObservation = Object.freeze({ provider: entry.provider, state: 'UNCONFIGURED', checkedAt: iso(this.clock), errorCode: 'CONFIGURATION_MISSING' });
+        if (generation === entry.generation) entry.observation = result;
+        return result;
+      }
+      const signal = await this.withTimeout((async () => {
+        if (!entry.initialized) {
+          await entry.adapter.initialize();
+          if (entry.shutdown) throw new ProviderAdapterError('SHUTDOWN', 'The provider connection was shut down.');
+          entry.initialized = true;
+        }
+        return entry.adapter.healthCheck();
+      })(), entry.timeoutMs);
+      const result: ProviderHealthObservation = Object.freeze({ provider: entry.provider, state: signal.status === 'healthy' ? 'HEALTHY' : signal.status === 'degraded' ? 'DEGRADED' : 'UNAVAILABLE', checkedAt: iso(this.clock), diagnostic: sanitizeDiagnostic(signal.diagnostic), ...(signal.status === 'healthy' ? {} : { errorCode: signal.status === 'degraded' ? 'PROVIDER_UNAVAILABLE' : 'PROVIDER_UNAVAILABLE' }) });
+      if (generation === entry.generation && !entry.shutdown) entry.observation = result;
+      return generation === entry.generation ? result : this.observation(scope);
+    } catch (error) {
+      const safe = classifyProviderError(error);
+      const result: ProviderHealthObservation = Object.freeze({ provider: entry.provider, state: safe.code === 'SHUTDOWN' ? 'DISCONNECTED' : safe.code === 'CONFIGURATION_MISSING' ? 'UNCONFIGURED' : safe.code === 'RATE_LIMITED' ? 'DEGRADED' : 'UNAVAILABLE', checkedAt: iso(this.clock), errorCode: safe.code, diagnostic: sanitizeDiagnostic(safe.diagnostic) });
+      if (generation === entry.generation && !entry.shutdown) entry.observation = result;
+      return generation === entry.generation ? result : this.observation(scope);
+    }
+  }
+
+  async shutdown(scope: ProviderInstanceScope): Promise<void> {
+    const entry = this.entry(scope);
+    if (entry.shutdownPromise) return entry.shutdownPromise;
+    entry.shutdown = true;
+    ++entry.generation;
+    entry.observation = Object.freeze({ provider: entry.provider, state: 'DISCONNECTED', checkedAt: iso(this.clock) });
+    entry.shutdownPromise = Promise.resolve().then(() => entry.adapter.shutdown()).catch(() => undefined);
+    return entry.shutdownPromise;
+  }
+
+  async shutdownAll(): Promise<void> { await Promise.all([...this.entries.values()].map((entry) => this.shutdown(entry.context.scope))); }
+
+  private entry(scope: ProviderInstanceScope): Entry {
+    const entry = this.entries.get(scopeKey(scope));
+    if (!entry) throw new ProviderAdapterError('UNKNOWN_INSTANCE', 'The provider connection instance is not registered.');
+    return entry;
+  }
+
+  private async withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new ProviderAdapterError('TIMEOUT', 'Provider health validation timed out.', true)), timeoutMs); });
+    // Attach a rejection handler to the underlying operation. Providers may not support cancellation;
+    // generation checks above ensure a late completion cannot mutate the newer state.
+    promise.catch(() => undefined);
+    try { return await Promise.race([promise, timeout]); } finally { if (timer) clearTimeout(timer); }
+  }
+}
