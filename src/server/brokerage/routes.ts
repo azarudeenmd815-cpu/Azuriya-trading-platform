@@ -9,6 +9,7 @@ import { brokerageContext, recordEvent, scopeValues, scopeWhere } from './common
 import { registerBrokerageClientRoutes } from './clients-routes.js';
 import { registerBrokerageAccountRoutes } from './accounts-routes.js';
 import { registerBrokerageFinanceRoutes } from './finance-routes.js';
+import { registerBrokerageOrderRoutes } from './orders-routes.js';
 import { templateVariables, validateTemplate } from './communications.js';
 import { AppError } from '../domain/errors.js';
 
@@ -18,7 +19,7 @@ const templateSchema = z.object({ event_type: z.string().regex(/^brokerage\.[a-z
 
 export function registerBrokerageRoutes(app: FastifyInstance, db: Database, auth: Auth, tenancy: Tenancy) {
   const ctx = brokerageContext(db, auth, tenancy);
-  registerBrokerageClientRoutes(app, ctx); registerBrokerageAccountRoutes(app, ctx); registerBrokerageFinanceRoutes(app, ctx);
+  registerBrokerageClientRoutes(app, ctx); registerBrokerageAccountRoutes(app, ctx); registerBrokerageFinanceRoutes(app, ctx); registerBrokerageOrderRoutes(app, ctx);
   const admin = '/api/v1/instances/:instanceId/brokerage';
   const client = '/api/v1/client/instances/:instanceId/brokerage';
   async function summary(scope: TenantContext, range: { from?: string; to?: string }, report: boolean) {
