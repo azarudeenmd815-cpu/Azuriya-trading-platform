@@ -9,7 +9,7 @@ import { ErrorState, ExternalLink, Loading, Notice } from '../components/ui';
 import { PlatformMark, platformLogoUrl, usePageFavicon } from '../components/PlatformMark';
 import { ThemeToggle, useLightTheme } from '../components/ThemeToggle';
 import { useHost } from '../host';
-import { brokerageClientNavigation, brokerageNavigation, clientNavigation, coreNavigation, tenantNavigation, type NavigationItem } from './navigation';
+import { brokerageClientNavigation, brokerageNavigation, clientNavigation, coreNavigation, tenantNavigation, tradingTerminalNavigation, type NavigationItem } from './navigation';
 
 export type Surface = 'core' | 'admin' | 'portal';
 export interface WorkspaceContext { context: Row; base: string; instanceId: string; can: (permission: string) => boolean; refreshContext: () => void }
@@ -38,7 +38,8 @@ export function PortalShell({ surface }: { surface: Surface }) {
   const permissions = Array.isArray(context.permissions) ? context.permissions : [];
   const can = (permission: string) => surface === 'core' || permissions.includes(permission) && !(support && ['staff.write','roles.write','api.write','settings.write'].includes(permission));
   const brokerage = product.slug === 'brokerage-crm';
-  const navigation = (surface === 'core' ? coreNavigation : surface === 'portal' ? brokerage ? brokerageClientNavigation : clientNavigation : brokerage ? brokerageNavigation : tenantNavigation).filter(item => !item.permission || can(item.permission));
+  const terminal = product.slug === 'trading-terminal';
+  const navigation = (surface === 'core' ? coreNavigation : surface === 'portal' ? brokerage ? brokerageClientNavigation : terminal ? tradingTerminalNavigation : clientNavigation : brokerage ? brokerageNavigation : tenantNavigation).filter(item => !item.permission || can(item.permission));
   const active = navigation.find(item => item.section === section);
   const base = surface === 'core' ? '/core' : `/${surface}/${instanceId}`;
   const label = surface === 'core' ? 'Azuriya Core' : str(config.business_name, str(brand.name, 'Business workspace'));

@@ -1,4 +1,4 @@
-import { Activity, AppWindow, Blocks, BookOpenCheck, Building2, Cable, CircleUserRound, Code2, Flag, Globe2, KeyRound, LayoutDashboard, Layers3, LifeBuoy, Palette, PanelTop, Radio, ShieldCheck, SlidersHorizontal, TerminalSquare, Users, Webhook, Wallet, ListChecks, Mail, Handshake, FileCheck, type LucideIcon } from 'lucide-react';
+import { Activity, AppWindow, Blocks, BookOpenCheck, Building2, Cable, CandlestickChart, CircleUserRound, Code2, Flag, Globe2, KeyRound, LayoutDashboard, Layers3, LifeBuoy, Palette, PanelTop, Radio, ShieldCheck, SlidersHorizontal, TerminalSquare, Users, Webhook, Wallet, ListChecks, Mail, Handshake, FileCheck, type LucideIcon } from 'lucide-react';
 export interface NavigationItem { section: string; label: string; icon: LucideIcon; group: string; permission?: string }
 export const coreNavigation: NavigationItem[] = [
   { section: 'security', label: 'Account security', icon: ShieldCheck, group: 'Governance' },
@@ -55,6 +55,11 @@ export const clientNavigation: NavigationItem[] = [
   { section: 'security', label: 'Account security', icon: ShieldCheck, group: 'Account' },
   { section: 'overview', label: 'My workspace', icon: PanelTop, group: 'Client portal' },
   { section: 'modules', label: 'Product modules', icon: Blocks, group: 'Client portal' },
+  { section: 'profile', label: 'My profile', icon: CircleUserRound, group: 'Account' },
+];
+export const tradingTerminalNavigation: NavigationItem[] = [
+  { section: 'overview', label: 'Trading terminal', icon: CandlestickChart, group: 'Markets' },
+  { section: 'security', label: 'Account security', icon: ShieldCheck, group: 'Account' },
   { section: 'profile', label: 'My profile', icon: CircleUserRound, group: 'Account' },
 ];
 export const brokerageNavigation: NavigationItem[] = [
