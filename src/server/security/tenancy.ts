@@ -39,7 +39,7 @@ export class Tenancy {
         if (!permissions.rows.length) throw new AppError(403, 'TENANT_ACCESS_DENIED', 'You do not have an active staff membership for this product instance.');
         codes = permissions.rows.map(row => row.permission_code);
       }
-      return { userId: principal.user.id, requestId: request.id, core: false, organizationId: instance.organization_id, brandId: instance.brand_id, environmentId: instance.environment_id, productInstanceId: instance.id, productSlug: instance.product_slug, permissions: codes, supportGrantId };
+      return { userId: principal.user.id, requestId: request.id, core: false, organizationId: instance.organization_id, brandId: instance.brand_id, environmentId: instance.environment_id, productInstanceId: instance.id, productSlug: instance.product_slug, permissions: codes, supportGrantId, credentialId: principal.kind === 'api' ? principal.key?.id : undefined };
     });
     if (permission && !context.permissions.includes(permission)) throw new AppError(403, 'PERMISSION_DENIED', `The ${permission} permission is required.`);
     await this.limitTenant?.(context);

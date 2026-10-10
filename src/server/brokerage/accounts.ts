@@ -104,6 +104,52 @@ export class BrokerageAccountsService {
   }
   private async staffScope(tx:Executor,scope:TenantContext,permission:string):Promise<void>{
     await this.accountScope(tx,scope,permission);
+    // TenantContext is an application contract and may be passed by workers
+    // or other services. Re-authorize the requested capability against the
+    // canonical membership and role grant instead of trusting that contract's
+    // permission array alone.
+    if(scope.supportGrantId){
+      const support=(await tx.query(`SELECT 1 FROM support_access_grants sag
+        WHERE sag.id=$1 AND sag.user_id=$2 AND sag.organization_id=$3 AND sag.brand_id=$4
+          AND sag.environment_id=$5 AND sag.product_instance_id=$6
+          AND sag.revoked_at IS NULL AND sag.starts_at<=now() AND sag.expires_at>now()
+          AND sag.scopes @> $7::jsonb
+          AND EXISTS (SELECT 1 FROM users u WHERE u.id=sag.user_id AND u.status='active') LIMIT 1`,[
+        scope.supportGrantId,scope.userId,scope.organizationId,scope.brandId,
+        scope.environmentId,scope.productInstanceId,JSON.stringify([permission])])).rows[0];
+      if(!support)throw new AppError(403,'PERMISSION_DENIED',`The ${permission} permission is required.`);
+      return;
+    }
+    if(scope.credentialId){
+      const credential=(await tx.query(`
+        SELECT 1 FROM api_keys
+        WHERE id=$1 AND created_by=$2 AND organization_id=$3 AND brand_id=$4
+          AND environment_id=$5 AND product_instance_id=$6
+          AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now())
+          AND scopes @> $7::jsonb
+        UNION ALL
+        SELECT 1 FROM service_accounts
+        WHERE id=$1 AND created_by=$2 AND organization_id=$3 AND brand_id=$4
+          AND environment_id=$5 AND product_instance_id=$6 AND status='active'
+          AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now())
+          AND scopes @> $7::jsonb
+        LIMIT 1`,[
+        scope.credentialId,scope.userId,scope.organizationId,scope.brandId,
+        scope.environmentId,scope.productInstanceId,JSON.stringify([permission])])).rows[0];
+      if(!credential)throw new AppError(403,'PERMISSION_DENIED',`The ${permission} permission is required.`);
+      return;
+    }
+    const grant=(await tx.query(`SELECT 1
+      FROM staff_memberships m
+      JOIN users u ON u.id=m.user_id AND u.status='active'
+      JOIN roles r ON r.id=m.role_id AND r.organization_id=m.organization_id
+      JOIN role_permissions rp ON rp.role_id=r.id AND rp.organization_id=m.organization_id
+      WHERE m.user_id=$1 AND m.organization_id=$2 AND m.status='active'
+        AND (m.environment_id IS NULL OR m.environment_id=$3)
+        AND (m.product_instance_id IS NULL OR m.product_instance_id=$4)
+        AND rp.permission_code=$5
+      LIMIT 1`,[scope.userId,scope.organizationId,scope.environmentId,scope.productInstanceId,permission])).rows[0];
+    if(!grant)throw new AppError(403,'PERMISSION_DENIED',`The ${permission} permission is required.`);
   }
   private async clientScope(tx:Executor,scope:TenantContext):Promise<void>{
     await this.accountScope(tx,scope);
