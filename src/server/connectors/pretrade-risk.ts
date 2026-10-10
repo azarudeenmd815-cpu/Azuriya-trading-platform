@@ -83,6 +83,7 @@ function quoteFailure(input: PretradeRiskInput): PretradeRejectedDecision | null
   if (!quote || !quote.trusted || !quote.available || quote.symbol !== order.symbol) return reject('TRADING_QUOTE_INVALID', 'A trusted executable quote is unavailable for this instrument.');
   const bid = parseDecimal(quote.bid); const ask = parseDecimal(quote.ask);
   if (!bid || !ask || bid.coefficient <= 0n || ask.coefficient <= 0n || compare(bid, ask) > 0) return reject('TRADING_QUOTE_INVALID', 'The executable quote is invalid.');
+  if (freshness && quote.observed_at === undefined) return reject('TRADING_QUOTE_INVALID', 'The executable quote timestamp is required for freshness validation.');
   if (quote.observed_at !== undefined) {
     const observed = Date.parse(quote.observed_at); if (!Number.isFinite(observed)) return reject('TRADING_QUOTE_INVALID', 'The executable quote timestamp is invalid.');
     if (freshness && (!Number.isFinite(freshness.maxAgeMs) || freshness.maxAgeMs < 0 || !Number.isFinite(freshness.nowMs) || observed > freshness.nowMs || freshness.nowMs - observed > freshness.maxAgeMs)) return reject('TRADING_QUOTE_INVALID', 'The executable quote is stale or its freshness information is invalid.');
@@ -96,7 +97,7 @@ function orderFailure(order: PretradeOrder, instrument: PretradeInstrument): Pre
   const pending = order.type !== 'market';
   if (pending && !order.price) return reject('TRADING_ORDER_INVALID', 'A pending order requires an exact trigger or limit price.');
   if (!pending && order.price !== undefined) return reject('TRADING_ORDER_INVALID', 'A market order cannot provide a client-selected execution price.');
-  for (const value of [order.price, order.execution_price]) if (value !== undefined) { const parsed = parseDecimal(value); const tick = parseDecimal(instrument.tick_size); if (!parsed || parsed.coefficient <= 0n || !tick || tick.coefficient <= 0n || !Number.isSafeInteger(instrument.digits) || instrument.digits < 0 || (value === order.price && parsed.scale > instrument.digits) || !multiple(parsed, tick)) return reject('TRADING_ORDER_INVALID', 'The order price has unsupported precision or tick alignment.') }
+  for (const value of [order.price, order.execution_price]) if (value !== undefined) { const parsed = parseDecimal(value); const tick = parseDecimal(instrument.tick_size); if (!parsed || parsed.coefficient <= 0n || !tick || tick.coefficient <= 0n || !Number.isSafeInteger(instrument.digits) || instrument.digits < 0 || parsed.scale > instrument.digits || !multiple(parsed, tick)) return reject('TRADING_ORDER_INVALID', 'The order price has unsupported precision or tick alignment.') }
   return null;
 }
 

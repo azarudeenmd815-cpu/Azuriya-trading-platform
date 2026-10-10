@@ -39,6 +39,10 @@ describe('deterministic pretrade risk admission', () => {
     ['zero quantity', { volume: '0' }], ['step mismatch', { volume: '0.101' }], ['too precise price', { price: '1.100001' }],
   ])('rejects %s', (_name, order) => expect(evaluatePretradeRisk(input({ order: { ...base.order, ...order } }))).toMatchObject({ allowed: false, code: 'TRADING_ORDER_INVALID' }));
 
+  it('rejects a server execution price beyond instrument precision', () => {
+    expect(evaluatePretradeRisk(input({ order: { ...base.order, execution_price: '1.100001' } }))).toMatchObject({ allowed: false, code: 'TRADING_ORDER_INVALID' });
+  });
+
   it('rejects disabled accounts and instruments', () => {
     expect(evaluatePretradeRisk(input({ account: { ...base.account, account: { ...base.account.account!, status: 'disabled' } } }))).toMatchObject({ allowed: false, code: 'TRADING_ACCOUNT_INELIGIBLE' });
     expect(evaluatePretradeRisk(input({ instrument: { ...instrument, enabled: false } }))).toMatchObject({ allowed: false, code: 'TRADING_INSTRUMENT_UNAVAILABLE' });
@@ -52,6 +56,10 @@ describe('deterministic pretrade risk admission', () => {
     const invalid = input({ quote: { ...base.quote!, trusted: false } });
     expect(evaluatePretradeRisk(invalid)).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
     expect(evaluatePretradeRisk(base)).toEqual(evaluatePretradeRisk(structuredClone(base)));
+  });
+
+  it('fails closed when freshness validation has no quote timestamp', () => {
+    expect(evaluatePretradeRisk({ ...base, freshness: { maxAgeMs: 60_000, nowMs: Date.now() } })).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
   });
 
   it('defers pending margin and quote checks until execution, then checks them', () => {
