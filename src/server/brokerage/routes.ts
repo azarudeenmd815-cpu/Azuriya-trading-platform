@@ -11,6 +11,7 @@ import { registerBrokerageAccountRoutes } from './accounts-routes.js';
 import { registerBrokerageFinanceRoutes } from './finance-routes.js';
 import { templateVariables, validateTemplate } from './communications.js';
 import { AppError } from '../domain/errors.js';
+import { registerTradingGroupRoutes } from './trading-groups-routes.js';
 
 const pageQuery = z.object({ limit: z.coerce.number().int().min(1).max(100).default(20), offset: z.coerce.number().int().min(0).max(1000000).default(0), search: z.string().max(120).optional(), status: z.string().max(60).optional(), sort: z.string().optional(), direction: z.enum(['asc','desc']).optional() });
 const dateQuery = z.object({ from: z.iso.date().optional(), to: z.iso.date().optional() }).refine(v => !v.from || !v.to || v.from<=v.to, 'Start date must precede end date.');
@@ -18,7 +19,7 @@ const templateSchema = z.object({ event_type: z.string().regex(/^brokerage\.[a-z
 
 export function registerBrokerageRoutes(app: FastifyInstance, db: Database, auth: Auth, tenancy: Tenancy) {
   const ctx = brokerageContext(db, auth, tenancy);
-  registerBrokerageClientRoutes(app, ctx); registerBrokerageAccountRoutes(app, ctx); registerBrokerageFinanceRoutes(app, ctx);
+  registerBrokerageClientRoutes(app, ctx); registerBrokerageAccountRoutes(app, ctx); registerBrokerageFinanceRoutes(app, ctx); registerTradingGroupRoutes(app, ctx);
   const admin = '/api/v1/instances/:instanceId/brokerage';
   const client = '/api/v1/client/instances/:instanceId/brokerage';
   async function summary(scope: TenantContext, range: { from?: string; to?: string }, report: boolean) {
