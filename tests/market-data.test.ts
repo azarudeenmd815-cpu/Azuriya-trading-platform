@@ -22,6 +22,7 @@ describe('market-data quote normalization', () => {
     ['crossed quote', { bid: '1.10003' }],
     ['precision violation', { bid: '1.100001' }],
     ['tick violation', { bid: '1.100011' }],
+    ['source sequence overflow', { sourceSequence: '9223372036854775808' }],
     ['invalid timestamp', { sourceEventAt: 'invalid' }],
   ])('%s is rejected', (_label, change) => {
     expect(() => normalizeQuote({ ...base, ...change } as never, instrument, source)).toThrow(AppError);

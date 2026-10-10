@@ -5,6 +5,7 @@ import type { TenantContext } from '../../shared/types.js';
 
 export const INTERNAL_MARKET_DATA_AUTHORITY = 'internal-market-data' as const;
 const FUTURE_TOLERANCE_MS = 5 * 60_000;
+const MAX_POSTGRES_BIGINT = 9_223_372_036_854_775_807n;
 
 export interface QuoteInput {
   instrumentId: string;
@@ -97,9 +98,15 @@ function timestamp(value: unknown, field: string, allowFuture = false): string {
 
 function sequence(value: unknown): string | null {
   if (value === undefined || value === null) return null;
-  if (typeof value === 'bigint') return value >= 0n ? value.toString() : reject('sourceSequence must be non-negative.');
+  if (typeof value === 'bigint') {
+    if (value < 0n) reject('sourceSequence must be non-negative.');
+    if (value > MAX_POSTGRES_BIGINT) reject('sourceSequence exceeds the supported integer range.');
+    return value.toString();
+  }
   if (typeof value !== 'string' || !/^\d{1,19}$/.test(value)) reject('sourceSequence must be an unsigned integer string.');
-  return BigInt(value).toString();
+  const normalized = BigInt(value);
+  if (normalized > MAX_POSTGRES_BIGINT) reject('sourceSequence exceeds the supported integer range.');
+  return normalized.toString();
 }
 
 function normalized(row: SnapshotRow): QuoteSnapshot {
