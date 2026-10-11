@@ -6,6 +6,7 @@ import { seedCatalog } from '../src/server/db/seed.js';
 import { FoundationService } from '../src/server/domain/service.js';
 import { BrokerageOrdersService } from '../src/server/brokerage/orders.js';
 import { scopeValues } from '../src/server/brokerage/common.js';
+import { boundDatabase } from '../src/server/api/idempotency.js';
 import type { Row, TenantContext } from '../src/shared/types.js';
 
 describe('native order cancellation lifecycle', () => {
@@ -86,6 +87,58 @@ describe('native order cancellation lifecycle', () => {
     await service.recordFill(scope, String(order.id), { quantity: '1', price: '1' });
     expect((await service.history(scope, String(order.id))).filter((event: { event_type: string }) => event.event_type === 'partially_filled')).toHaveLength(2);
     expect(await service.fills(scope, String(order.id))).toHaveLength(2);
+  });
+
+  it.each([
+    ['filled', '1'],
+    ['partially_filled', '2'],
+  ])('rejects %s at quantity %s of 2 without changing the order or history', async (status, filledQuantity) => {
+    const order = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity: '2', limit_price: '1' });
+    const history = await service.history(scope, order.id);
+    await expect(db.transaction(scope, tx => tx.query('UPDATE brokerage_orders SET status=$1,filled_quantity=$2 WHERE id=$3', [status, filledQuantity, order.id]))).rejects.toMatchObject({ code: '23514' });
+    expect(await service.get(scope, order.id)).toEqual(order);
+    expect(await service.history(scope, order.id)).toEqual(history);
+    expect(await service.fills(scope, order.id)).toEqual([]);
+  });
+
+  it('rejects decreasing partial execution progress without rewriting fills', async () => {
+    const progressing = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'stop', side: 'buy', quantity: '3', stop_price: '1' });
+    const partial = await service.recordFill(scope, progressing.id, { quantity: '2', price: '1' });
+    const history = await service.history(scope, progressing.id);
+    const fills = await service.fills(scope, progressing.id);
+    await expect(db.transaction(scope, tx => tx.query('UPDATE brokerage_orders SET filled_quantity=$1 WHERE id=$2', ['1', progressing.id]))).rejects.toMatchObject({ code: '23514' });
+    expect(await service.get(scope, progressing.id)).toEqual(partial);
+    expect(await service.history(scope, progressing.id)).toEqual(history);
+    expect(await service.fills(scope, progressing.id)).toEqual(fills);
+  });
+
+  it.each([
+    ['0.00000003', '0.00000001', '0.00000002'],
+    ['99999999999999999999.99999999', '99999999999999999999.99999998', '0.00000001'],
+  ])('retains exact partial and full progress for quantity %s', async (quantity, firstFill, remainder) => {
+    const order = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'market', side: 'sell', quantity });
+    expect(await service.recordFill(scope, order.id, { quantity: firstFill, price: '1' })).toMatchObject({ status: 'partially_filled', filled_quantity: firstFill });
+    const complete = await service.recordFill(scope, order.id, { quantity: remainder, price: '1' });
+    expect(complete).toMatchObject({ status: 'filled', filled_quantity: quantity, quantity });
+    expect((await service.history(scope, order.id)).map(event => event.event_type).sort()).toEqual(['created', 'filled', 'partially_filled']);
+    expect(await service.fills(scope, order.id)).toHaveLength(2);
+    const total = await db.transaction(scope, tx => tx.query<{ total: string }>('SELECT sum(quantity)::text AS total FROM brokerage_order_fills WHERE order_id=$1', [order.id]));
+    expect(total.rows[0].total).toBe(quantity);
+    await expect(db.transaction(scope, tx => tx.query('UPDATE brokerage_orders SET filled_quantity=$1 WHERE id=$2', [firstFill, order.id]))).rejects.toMatchObject({ code: '23514' });
+    expect(await service.get(scope, order.id)).toEqual(complete);
+  });
+
+  it('rolls back a fill and its history when a later aggregate write fails in the transaction', async () => {
+    const order = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity: '3', limit_price: '1' });
+    const history = await service.history(scope, order.id);
+    await expect(db.transaction(scope, async tx => {
+      const bound = new BrokerageOrdersService(boundDatabase(tx, scope));
+      await bound.recordFill(scope, order.id, { quantity: '2', price: '1' });
+      await tx.query('UPDATE brokerage_orders SET filled_quantity=1 WHERE id=$1', [order.id]);
+    })).rejects.toMatchObject({ code: '23514' });
+    expect(await service.get(scope, order.id)).toEqual(order);
+    expect(await service.history(scope, order.id)).toEqual(history);
+    expect(await service.fills(scope, order.id)).toEqual([]);
   });
 
   it('locks cancellation against fills and hides cross-tenant and cross-account orders', async () => {
