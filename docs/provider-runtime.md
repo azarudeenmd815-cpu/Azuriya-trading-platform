@@ -16,6 +16,8 @@ The built-in MetaTrader 5, MetaTrader 4, TradeLocker, and cTrader definitions ar
 
 `check` moves the instance through `CONNECTING` and reaches `HEALTHY` only after the injected adapter initializes and returns an explicit healthy signal. Missing configuration is `UNCONFIGURED`; authentication, transport, timeout, provider-unavailable, unexpected, and unsupported health failures are safe nonhealthy results. Rate limiting is represented as `DEGRADED`. Checks have a bounded logical timeout, and generation checks prevent late or older concurrent promises from overwriting a newer observation. Diagnostics are bounded and redacted.
 
+Initialization is deduplicated per scoped instance. Overlapping checks share one initialization promise; a timeout invalidates that promise so a later check retries initialization, and a late completion cannot mark the instance initialized. Shutdown also invalidates initialization and prevents a late initializer from reaching `healthCheck`.
+
 `shutdown` is idempotent, invalidates in-flight generations, and leaves the instance `DISCONNECTED`. There is no automatic polling in this cycle.
 
 ## Tenant and future adapters

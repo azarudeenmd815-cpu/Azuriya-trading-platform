@@ -218,12 +218,15 @@ export function scopeKey(scope: ProviderInstanceScope): string {
   return JSON.stringify(parts);
 }
 
-export function sanitizeDiagnostic(value: unknown): string | undefined {
+export function sanitizeDiagnostic(value: unknown, secrets: Readonly<Record<string, string>> = {}): string | undefined {
   if (typeof value !== 'string') return undefined;
-  const normalized = value
+  let normalized = value
     .replace(/[\r\n\t]/g, ' ')
     .replace(/(password|secret|token|authorization|api[-_ ]?key|credential)\s*["']?\s*[:=]\s*["']?\s*(?:bearer\s+)?["']?\s*[^\s,;}'"]+["']?/gi, '$1=[REDACTED]')
     .replace(/(authorization)\s+(?:bearer\s+)?[^\s,;]+/gi, '$1=[REDACTED]');
+  for (const secret of Object.values(secrets)) {
+    if (secret.length > 0) normalized = normalized.split(secret).join('[REDACTED]');
+  }
   return normalized.slice(0, 160);
 }
 

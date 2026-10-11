@@ -33,6 +33,7 @@ interface Entry {
   generation: number;
   shutdown: boolean;
   initialized: boolean;
+  initialization?: { token: symbol; promise: Promise<void> };
   observation: ProviderHealthObservation;
   shutdownPromise?: Promise<void>;
 }
@@ -57,7 +58,19 @@ export class ProviderHealthRuntime {
     const frozenConfiguration = Object.freeze({ ...configuration });
     const context: ProviderInstanceContext = Object.freeze({ scope: Object.freeze({ ...scope }), environment, configuration: frozenConfiguration });
     const observation: ProviderHealthObservation = Object.freeze({ provider, state: 'UNCONFIGURED', checkedAt: iso(this.clock) });
-    this.entries.set(key, { key, provider, adapter: definition.create(context), context, timeoutMs: this.timeoutMs, generation: 0, shutdown: false, initialized: false, observation });
+    let adapter: ProviderAdapterInstance;
+    try {
+      adapter = definition.create(context);
+    } catch (error) {
+      const safe = classifyProviderError(error);
+      adapter = {
+        operations: {},
+        initialize: async () => { throw safe; },
+        healthCheck: async () => { throw safe; },
+        shutdown: async () => undefined,
+      };
+    }
+    this.entries.set(key, { key, provider, adapter, context, timeoutMs: this.timeoutMs, generation: 0, shutdown: false, initialized: false, observation });
   }
 
   observation(scope: ProviderInstanceScope): ProviderHealthObservation {
@@ -78,22 +91,27 @@ export class ProviderHealthRuntime {
       if (!configured) {
         const result: ProviderHealthObservation = Object.freeze({ provider: entry.provider, state: 'UNCONFIGURED', checkedAt: iso(this.clock), errorCode: 'CONFIGURATION_MISSING' });
         if (generation === entry.generation) entry.observation = result;
-        return result;
+        return generation === entry.generation ? result : this.observation(scope);
+      }
+      if (!definition.descriptor.capabilities.includes('connection.health')) {
+        const result: ProviderHealthObservation = Object.freeze({ provider: entry.provider, state: 'UNAVAILABLE', checkedAt: iso(this.clock), errorCode: 'UNSUPPORTED_OPERATION' });
+        if (generation === entry.generation) entry.observation = result;
+        return generation === entry.generation ? result : this.observation(scope);
       }
       const signal = await this.withTimeout((async () => {
-        if (!entry.initialized) {
-          await entry.adapter.initialize();
-          if (entry.shutdown) throw new ProviderAdapterError('SHUTDOWN', 'The provider connection was shut down.');
-          entry.initialized = true;
-        }
+        await this.initialize(entry);
+        if (entry.shutdown) throw new ProviderAdapterError('SHUTDOWN', 'The provider connection was shut down.');
         return entry.adapter.healthCheck();
       })(), entry.timeoutMs);
-      const result: ProviderHealthObservation = Object.freeze({ provider: entry.provider, state: signal.status === 'healthy' ? 'HEALTHY' : signal.status === 'degraded' ? 'DEGRADED' : 'UNAVAILABLE', checkedAt: iso(this.clock), diagnostic: sanitizeDiagnostic(signal.diagnostic), ...(signal.status === 'healthy' ? {} : { errorCode: signal.status === 'degraded' ? 'PROVIDER_UNAVAILABLE' : 'PROVIDER_UNAVAILABLE' }) });
+      const result: ProviderHealthObservation = Object.freeze({ provider: entry.provider, state: signal.status === 'healthy' ? 'HEALTHY' : signal.status === 'degraded' ? 'DEGRADED' : 'UNAVAILABLE', checkedAt: iso(this.clock), diagnostic: sanitizeDiagnostic(signal.diagnostic, entry.context.configuration), ...(signal.status === 'healthy' ? {} : { errorCode: signal.status === 'degraded' ? 'PROVIDER_UNAVAILABLE' : 'PROVIDER_UNAVAILABLE' }) });
       if (generation === entry.generation && !entry.shutdown) entry.observation = result;
       return generation === entry.generation ? result : this.observation(scope);
     } catch (error) {
       const safe = classifyProviderError(error);
-      const result: ProviderHealthObservation = Object.freeze({ provider: entry.provider, state: safe.code === 'SHUTDOWN' ? 'DISCONNECTED' : safe.code === 'CONFIGURATION_MISSING' ? 'UNCONFIGURED' : safe.code === 'RATE_LIMITED' ? 'DEGRADED' : 'UNAVAILABLE', checkedAt: iso(this.clock), errorCode: safe.code, diagnostic: sanitizeDiagnostic(safe.diagnostic) });
+      if (safe.code === 'TIMEOUT' && entry.initialization) {
+        entry.initialization = undefined;
+      }
+      const result: ProviderHealthObservation = Object.freeze({ provider: entry.provider, state: safe.code === 'SHUTDOWN' ? 'DISCONNECTED' : safe.code === 'CONFIGURATION_MISSING' ? 'UNCONFIGURED' : safe.code === 'RATE_LIMITED' ? 'DEGRADED' : 'UNAVAILABLE', checkedAt: iso(this.clock), errorCode: safe.code, diagnostic: sanitizeDiagnostic(safe.diagnostic, entry.context.configuration) });
       if (generation === entry.generation && !entry.shutdown) entry.observation = result;
       return generation === entry.generation ? result : this.observation(scope);
     }
@@ -104,7 +122,7 @@ export class ProviderHealthRuntime {
     if (entry.shutdownPromise) return entry.shutdownPromise;
     entry.shutdown = true;
     ++entry.generation;
-    entry.observation = Object.freeze({ provider: entry.provider, state: 'DISCONNECTED', checkedAt: iso(this.clock) });
+    entry.observation = Object.freeze({ provider: entry.provider, state: 'DISCONNECTED', checkedAt: iso(this.clock), errorCode: 'SHUTDOWN' });
     entry.shutdownPromise = Promise.resolve().then(() => entry.adapter.shutdown()).catch(() => undefined);
     return entry.shutdownPromise;
   }
@@ -115,6 +133,19 @@ export class ProviderHealthRuntime {
     const entry = this.entries.get(scopeKey(scope));
     if (!entry) throw new ProviderAdapterError('UNKNOWN_INSTANCE', 'The provider connection instance is not registered.');
     return entry;
+  }
+
+  private initialize(entry: Entry): Promise<void> {
+    if (entry.initialized) return Promise.resolve();
+    if (!entry.initialization) {
+      const token = Symbol('provider-initialization');
+      const promise = Promise.resolve().then(() => entry.adapter.initialize()).then(() => {
+        if (entry.shutdown || entry.initialization?.token !== token) throw new ProviderAdapterError('SHUTDOWN', 'The provider connection was shut down.');
+        entry.initialized = true;
+      }).finally(() => { if (entry.initialization?.token === token) entry.initialization = undefined; });
+      entry.initialization = { token, promise };
+    }
+    return entry.initialization.promise;
   }
 
   private async withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
