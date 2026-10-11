@@ -15,7 +15,9 @@ Migration 065 stores `provenance` and `source_kind` on each latest snapshot and
 backfills existing rows from the registered source. Snapshot reads use the
 persisted values, so changing a source's mutable catalog fields cannot relabel
 an already stored simulated quote as verified provider data. A database check
-keeps the two provenance fields consistent.
+keeps the two provenance fields consistent. Migration 066 adds the matching
+database invariant that a source event cannot be later than its receipt, so
+trusted maintenance writes cannot bypass normalized-ingestion ordering.
 
 ## Acceptance criteria
 
@@ -63,10 +65,11 @@ Authenticated GET routes:
 - `/api/v1/instances/:instanceId/brokerage/quotes/instruments`
 - `/api/v1/client/instances/:instanceId/brokerage/quotes/instruments`
 
-Migrations 061–065 create scoped access records, enable trusted Core catalog
+Migrations 061–066 create scoped access records, enable trusted Core catalog
 administration through the restricted runtime role, and add a restrictive
 snapshot SELECT policy. Migration 065 also snapshots source provenance on each
-quote. Runtime source updates are limited to slug/active:
+quote; migration 066 enforces source/receipt ordering in the database. Runtime
+source updates are limited to slug/active:
 source kind and provenance cannot change after registration, preventing old
 simulated quotes from being relabeled as provider prices. Migration 060 is unchanged. The migration runner
 checksums and transactionally applies each migration once.

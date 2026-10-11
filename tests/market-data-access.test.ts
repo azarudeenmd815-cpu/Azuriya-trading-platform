@@ -132,6 +132,16 @@ describe('market-data entitlement and RLS boundaries', () => {
     expect((await db.transaction({ core: true }, tx => tx.query<{ slug: string; active: boolean; provenance: string }>('UPDATE market_data_sources SET active=true WHERE id=$1 RETURNING slug,active,provenance', [sourceId]))).rows[0]).toMatchObject({ slug: `renamed-${sourceId.slice(0, 8)}`, active: true, provenance: current.provenance });
   });
 
+  it('keeps source event ordering enforced for trusted direct snapshot writes', async () => {
+    const orderingSourceId = randomUUID();
+    const orderingQuoteId = randomUUID();
+    await db.transaction({ core: true }, tx => tx.query('INSERT INTO market_data_sources(id,slug,source_kind,provenance) VALUES($1,$2,$3,$4)', [orderingSourceId, `simulated-${orderingSourceId.slice(0, 8)}`, 'simulated', 'simulated']));
+    await expect(db.transaction({ core: true }, tx => tx.query(
+      'INSERT INTO market_data_latest_quotes(id,organization_id,brand_id,environment_id,product_instance_id,instrument_id,source_id,bid,ask,source_event_at,received_at,event_id,provenance,source_kind) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)',
+      [orderingQuoteId, scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, instrumentEnabled, orderingSourceId, '1.10000', '1.10002', '2026-10-11T00:00:02Z', '2026-10-11T00:00:01Z', 'invalid-ordering', 'simulated', 'simulated'],
+    ))).rejects.toMatchObject({ code: '23514' });
+  });
+
   it('enforces bounded instrument and quote lists', async () => {
     await expect(service.listInstruments(scope, 101)).rejects.toMatchObject({ code: 'INSTRUMENT_QUERY_LIMIT' });
     await expect(service.listLatest(scope, Array.from({ length: 101 }, () => randomUUID()))).rejects.toMatchObject({ code: 'QUOTE_QUERY_LIMIT' });
