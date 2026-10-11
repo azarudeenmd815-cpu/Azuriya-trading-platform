@@ -74,10 +74,10 @@ export class BrokerageLedgerService {
     const row = (await tx.query<AccountSnapshot>(`
       SELECT a.currency AS account_currency, l.balance::text, l.entry_count, l.watermark,
         statement_timestamp()::text AS evaluated_at, p.balance::text AS stored_balance,
-        (l.balance - p.balance)::numeric(38,8)::text AS difference
+        (l.balance - p.balance)::text AS difference
       FROM brokerage_accounts a
       CROSS JOIN LATERAL (
-        SELECT COALESCE(SUM(le.amount),0)::numeric(38,8) AS balance,
+        SELECT COALESCE(SUM(le.amount),0) AS balance,
           COUNT(*)::int AS entry_count, MAX(le.sequence)::text AS watermark
         FROM brokerage_ledger_entries le
         WHERE ${scopeWhere('le')} AND le.account_id=a.id AND le.currency=a.currency
