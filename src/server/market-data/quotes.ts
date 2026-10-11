@@ -113,7 +113,7 @@ function normalized(row: SnapshotRow): QuoteSnapshot {
   return {
     id: row.id, organizationId: row.organization_id, brandId: row.brand_id, environmentId: row.environment_id,
     productInstanceId: row.product_instance_id, instrumentId: row.instrument_id, sourceId: row.source_id,
-    bid: String(row.bid), ask: String(row.ask), sourceEventAt: new Date(row.source_event_at).toISOString(),
+    bid: canonicalDecimal(row.bid, 'bid'), ask: canonicalDecimal(row.ask, 'ask'), sourceEventAt: new Date(row.source_event_at).toISOString(),
     receivedAt: new Date(row.received_at).toISOString(), sourceSequence: row.source_sequence === null ? null : String(row.source_sequence),
     eventId: row.event_id, updatedAt: new Date(row.updated_at).toISOString(), provenance: row.provenance, sourceKind: row.source_kind,
   };
@@ -166,6 +166,8 @@ export class MarketDataService {
   private async ingestInTransaction(tx: Executor, scope: TenantContext, input: QuoteInput): Promise<QuoteIngestionResult> {
     const instrument = (await tx.query<Instrument>('SELECT id,symbol,price_scale,tick_size::text,zero_spread_allowed,active FROM market_data_instruments WHERE id=$1', [input.instrumentId])).rows[0];
     if (!instrument) throw new AppError(404, 'INSTRUMENT_NOT_FOUND', 'The requested instrument is unavailable.');
+    const entitlement = (await tx.query<{ enabled: boolean }>('SELECT enabled FROM market_data_instrument_access WHERE organization_id=$1 AND brand_id=$2 AND environment_id=$3 AND product_instance_id=$4 AND instrument_id=$5', [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, input.instrumentId])).rows[0];
+    if (!entitlement?.enabled) throw new AppError(403, 'INSTRUMENT_NOT_AUTHORIZED', 'The instrument is not enabled for this product instance.');
     const source = (await tx.query<Source>('SELECT id,source_kind,provenance,active FROM market_data_sources WHERE id=$1', [input.sourceId])).rows[0];
     if (!source) throw new AppError(403, 'MARKET_DATA_SOURCE_UNAUTHORIZED', 'The market-data source is not approved.');
     const quote = normalizeQuote(input, instrument, source);
@@ -174,7 +176,7 @@ export class MarketDataService {
       const existing = normalized(current);
       const order = compareQuote(quote, existing);
       if (order <= 0) return { status: order === 0 ? 'duplicate' : 'stale', snapshot: existing };
-      const updated = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`UPDATE market_data_latest_quotes SET bid=$7,ask=$8,source_event_at=$9,received_at=$10,source_sequence=$11,event_id=$12,updated_at=now() WHERE id=$6 RETURNING market_data_latest_quotes.*, $13::text AS provenance, $14::text AS source_kind`, [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, quote.instrumentId, current.id, quote.bid, quote.ask, quote.sourceEventAt, quote.receivedAt, quote.sourceSequence, quote.eventId, quote.provenance, quote.sourceKind])).rows[0];
+      const updated = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`UPDATE market_data_latest_quotes SET bid=$2,ask=$3,source_event_at=$4,received_at=$5,source_sequence=$6,event_id=$7,updated_at=now() WHERE id=$1 RETURNING market_data_latest_quotes.*, $8::text AS provenance, $9::text AS source_kind`, [current.id, quote.bid, quote.ask, quote.sourceEventAt, quote.receivedAt, quote.sourceSequence, quote.eventId, quote.provenance, quote.sourceKind])).rows[0];
       return { status: 'accepted', snapshot: normalized(updated) };
     }
     const inserted = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`INSERT INTO market_data_latest_quotes(id,organization_id,brand_id,environment_id,product_instance_id,instrument_id,source_id,bid,ask,source_event_at,received_at,source_sequence,event_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) ON CONFLICT (organization_id,brand_id,environment_id,product_instance_id,instrument_id,source_id) DO NOTHING RETURNING market_data_latest_quotes.*, $14::text AS provenance, $15::text AS source_kind`, [randomUUID(), scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, quote.instrumentId, quote.sourceId, quote.bid, quote.ask, quote.sourceEventAt, quote.receivedAt, quote.sourceSequence, quote.eventId, quote.provenance, quote.sourceKind])).rows[0];
@@ -183,8 +185,16 @@ export class MarketDataService {
     if (!winner) throw new AppError(409, 'QUOTE_WRITE_CONFLICT', 'The quote snapshot changed concurrently; retry the quote.');
     const existing = normalized(winner); const order = compareQuote(quote, existing);
     if (order <= 0) return { status: order === 0 ? 'duplicate' : 'stale', snapshot: existing };
-    const updated = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`UPDATE market_data_latest_quotes SET bid=$7,ask=$8,source_event_at=$9,received_at=$10,source_sequence=$11,event_id=$12,updated_at=now() WHERE id=$6 RETURNING market_data_latest_quotes.*, $13::text AS provenance, $14::text AS source_kind`, [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, quote.instrumentId, winner.id, quote.bid, quote.ask, quote.sourceEventAt, quote.receivedAt, quote.sourceSequence, quote.eventId, quote.provenance, quote.sourceKind])).rows[0];
+    const updated = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`UPDATE market_data_latest_quotes SET bid=$2,ask=$3,source_event_at=$4,received_at=$5,source_sequence=$6,event_id=$7,updated_at=now() WHERE id=$1 RETURNING market_data_latest_quotes.*, $8::text AS provenance, $9::text AS source_kind`, [winner.id, quote.bid, quote.ask, quote.sourceEventAt, quote.receivedAt, quote.sourceSequence, quote.eventId, quote.provenance, quote.sourceKind])).rows[0];
     return { status: 'accepted', snapshot: normalized(updated) };
+  }
+
+  async listInstruments(scope: TenantContext, limit = 100): Promise<Array<{ id: string; symbol: string; displayName: string; priceScale: number; tickSize: string; zeroSpreadAllowed: boolean }>> {
+    if (!Number.isInteger(limit) || limit < 1 || limit > 100) throw new AppError(400, 'INSTRUMENT_QUERY_LIMIT', 'At most 100 instruments may be requested.');
+    return this.db.transaction(scope, async tx => {
+      const rows = (await tx.query<Instrument & { display_name: string }>('SELECT i.id,i.symbol,i.display_name,i.price_scale,i.tick_size::text,i.zero_spread_allowed FROM market_data_instruments i JOIN market_data_instrument_access a ON a.instrument_id=i.id AND a.organization_id=$1 AND a.brand_id=$2 AND a.environment_id=$3 AND a.product_instance_id=$4 AND a.enabled=true WHERE i.active=true ORDER BY i.symbol,i.id LIMIT $5', [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, limit])).rows;
+      return rows.map(row => ({ id: row.id, symbol: row.symbol, displayName: row.display_name, priceScale: row.price_scale, tickSize: canonicalDecimal(row.tick_size, 'tickSize'), zeroSpreadAllowed: row.zero_spread_allowed }));
+    });
   }
 
   async getLatest(scope: TenantContext, instrumentId: string, sourceId?: string): Promise<QuoteSnapshot | null> {
@@ -192,7 +202,7 @@ export class MarketDataService {
       const params: unknown[] = [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, instrumentId];
       const source = sourceId ? ' AND q.source_id=$6' : '';
       if (sourceId) params.push(sourceId);
-      const row = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`SELECT q.*,s.provenance,s.source_kind FROM market_data_latest_quotes q JOIN market_data_sources s ON s.id=q.source_id WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=$5${source} ORDER BY q.source_event_at DESC,q.source_id ASC LIMIT 1`, params)).rows[0];
+      const row = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`SELECT q.*,s.provenance,s.source_kind FROM market_data_latest_quotes q JOIN market_data_sources s ON s.id=q.source_id JOIN market_data_instrument_access a ON a.organization_id=q.organization_id AND a.brand_id=q.brand_id AND a.environment_id=q.environment_id AND a.product_instance_id=q.product_instance_id AND a.instrument_id=q.instrument_id AND a.enabled=true WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=$5${source} ORDER BY q.source_event_at DESC,q.source_id ASC LIMIT 1`, params)).rows[0];
       return row ? normalized(row) : null;
     });
   }
@@ -204,7 +214,7 @@ export class MarketDataService {
       const params: unknown[] = [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, instrumentIds];
       const source = sourceId ? ' AND q.source_id=$6' : '';
       if (sourceId) params.push(sourceId);
-      const rows = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`SELECT q.*,s.provenance,s.source_kind FROM market_data_latest_quotes q JOIN market_data_sources s ON s.id=q.source_id WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=ANY($5::uuid[])${source} ORDER BY q.instrument_id,q.source_id`, params)).rows;
+      const rows = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`SELECT q.*,s.provenance,s.source_kind FROM market_data_latest_quotes q JOIN market_data_sources s ON s.id=q.source_id JOIN market_data_instrument_access a ON a.organization_id=q.organization_id AND a.brand_id=q.brand_id AND a.environment_id=q.environment_id AND a.product_instance_id=q.product_instance_id AND a.instrument_id=q.instrument_id AND a.enabled=true WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=ANY($5::uuid[])${source} ORDER BY q.instrument_id,q.source_id`, params)).rows;
       return rows.map(normalized);
     });
   }

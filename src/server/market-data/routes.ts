@@ -16,6 +16,8 @@ export function registerMarketDataRoutes(app: FastifyInstance, db: Database, aut
   const service = new MarketDataService(db);
   const admin = '/api/v1/instances/:instanceId/brokerage/quotes';
   const client = '/api/v1/client/instances/:instanceId/brokerage/quotes';
+  const instrumentAdmin = '/api/v1/instances/:instanceId/brokerage/quotes/instruments';
+  const instrumentClient = '/api/v1/client/instances/:instanceId/brokerage/quotes/instruments';
   const read = async (request: FastifyRequest, self: boolean) => {
     params.parse(request.params); const input = query.parse(request.query);
     const scope = self ? await context.client(request) : await context.staff(request, 'brokerage.accounts.read');
@@ -26,4 +28,6 @@ export function registerMarketDataRoutes(app: FastifyInstance, db: Database, aut
   };
   app.get(admin, async request => read(request, false));
   app.get(client, async request => read(request, true));
+  app.get(instrumentAdmin, async request => { params.parse(request.params); const scope = await context.staff(request, 'brokerage.accounts.read'); return { data: await service.listInstruments(scope) }; });
+  app.get(instrumentClient, async request => { params.parse(request.params); const scope = await context.client(request); return { data: await service.listInstruments(scope) }; });
 }
