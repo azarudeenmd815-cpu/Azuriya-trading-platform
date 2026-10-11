@@ -122,17 +122,19 @@ export class BrokerageAccountsService {
     }
     if(scope.credentialId){
       const credential=(await tx.query(`
-        SELECT 1 FROM api_keys
-        WHERE id=$1 AND created_by=$2 AND organization_id=$3 AND brand_id=$4
-          AND environment_id=$5 AND product_instance_id=$6
-          AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now())
-          AND scopes @> $7::jsonb
+        SELECT 1 FROM api_keys k
+        JOIN users u ON u.id=k.created_by AND u.status='active'
+        WHERE k.id=$1 AND k.created_by=$2 AND k.organization_id=$3 AND k.brand_id=$4
+          AND k.environment_id=$5 AND k.product_instance_id=$6
+          AND k.revoked_at IS NULL AND (k.expires_at IS NULL OR k.expires_at>now())
+          AND k.scopes @> $7::jsonb
         UNION ALL
-        SELECT 1 FROM service_accounts
-        WHERE id=$1 AND created_by=$2 AND organization_id=$3 AND brand_id=$4
-          AND environment_id=$5 AND product_instance_id=$6 AND status='active'
-          AND revoked_at IS NULL AND (expires_at IS NULL OR expires_at>now())
-          AND scopes @> $7::jsonb
+        SELECT 1 FROM service_accounts s
+        JOIN users u ON u.id=s.created_by AND u.status='active'
+        WHERE s.id=$1 AND s.created_by=$2 AND s.organization_id=$3 AND s.brand_id=$4
+          AND s.environment_id=$5 AND s.product_instance_id=$6 AND s.status='active'
+          AND s.revoked_at IS NULL AND (s.expires_at IS NULL OR s.expires_at>now())
+          AND s.scopes @> $7::jsonb
         LIMIT 1`,[
         scope.credentialId,scope.userId,scope.organizationId,scope.brandId,
         scope.environmentId,scope.productInstanceId,JSON.stringify([permission])])).rows[0];
