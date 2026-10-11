@@ -84,6 +84,15 @@ describe('authoritative account ledger replay and reconciliation', () => {
     await service.postEntry(first, { account_id: accountId, currency: 'USD', amount: '1', kind: 'deposit', idempotency_key: 'ledger-scope-0001' });
     await expect(service.balance(second, accountId, 'USD')).rejects.toMatchObject({ code: 'ACCOUNT_NOT_FOUND' });
     await expect(service.balance(first, accountId, 'EUR')).rejects.toMatchObject({ code: 'ACCOUNT_CURRENCY_MISMATCH' });
+    await expect(service.reconcile(second, accountId, 'USD')).rejects.toMatchObject({ code: 'ACCOUNT_NOT_FOUND' });
+    await expect(service.reconcile(first, accountId, 'EUR')).rejects.toMatchObject({ code: 'ACCOUNT_CURRENCY_MISMATCH' });
+  });
+
+  it('returns structured not-found errors for malformed account identifiers', async () => {
+    const malformed = 'not-an-account-uuid';
+    await expect(service.balance(first, malformed, 'USD')).rejects.toMatchObject({ statusCode: 404, code: 'ACCOUNT_NOT_FOUND' });
+    await expect(service.reconcile(first, malformed, 'USD')).rejects.toMatchObject({ statusCode: 404, code: 'ACCOUNT_NOT_FOUND' });
+    await expect(service.postEntry(first, { account_id: malformed, currency: 'USD', amount: '1', kind: 'deposit', idempotency_key: 'ledger-malformed-account' })).rejects.toMatchObject({ statusCode: 404, code: 'ACCOUNT_NOT_FOUND' });
   });
 
   it('fails closed for core and malformed service contexts', async () => {
@@ -105,6 +114,86 @@ describe('authoritative account ledger replay and reconciliation', () => {
     const mismatch = await service.reconcile(first, accountId, 'USD');
     expect(mismatch).toMatchObject({ status: 'MISMATCHED', stored_balance: '10.00000000', difference: '2.34567891' });
     expect((await db.transaction(first, tx => tx.query<{ balance: string }>('SELECT balance::text FROM brokerage_account_balance_projections WHERE account_id=$1', [accountId]))).rows[0].balance).toBe('10.00000000');
+  });
+
+  it('returns an empty snapshot without treating an absent projection as a matching zero', async () => {
+    const accountId = await account();
+    expect(await service.balance(first, accountId, 'USD')).toMatchObject({ balance: '0.00000000', entry_count: 0, watermark: null });
+    expect(await service.reconcile(first, accountId, 'USD')).toMatchObject({ status: 'NOT_COMPARABLE', balance: '0.00000000', stored_balance: null, difference: null, entry_count: 0, watermark: null });
+    await db.transaction(first, tx => tx.query("INSERT INTO brokerage_account_balance_projections(organization_id,brand_id,environment_id,product_instance_id,account_id,currency,balance) VALUES($1,$2,$3,$4,$5,'USD',0)", [...values(first), accountId]));
+    expect(await service.reconcile(first, accountId, 'USD')).toMatchObject({ status: 'MATCHED', balance: '0.00000000', stored_balance: '0.00000000', difference: '0.00000000', entry_count: 0, watermark: null });
+  });
+
+  it('preserves exact negative differences, cash filtering, watermark, and read-only projections', async () => {
+    const accountId = await account();
+    const cash = await service.postEntry(first, { account_id: accountId, currency: 'USD', amount: '-9007199254740993.00000001', kind: 'adjustment', idempotency_key: 'ledger-wide-cash-01' });
+    for (const status of ['pending', 'void', 'rejected'] as const) {
+      await service.postEntry(first, { account_id: accountId, currency: 'USD', amount: '10', kind: 'deposit', status, idempotency_key: `ledger-ignored-${status}` });
+    }
+    await service.postEntry(first, { account_id: accountId, currency: 'USD', amount: '99', kind: 'unrealized_pnl', idempotency_key: 'ledger-ignored-unrealized' });
+    await db.transaction(first, tx => tx.query("INSERT INTO brokerage_account_balance_projections(organization_id,brand_id,environment_id,product_instance_id,account_id,currency,balance) VALUES($1,$2,$3,$4,$5,'USD',-9007199254740993)", [...values(first), accountId]));
+    const persisted = () => db.transaction(first, async tx => ({
+      entries: (await tx.query('SELECT * FROM brokerage_ledger_entries WHERE account_id=$1 ORDER BY sequence', [accountId])).rows,
+      projection: (await tx.query('SELECT * FROM brokerage_account_balance_projections WHERE account_id=$1', [accountId])).rows,
+    }));
+    const before = await persisted();
+    const snapshot = await service.reconcile(first, accountId, 'USD');
+    expect(snapshot).toMatchObject({ status: 'MISMATCHED', balance: '-9007199254740993.00000001', ledger_derived_balance: '-9007199254740993.00000001', stored_balance: '-9007199254740993.00000000', difference: '-0.00000001', entry_count: 1, watermark: cash.sequence });
+    expect(await service.reconcile(first, accountId, 'USD')).toEqual({ ...snapshot, evaluated_at: expect.any(String) });
+    expect(await persisted()).toEqual(before);
+  });
+
+  it('isolates all scope dimensions, account projections and denominations under actual RLS', async () => {
+    const accountId = await account();
+    const otherAccountId = await account();
+    await service.postEntry(first, { account_id: accountId, currency: 'USD', amount: '1', kind: 'deposit', idempotency_key: 'ledger-isolated-cash' });
+    await service.postEntry(first, { account_id: otherAccountId, currency: 'USD', amount: '55', kind: 'deposit', idempotency_key: 'ledger-isolated-cash' });
+    await db.transaction(first, async tx => {
+      await tx.query("INSERT INTO brokerage_account_balance_projections(organization_id,brand_id,environment_id,product_instance_id,account_id,currency,balance) VALUES($1,$2,$3,$4,$5,'EUR',99),($1,$2,$3,$4,$6,'USD',55)", [...values(first), accountId, otherAccountId]);
+      // The schema permits a foreign denomination on a posting; replay must exclude it.
+      await tx.query("INSERT INTO brokerage_ledger_entries(id,organization_id,brand_id,environment_id,product_instance_id,account_id,currency,kind,amount,idempotency_key,created_by) VALUES($1,$2,$3,$4,$5,$6,'EUR','deposit',99,'ledger-foreign-currency',$7)", [randomUUID(), ...values(first), accountId, ownerId]);
+    });
+    expect(await service.reconcile(first, accountId, 'USD')).toMatchObject({ balance: '1.00000000', status: 'NOT_COMPARABLE', entry_count: 1, stored_balance: null });
+    expect(await service.reconcile(first, otherAccountId, 'USD')).toMatchObject({ balance: '55.00000000', status: 'MATCHED', entry_count: 1 });
+    for (const field of ['organizationId', 'brandId', 'environmentId', 'productInstanceId'] as const) {
+      const foreignScope = { ...first, [field]: randomUUID() };
+      for (const read of ['balance', 'reconcile'] as const) await expect(service[read](foreignScope, accountId, 'USD')).rejects.toMatchObject({ statusCode: 404, code: 'ACCOUNT_NOT_FOUND', message: 'The account does not exist in this scope.' });
+      expect((await db.transaction(foreignScope, tx => tx.query('SELECT account_id FROM brokerage_ledger_entries WHERE account_id=$1', [accountId]))).rows).toEqual([]);
+      expect((await db.transaction(foreignScope, tx => tx.query('SELECT account_id FROM brokerage_account_balance_projections WHERE account_id=$1', [accountId]))).rows).toEqual([]);
+    }
+    await expect(service.reconcile(first, randomUUID(), 'USD')).rejects.toMatchObject({ code: 'ACCOUNT_NOT_FOUND' });
+  });
+
+  it('cannot mix old ledger and new projection when a posting commits at a statement boundary', async () => {
+    const accountId = await account();
+    const opening = await service.postEntry(first, { account_id: accountId, currency: 'USD', amount: '100', kind: 'opening_balance', idempotency_key: 'ledger-snapshot-opening' });
+    await db.transaction(first, tx => tx.query("INSERT INTO brokerage_account_balance_projections(organization_id,brand_id,environment_id,product_instance_id,account_id,currency,balance) VALUES($1,$2,$3,$4,$5,'USD',100)", [...values(first), accountId]));
+    let committed = false;
+    const statements: string[] = [];
+    // PGlite serializes whole transactions. This adapter executes the real SQL
+    // under the real scoped role, but allows a commit between service statements
+    // to reproduce READ COMMITTED visibility. It is not a multi-connection test.
+    const interleaved: Database = {
+      ...db,
+      transaction: (context, work) => work({
+        query: async <T>(sql: string, params?: unknown[]) => {
+          statements.push(sql);
+          const result = await db.transaction(context, tx => tx.query<T>(sql, params));
+          if (!committed && sql.includes('brokerage_ledger_entries')) {
+            committed = true;
+            await db.transaction(first, async tx => {
+              await tx.query("INSERT INTO brokerage_ledger_entries(id,organization_id,brand_id,environment_id,product_instance_id,account_id,currency,kind,amount,idempotency_key,created_by) VALUES($1,$2,$3,$4,$5,$6,'USD','deposit',0.00000001,'ledger-snapshot-commit',$7)", [randomUUID(), ...values(first), accountId, ownerId]);
+              await tx.query('UPDATE brokerage_account_balance_projections SET balance=balance+0.00000001 WHERE account_id=$1', [accountId]);
+            });
+          }
+          return result;
+        },
+      }),
+    };
+    expect(await new BrokerageLedgerService(interleaved).reconcile(first, accountId, 'USD')).toMatchObject({ status: 'MATCHED', balance: '100.00000000', stored_balance: '100.00000000', difference: '0.00000000', entry_count: 1, watermark: opening.sequence });
+    expect(committed).toBe(true);
+    expect(statements).toHaveLength(1);
+    expect(await service.reconcile(first, accountId, 'USD')).toMatchObject({ status: 'MATCHED', balance: '100.00000001', stored_balance: '100.00000001', difference: '0.00000000', entry_count: 2 });
   });
 
   it('keeps historical entries immutable and exposes deterministic sequence metadata', async () => {

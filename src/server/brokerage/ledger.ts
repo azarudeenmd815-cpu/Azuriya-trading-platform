@@ -15,8 +15,18 @@ export interface LedgerEntryInput { account_id: string; currency: string; amount
 export interface LedgerEntry { id: string; account_id: string; currency: string; kind: LedgerEntryKind; amount: string; status: string; sequence: string; idempotency_key: string; reference: string | null; created_at: string }
 export interface BalanceResult { account_id: string; currency: string; balance: string; entry_count: number; watermark: string | null; evaluated_at: string }
 export interface ReconciliationResult extends BalanceResult { organization_id: string; ledger_derived_balance: string; stored_balance: string | null; difference: string | null; status: ReconciliationStatus }
+interface AccountSnapshot {
+  account_currency: string;
+  balance: string;
+  entry_count: number;
+  watermark: string | null;
+  evaluated_at: string;
+  stored_balance: string | null;
+  difference: string | null;
+}
 
 function validCurrency(currency: string): void { if (!/^[A-Z]{3}$/.test(currency)) throw new AppError(422, 'LEDGER_CURRENCY_INVALID', 'Currency must be a three-letter uppercase code.'); }
+function validAccountId(accountId: string): void { if (typeof accountId !== 'string' || !uuid.safeParse(accountId).success) throw new AppError(404, 'ACCOUNT_NOT_FOUND', 'The account does not exist in this scope.'); }
 function validAmount(amount: string): void { if (typeof amount !== 'string' || !amountPattern.test(amount) || /^-?0(?:\.0{1,8})?$/.test(amount)) throw new AppError(422, 'LEDGER_AMOUNT_INVALID', 'Ledger amounts must be non-zero exact decimals with at most eight fractional places.'); }
 function validIdempotency(key: string): void { if (typeof key !== 'string' || !idempotencyPattern.test(key)) throw new AppError(422, 'LEDGER_IDEMPOTENCY_INVALID', 'Ledger idempotency keys must contain 8-128 safe characters.'); }
 function validReference(reference?: string): void { if (reference !== undefined && (!reference.trim() || reference.length > 200)) throw new AppError(422, 'LEDGER_REFERENCE_INVALID', 'Ledger references must contain between 1 and 200 characters.'); }
@@ -40,7 +50,7 @@ export class BrokerageLedgerService {
 
   async postEntry(scope: TenantContext, input: LedgerEntryInput): Promise<LedgerEntry> {
     validateScope(scope);
-    validCurrency(input.currency); validAmount(input.amount); validIdempotency(input.idempotency_key); validReference(input.reference);
+    validAccountId(input.account_id); validCurrency(input.currency); validAmount(input.amount); validIdempotency(input.idempotency_key); validReference(input.reference);
     if (!kinds.includes(input.kind)) throw new AppError(422, 'LEDGER_KIND_INVALID', 'The ledger entry kind is not supported.');
     const amount = normalize(input.amount);
     return this.db.transaction(scope, async tx => {
@@ -58,27 +68,50 @@ export class BrokerageLedgerService {
     });
   }
 
-  private async aggregate(tx: Executor, scope: TenantContext, accountId: string, currency: string): Promise<{ balance: string; entry_count: number; watermark: string | null; evaluated_at: string }> {
-    const row = (await tx.query<{ balance: string; entry_count: number; watermark: string | null; evaluated_at: string }>(`SELECT COALESCE(SUM(amount) FILTER (WHERE kind <> 'unrealized_pnl'),0)::numeric(38,8)::text AS balance, COUNT(*) FILTER (WHERE kind <> 'unrealized_pnl')::int AS entry_count, MAX(sequence) FILTER (WHERE kind <> 'unrealized_pnl')::text AS watermark, CURRENT_TIMESTAMP::text AS evaluated_at FROM brokerage_ledger_entries WHERE ${scopeWhere()} AND account_id=$5 AND currency=$6 AND status='posted'`, [...scopeValues(scope), accountId, currency])).rows[0];
-    return { ...row, balance: normalize(row.balance) };
+  private async snapshot(tx: Executor, scope: TenantContext, accountId: string, currency: string, withProjection: boolean): Promise<AccountSnapshot> {
+    // One statement gives account ownership, cash and projection a common
+    // READ COMMITTED snapshot. Do not split these reads across queries.
+    const row = (await tx.query<AccountSnapshot>(`
+      SELECT a.currency AS account_currency, l.balance::text, l.entry_count, l.watermark,
+        statement_timestamp()::text AS evaluated_at, p.balance::text AS stored_balance,
+        (l.balance - p.balance)::numeric(38,8)::text AS difference
+      FROM brokerage_accounts a
+      CROSS JOIN LATERAL (
+        SELECT COALESCE(SUM(le.amount),0)::numeric(38,8) AS balance,
+          COUNT(*)::int AS entry_count, MAX(le.sequence)::text AS watermark
+        FROM brokerage_ledger_entries le
+        WHERE ${scopeWhere('le')} AND le.account_id=a.id AND le.currency=a.currency
+          AND a.currency=$6 AND le.status='posted' AND le.kind <> 'unrealized_pnl'
+      ) l
+      LEFT JOIN brokerage_account_balance_projections p
+        ON ${scopeWhere('p')} AND p.account_id=a.id AND p.currency=a.currency
+          AND a.currency=$6 AND $7::boolean
+      WHERE ${scopeWhere('a')} AND a.id=$5`, [...scopeValues(scope), accountId, currency, withProjection])).rows[0];
+    if (!row) throw new AppError(404, 'ACCOUNT_NOT_FOUND', 'The account does not exist in this scope.');
+    if (row.account_currency !== currency) throw new AppError(422, 'ACCOUNT_CURRENCY_MISMATCH', 'The account denomination does not match the requested ledger currency.');
+    return {
+      ...row,
+      balance: normalize(row.balance),
+      stored_balance: row.stored_balance === null ? null : normalize(row.stored_balance),
+      difference: row.difference === null ? null : normalize(row.difference),
+    };
   }
 
   async balance(scope: TenantContext, accountId: string, currency: string): Promise<BalanceResult> {
     validateScope(scope);
-    validCurrency(currency);
-    return this.db.transaction(scope, async tx => { await this.account(tx, scope, accountId, currency); return { account_id: accountId, currency, ...(await this.aggregate(tx, scope, accountId, currency)) }; });
+    validAccountId(accountId); validCurrency(currency);
+    return this.db.transaction(scope, async tx => {
+      const { balance, entry_count, watermark, evaluated_at } = await this.snapshot(tx, scope, accountId, currency, false);
+      return { account_id: accountId, currency, balance, entry_count, watermark, evaluated_at };
+    });
   }
 
   async reconcile(scope: TenantContext, accountId: string, currency: string): Promise<ReconciliationResult> {
     validateScope(scope);
-    validCurrency(currency);
+    validAccountId(accountId); validCurrency(currency);
     return this.db.transaction(scope, async tx => {
-      await this.account(tx, scope, accountId, currency);
-      const aggregate = await this.aggregate(tx, scope, accountId, currency);
-      const projection = (await tx.query<{ balance: string }>(`SELECT balance::text FROM brokerage_account_balance_projections WHERE ${scopeWhere()} AND account_id=$5 AND currency=$6`, [...scopeValues(scope), accountId, currency])).rows[0];
-      const stored = projection ? normalize(projection.balance) : null;
-      const difference = stored === null ? null : normalize((await tx.query<{ difference: string }>('SELECT ($1::numeric - $2::numeric)::numeric(38,8)::text AS difference', [aggregate.balance, stored])).rows[0].difference);
-      return { account_id: accountId, organization_id: scope.organizationId, currency, ...aggregate, ledger_derived_balance: aggregate.balance, stored_balance: stored, difference, status: stored === null ? 'NOT_COMPARABLE' : difference === '0.00000000' ? 'MATCHED' : 'MISMATCHED' };
+      const { balance, entry_count, watermark, evaluated_at, stored_balance, difference } = await this.snapshot(tx, scope, accountId, currency, true);
+      return { account_id: accountId, organization_id: scope.organizationId, currency, balance, entry_count, watermark, evaluated_at, ledger_derived_balance: balance, stored_balance, difference, status: stored_balance === null ? 'NOT_COMPARABLE' : difference === '0.00000000' ? 'MATCHED' : 'MISMATCHED' };
     });
   }
 }
