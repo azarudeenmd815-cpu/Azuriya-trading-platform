@@ -57,4 +57,3 @@
 - [ ] Run `npm test -- tests/ledger.test.ts`.
 - [ ] Run `npm test`, `npm run typecheck`, `npm run lint`, and `npm run build`.
 - [ ] Inspect the working tree and record migration/API/security details for W01.
-
