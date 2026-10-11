@@ -53,6 +53,11 @@ function objectValue(value: unknown): Record<string, unknown> | undefined {
   return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
 }
 function stringValue(value: unknown): string | undefined { return typeof value === 'string' ? value : undefined; }
+const externalScopePermissions: Record<ExternalScope, string> = {
+  'accounts:read': 'brokerage.accounts.read',
+  'orders:read': 'brokerage.orders.read',
+  'positions:read': 'brokerage.accounts.read',
+};
 interface ExternalPosition {
   id: string;
   account_id: string;
@@ -78,13 +83,16 @@ export class ExternalApiService {
   }
 
   async createCredential(scope: TenantContext, input: ExternalCredentialInput): Promise<{ credential: Row; secret: string }> {
+    const parsedInput = externalCredentialInput.parse(input);
     if (scope.supportGrantId) throw new AppError(403, 'SUPPORT_DELEGATION_DENIED', 'Support access cannot create persistent credentials.');
     if (scope.productSlug !== 'brokerage-crm') throw new AppError(404, 'PRODUCT_UNAVAILABLE', 'External credentials are available in a Brokerage CRM workspace.');
-    if (input.expires_at && new Date(input.expires_at).getTime() <= Date.now()) throw new AppError(422, 'INVALID_EXPIRY', 'Choose a future credential expiry.');
+    if (scope.core || !scope.permissions?.includes('api.write')) throw new AppError(403, 'PERMISSION_DENIED', 'The api.write permission is required.');
+    if (parsedInput.scopes.some(value => !scope.permissions.includes(externalScopePermissions[value]))) throw new AppError(403, 'PERMISSION_DENIED', 'Credentials may grant only read permissions already held by the acting user.');
+    if (parsedInput.expires_at && new Date(parsedInput.expires_at).getTime() <= Date.now()) throw new AppError(422, 'INVALID_EXPIRY', 'Choose a future credential expiry.');
     const secret = `azk_${randomBytes(32).toString('base64url')}`;
     const id = randomUUID();
     const row = await this.db.transaction({ organizationId: scope.organizationId, brandId: scope.brandId, environmentId: scope.environmentId, productInstanceId: scope.productInstanceId }, async tx => {
-      const result = await tx.query<Row>(`INSERT INTO api_keys(id,organization_id,brand_id,environment_id,product_instance_id,name,prefix,secret_hash,scopes,expires_at,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10,$11) RETURNING ${credentialFields}`, [id, ...scopeValues(scope), input.name.trim(), secret.slice(0, 12), hashSecret(secret), JSON.stringify(input.scopes), input.expires_at ?? null, scope.userId]);
+      const result = await tx.query<Row>(`INSERT INTO api_keys(id,organization_id,brand_id,environment_id,product_instance_id,name,prefix,secret_hash,scopes,expires_at,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,$10,$11) RETURNING ${credentialFields}`, [id, ...scopeValues(scope), parsedInput.name.trim(), secret.slice(0, 12), hashSecret(secret), JSON.stringify(parsedInput.scopes), parsedInput.expires_at ?? null, scope.userId]);
       await this.audit(tx, scope, 'api_key.created', id);
       return result.rows[0];
     });
@@ -109,6 +117,7 @@ export class ExternalApiService {
   }
 
   async listAccounts(context: TenantContext, query: unknown) {
+    await this.assertExternalRead(context, 'accounts:read');
     const parsed = externalAccountListSchema.parse(query);
     const statusValue = parsed.status;
     return this.db.transaction(context, async tx => {
@@ -121,13 +130,19 @@ export class ExternalApiService {
       const joins = 'FROM brokerage_accounts a JOIN brokerage_offerings o ON o.id=a.offering_id AND o.organization_id=a.organization_id AND o.brand_id=a.brand_id AND o.environment_id=a.environment_id AND o.product_instance_id=a.product_instance_id JOIN brokerage_clients c ON c.id=a.client_id AND c.organization_id=a.organization_id AND c.brand_id=a.brand_id AND c.environment_id=a.environment_id AND c.product_instance_id=a.product_instance_id';
       const total = Number((await tx.query<{ total: string }>(`SELECT count(*) AS total ${joins} WHERE ${where}`, values)).rows[0].total);
       values.push(parsed.limit, parsed.offset);
-      const orderColumn = ({ account_number: 'a.account_number', account_type: 'a.account_type', currency: 'a.currency', leverage: 'a.leverage', status: 'a.status', created_at: 'a.created_at' } as Record<string, string>)[parsed.sort] ?? 'a.created_at';
+      const orderColumns = { account_number: 'a.account_number', account_type: 'a.account_type', currency: 'a.currency', leverage: 'a.leverage', status: 'a.status', created_at: 'a.created_at' } as Record<string, string>;
+      const orderColumn = Object.prototype.hasOwnProperty.call(orderColumns, parsed.sort) ? orderColumns[parsed.sort] : 'a.created_at';
       const direction = parsed.direction === 'asc' ? 'ASC' : 'DESC';
       const rows = (await tx.query<Row>(`SELECT a.id,a.account_number,a.account_type,a.currency,a.leverage,a.status,a.sync_status,a.synchronized_at,a.created_at,a.updated_at ${joins} WHERE ${where} ORDER BY ${orderColumn} ${direction},a.id LIMIT $${values.length - 1} OFFSET $${values.length}`, values)).rows;
       return { data: serializable(rows.map(row => this.accountProjection(row, context.productInstanceId))), pagination: { total, limit: parsed.limit, offset: parsed.offset } };
     });
   }
   async getAccount(context: TenantContext, id: string) {
+    return this.readAccount(context, id, 'accounts:read');
+  }
+
+  private async readAccount(context: TenantContext, id: string, required: ExternalScope) {
+    await this.assertExternalRead(context, required);
     requireUuid(id, 'ACCOUNT_NOT_FOUND', 'The account does not exist in this scope.');
     return this.db.transaction(context, async tx => {
       const joins = 'FROM brokerage_accounts a JOIN brokerage_offerings o ON o.id=a.offering_id AND o.organization_id=a.organization_id AND o.brand_id=a.brand_id AND o.environment_id=a.environment_id AND o.product_instance_id=a.product_instance_id JOIN brokerage_clients c ON c.id=a.client_id AND c.organization_id=a.organization_id AND c.brand_id=a.brand_id AND c.environment_id=a.environment_id AND c.product_instance_id=a.product_instance_id';
@@ -152,8 +167,39 @@ export class ExternalApiService {
     });
   }
 
-  private async assertAccount(context: TenantContext, accountId: string): Promise<void> {
-    await this.getAccount(context, accountId);
+  private async assertAccount(context: TenantContext, accountId: string, required: ExternalScope): Promise<void> {
+    await this.readAccount(context, accountId, required);
+  }
+
+  private async assertExternalRead(context: TenantContext, required: ExternalScope): Promise<void> {
+    if (context.core || context.productSlug !== 'brokerage-crm' || !context.credentialId) throw new AppError(401, 'UNAUTHENTICATED', 'A valid external API credential is required.');
+    const ids = [context.userId, context.organizationId, context.brandId, context.environmentId, context.productInstanceId, context.credentialId];
+    if (ids.some(value => !z.uuid().safeParse(value).success)) throw new AppError(401, 'UNAUTHENTICATED', 'A valid external API credential is required.');
+    // Preserve the canonical account service's current staff authorization for
+    // legacy credentials as well as newly issued external credentials.
+    const row = await this.db.transaction(context, async tx => (await tx.query<{ id: string }>(`SELECT k.id FROM api_keys k
+      JOIN users u ON u.id=k.created_by AND u.status='active' AND u.core_role IS NULL
+      JOIN organizations o ON o.id=k.organization_id AND o.status='active'
+      JOIN brands b ON b.id=k.brand_id AND b.organization_id=k.organization_id AND b.status='active'
+      JOIN environments e ON e.id=k.environment_id AND e.organization_id=k.organization_id AND e.brand_id=k.brand_id AND e.status='active'
+      JOIN product_instances i ON i.id=k.product_instance_id AND i.organization_id=k.organization_id AND i.brand_id=k.brand_id AND i.environment_id=k.environment_id AND i.status='active'
+      JOIN products p ON p.id=i.product_id AND p.slug='brokerage-crm' AND p.status='active'
+      JOIN product_subscriptions s ON s.id=i.subscription_id AND s.organization_id=i.organization_id AND s.product_id=i.product_id AND s.status='active'
+      WHERE k.id=$5 AND k.created_by=$6 AND k.organization_id=$1 AND k.brand_id=$2 AND k.environment_id=$3 AND k.product_instance_id=$4
+        AND k.revoked_at IS NULL AND (k.expires_at IS NULL OR k.expires_at>now()) AND k.scopes @> $7::jsonb
+        AND (k.application_id IS NULL OR EXISTS (SELECT 1 FROM api_applications a
+          WHERE a.id=k.application_id AND a.organization_id=k.organization_id AND a.brand_id=k.brand_id
+            AND a.environment_id=k.environment_id AND a.product_instance_id=k.product_instance_id
+            AND a.status='active' AND a.scopes @> k.scopes))
+        AND EXISTS (SELECT 1 FROM staff_memberships m
+          JOIN roles r ON r.id=m.role_id AND r.organization_id=m.organization_id
+          JOIN role_permissions rp ON rp.role_id=r.id AND rp.organization_id=m.organization_id
+          WHERE m.user_id=k.created_by AND m.organization_id=k.organization_id AND m.status='active'
+            AND (m.environment_id IS NULL OR m.environment_id=k.environment_id)
+            AND (m.product_instance_id IS NULL OR m.product_instance_id=k.product_instance_id)
+            AND rp.permission_code=$8)
+      LIMIT 1`, [...scopeValues(context), context.credentialId, context.userId, JSON.stringify([required]), externalScopePermissions[required]])).rows[0]);
+    if (!row) throw new AppError(401, 'UNAUTHENTICATED', 'A valid external API credential is required.');
   }
 
   private orderProjection(row: Record<string, unknown>): Row {
@@ -174,7 +220,7 @@ export class ExternalApiService {
   }
 
   async listOrders(context: TenantContext, accountId: string, input: z.infer<typeof externalOrderListSchema>) {
-    await this.assertAccount(context, accountId);
+    await this.assertAccount(context, accountId, 'orders:read');
     const page = await new BrokerageOrdersService(this.db).list(context, { account_id: accountId, status: input.status, limit: input.limit, offset: input.offset });
     return { ...page, data: page.data.map(row => this.orderProjection(row)) };
   }
@@ -182,7 +228,7 @@ export class ExternalApiService {
   async getOrder(context: TenantContext, accountId: string, orderId: string) {
     requireUuid(accountId, 'ACCOUNT_NOT_FOUND', 'The account does not exist in this scope.');
     requireUuid(orderId, 'ORDER_NOT_FOUND', 'The order does not exist in this scope.');
-    await this.assertAccount(context, accountId);
+    await this.assertAccount(context, accountId, 'orders:read');
     const row = await new BrokerageOrdersService(this.db).get(context, orderId);
     if (String(row.account_id) !== accountId) throw new AppError(404, 'ORDER_NOT_FOUND', 'The order does not exist in this account.');
     return this.orderProjection(row);
@@ -190,7 +236,7 @@ export class ExternalApiService {
 
   private async positionSnapshot(context: TenantContext, accountId: string): Promise<ExternalPosition[]> {
     requireUuid(accountId, 'ACCOUNT_NOT_FOUND', 'The account does not exist in this scope.');
-    await this.assertAccount(context, accountId);
+    await this.assertAccount(context, accountId, 'positions:read');
     const row = await this.db.transaction(context, async tx => (await tx.query<{ trading_observations: unknown; external_account_id: string | null }>(`SELECT trading_observations,external_account_id FROM brokerage_accounts WHERE ${scopeWhere()} AND id=$5`, [...scopeValues(context), accountId])).rows[0]);
     const snapshot = objectValue(row?.trading_observations);
     const providerAccountId = stringValue(row?.external_account_id);

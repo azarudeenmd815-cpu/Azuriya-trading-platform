@@ -101,6 +101,89 @@ describe('W08 external developer API', () => {
     expect(scopedListing.body).not.toContain(scoped.json().data.secret);
   });
 
+  it('requires api.write and pre-authorized read scopes before creating external credentials', async () => {
+    const foundation = new FoundationService(db);
+    const apiOnly = await foundation.createApiKey(first, { name: 'External API creator', scopes: ['api.write'] });
+    const apiOrders = await foundation.createApiKey(first, { name: 'External orders creator', scopes: ['api.write', 'brokerage.orders.read'] });
+    const count = async () => Number((await db.transaction({ core: true }, tx => tx.query<{ total: string }>('SELECT count(*) AS total FROM api_keys WHERE organization_id=$1 AND brand_id=$2 AND environment_id=$3 AND product_instance_id=$4', [first.organizationId, first.brandId, first.environmentId, first.productInstanceId]))).rows[0].total);
+    const before = await count();
+
+    const deniedPayloads = [
+      { name: 'Denied accounts', scopes: ['accounts:read'] },
+      { name: 'Denied orders', scopes: ['orders:read'] },
+      { name: 'Denied positions', scopes: ['positions:read'] },
+    ];
+    for (const payload of deniedPayloads) {
+      const response = await app.inject({ method: 'POST', url: `/api/v1/instances/${first.productInstanceId}/external-credentials`, headers: { authorization: `Bearer ${apiOnly.secret}` }, payload });
+      expect(response.statusCode, response.body).toBe(403);
+      expect(response.body).not.toContain('azk_');
+    }
+    expect(await count()).toBe(before);
+
+    const orders = await app.inject({ method: 'POST', url: `/api/v1/instances/${first.productInstanceId}/external-credentials`, headers: { authorization: `Bearer ${apiOrders.secret}` }, payload: { name: 'Permitted orders', scopes: ['orders:read'] } });
+    expect(orders.statusCode, orders.body).toBe(201);
+    expect(orders.json().data.secret).toMatch(/^azk_[A-Za-z0-9_-]{43}$/);
+    const deniedPositions = await app.inject({ method: 'POST', url: `/api/v1/instances/${first.productInstanceId}/external-credentials`, headers: { authorization: `Bearer ${apiOrders.secret}` }, payload: { name: 'Denied positions', scopes: ['positions:read'] } });
+    expect(deniedPositions.statusCode, deniedPositions.body).toBe(403);
+    expect(deniedPositions.body).not.toContain('azk_');
+    expect(await count()).toBe(before + 1);
+
+    const service = new ExternalApiService(db);
+    const noApiWrite = { ...first, permissions: ['brokerage.orders.read'] };
+    const directBefore = await count();
+    await expect(service.createCredential(noApiWrite, { name: 'Direct denied', scopes: ['orders:read'] })).rejects.toMatchObject({ code: 'PERMISSION_DENIED' });
+    await expect(service.createCredential(first, { name: 'Direct duplicate', scopes: ['orders:read', 'orders:read'] })).rejects.toThrow();
+    await expect(service.createCredential(first, { name: 'Direct unsupported', scopes: ['api.write'] as unknown as ['orders:read'] })).rejects.toThrow();
+    expect(await count()).toBe(directBefore);
+  });
+
+  it('binds direct external reads to the live credential owner and all tenant dimensions', async () => {
+    const service = new ExternalApiService(db);
+    const credential = await service.createCredential(first, { name: 'Direct read binding', scopes: ['accounts:read'] });
+    const validContext: TenantContext = { ...first, credentialId: String(credential.credential.id) };
+    const unauthenticatedReads = [
+      () => service.listAccounts(first, { limit: 1, offset: 0 }),
+      () => service.getAccount(first, accountId),
+      () => service.listOrders(first, accountId, { limit: 1, offset: 0 }),
+      () => service.getOrder(first, accountId, orderId),
+      () => service.listPositions(first, accountId, { limit: 1, offset: 0 }),
+      () => service.getPosition(first, accountId, positionId),
+    ];
+    for (const read of unauthenticatedReads) await expect(read()).rejects.toMatchObject({ statusCode: 401 });
+    const valid = await service.listAccounts(validContext, { limit: 1, offset: 0 });
+    expect(valid.pagination.total).toBe(2);
+    const otherUser = randomUUID();
+    const otherEmail = `external-reader-${otherUser}@test.local`;
+    const otherRole = await new FoundationService(db).createRole(first, { name: `Account-reader-${otherUser}`, permissions: ['brokerage.accounts.read'] });
+    await db.transaction({ core: true }, tx => tx.query('INSERT INTO users(id,email,password_hash,display_name) VALUES($1,$2,$3,$4)', [otherUser, otherEmail, 'external-test-password-hash', 'Other API Reader']));
+    await new FoundationService(db).addStaff(first, { email: otherEmail, role_id: String(otherRole.id) });
+    await expect(service.listAccounts({ ...validContext, userId: otherUser }, { limit: 1, offset: 0 })).rejects.toMatchObject({ statusCode: 401 });
+    const substitutedContexts: TenantContext[] = [
+      { ...validContext, organizationId: second.organizationId },
+      { ...validContext, brandId: second.brandId },
+      { ...validContext, environmentId: second.environmentId },
+      { ...validContext, productInstanceId: second.productInstanceId },
+    ];
+    for (const context of substitutedContexts) await expect(service.listAccounts(context, { limit: 1, offset: 0 })).rejects.toMatchObject({ statusCode: 401 });
+    await service.revokeCredential(first, String(credential.credential.id));
+    await expect(service.listAccounts(validContext, { limit: 1, offset: 0 })).rejects.toMatchObject({ statusCode: 401 });
+  });
+
+  it('rejects a legacy accounts:read credential whose staff owner only has api.write', async () => {
+    const foundation = new FoundationService(db);
+    const legacyOwner = randomUUID();
+    const legacyEmail = `legacy-${legacyOwner}@test.local`;
+    await db.transaction({ core: true }, tx => tx.query('INSERT INTO users(id,email,password_hash,display_name) VALUES($1,$2,$3,$4)', [legacyOwner, legacyEmail, 'legacy-test-password-hash', 'Legacy API Owner']));
+    const role = await foundation.createRole(first, { name: `API-only-${legacyOwner}`, permissions: ['api.write'] });
+    await foundation.addStaff(first, { email: legacyEmail, role_id: String(role.id) });
+    const legacyScope: TenantContext = { ...first, userId: legacyOwner, permissions: ['api.write'] };
+    const legacyKey = await foundation.createApiKey(legacyScope, { name: 'Legacy accounts scope', scopes: ['api.write'] });
+    await db.transaction({ core: true }, tx => tx.query('UPDATE api_keys SET scopes=$2::jsonb WHERE id=$1', [legacyKey.key.id, JSON.stringify(['accounts:read'])]));
+    const response = await app.inject({ url: '/api/external/v1/accounts', headers: { authorization: `Bearer ${legacyKey.secret}` } });
+    expect([401, 403]).toContain(response.statusCode);
+    expect(response.body).not.toContain('azk_');
+  });
+
   it('enforces Bearer auth, scope denial, tenant isolation, expiry, and revocation', async () => {
     const service = new ExternalApiService(db);
     const credential = await service.createCredential(first, { name: 'External accounts', scopes: ['accounts:read'] });
@@ -164,6 +247,7 @@ describe('W08 external developer API', () => {
 
   it('enforces account membership, bounded deterministic paging, filters, and read-only order access', async () => {
     const credential = await new ExternalApiService(db).createCredential(first, { name: 'Orders coverage', scopes: ['orders:read'] });
+    const accountsCredential = await new ExternalApiService(db).createCredential(first, { name: 'Accounts sort coverage', scopes: ['accounts:read'] });
     const otherTenantCredential = await new ExternalApiService(db).createCredential(second, { name: 'Other tenant orders', scopes: ['orders:read'] });
     const headers = { authorization: `Bearer ${credential.secret}` };
     const firstPage = await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?limit=1&offset=0`, headers });
@@ -177,6 +261,14 @@ describe('W08 external developer API', () => {
     const pending = await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?status=pending`, headers });
     expect(pending.statusCode, pending.body).toBe(200);
     expect(pending.json().data.map((row: { status: string }) => row.status)).toEqual(['pending']);
+    const accountHeaders = { authorization: `Bearer ${accountsCredential.secret}` };
+    const defaultSort = await app.inject({ url: '/api/external/v1/accounts?sort=created_at', headers: accountHeaders });
+    expect(defaultSort.statusCode, defaultSort.body).toBe(200);
+    for (const sort of ['constructor', 'toString', '__proto__']) {
+      const inheritedSort = await app.inject({ url: `/api/external/v1/accounts?sort=${sort}`, headers: accountHeaders });
+      expect(inheritedSort.statusCode, inheritedSort.body).toBe(200);
+      expect(inheritedSort.json().data).toEqual(defaultSort.json().data);
+    }
     const filled = await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?status=filled`, headers });
     expect(filled.statusCode, filled.body).toBe(200);
     expect(filled.json().data.map((row: { id: string; status: string }) => [row.id, row.status])).toEqual([[historicalOrderId, 'filled']]);

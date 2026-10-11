@@ -10,6 +10,8 @@ Tenant administrators with the existing `api.write` permission create credential
 
 The JSON body is `{ "name": "CRM", "scopes": ["accounts:read", "orders:read"], "expires_at": "2027-01-01T00:00:00Z" }`. Supported scopes are `accounts:read`, `orders:read`, and `positions:read`; each scope is independent and access is deny-by-default. The response contains the `azk_` Bearer secret exactly once; it is generated from 256 random bits, stored only as a SHA-256 digest, and must be stored by the CRM immediately. It is never returned by list or revoke operations.
 
+Issuers must also hold `brokerage.accounts.read` to grant `accounts:read` or `positions:read`, and `brokerage.orders.read` to grant `orders:read`. Reads require the credential owner to retain the corresponding active staff permission in that workspace. Orders and positions scopes do not require the credential to include `accounts:read`.
+
 Metadata is listed with `GET /api/v1/instances/:instanceId/external-credentials` and a bounded `limit`/`offset`. A credential is revoked with `DELETE /api/v1/instances/:instanceId/external-credentials/:id`. Both operations are tenant-scoped through the existing organization, brand, environment, and product-instance authorization and RBAC checks.
 
 Credential creation and revocation write `api_key.created` and `api_key.revoked` audit events. Audit metadata does not contain the secret or its digest. Expired and revoked credentials fail authentication immediately.
