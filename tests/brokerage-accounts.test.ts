@@ -41,6 +41,7 @@ describe('Brokerage account registry, manual KYC and private connections',()=>{
   it('replays provisioning once and binds the idempotency key to its request body',async()=>{let calls=0;const command={offering_id:offeringId,currency:'EUR',leverage:100};const options={key:'account-request-once',route:'/accounts/requests',payload:command};const work=(bound:Database)=>{calls++;return new BrokerageAccountsService(bound).requestAccount(customer,command);};const results=await Promise.all([idempotent(db,customer,options,work),idempotent(db,customer,options,work)]);expect(calls).toBe(1);expect(results[0].result.id).toBe(results[1].result.id);expect(results[1].replayed).toBe(true);await expect(idempotent(db,customer,{...options,payload:{...command,currency:'USD'}},work)).rejects.toMatchObject({code:'IDEMPOTENCY_CONFLICT'});});
   it('enforces ownership, tenant scope and server pagination',async()=>{expect((await service.listAccounts(customer,{limit:1},true)).data).toHaveLength(1);expect((await service.listAccounts(customer,{limit:1},true)).pagination.total).toBe(2);expect((await service.listAccounts(otherCustomer,{},true)).data).toHaveLength(0);expect((await service.listAccounts(b)).data).toHaveLength(0);await expect(service.getAccount(otherCustomer,accountId,true)).rejects.toMatchObject({code:'ACCOUNT_NOT_FOUND'});await expect(service.getAccount(b,accountId)).rejects.toMatchObject({code:'ACCOUNT_NOT_FOUND'});await expect(service.requestAccount(a,{offering_id:offeringId,currency:'USD',leverage:100},foreignClientId)).rejects.toMatchObject({code:'BROKERAGE_CLIENT_NOT_FOUND'});});
   it('fails closed at the service boundary for malformed IDs, missing tenant context and unauthorized staff',async()=>{await expect(service.getAccount(customer,'not-an-id',true)).rejects.toThrow();await expect(service.listAccounts({...customer,productSlug:'trading-hub'}, {}, true)).rejects.toMatchObject({code:'TENANT_CONTEXT_REQUIRED'});await expect(service.listAccounts({...a,permissions:[]}, {})).rejects.toMatchObject({code:'PERMISSION_DENIED'});await expect(service.listAccounts({...a,userId:foreignUser,permissions:[...permissions]}, {})).rejects.toMatchObject({code:'PERMISSION_DENIED'});await expect(service.listAccounts(a,{status:'invented'})).rejects.toMatchObject({code:'VALIDATION_ERROR'});});
+  it('rejects a tenant context with no explicit non-Core authentication marker',async()=>{const missingCore={...a,core:undefined} as unknown as TenantContext;await expect(service.listAccounts(missingCore,{})).rejects.toMatchObject({statusCode:403,code:'TENANT_CONTEXT_REQUIRED'});});
   it('requires a canonical owner identity before provisioning',async()=>{const ownerless=randomUUID();await db.transaction({core:true},tx=>tx.query('INSERT INTO brokerage_clients(id,organization_id,brand_id,environment_id,product_instance_id,user_id,client_number,full_name,email,status,country,residence_country,birth_date,kyc_status) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,\'active\',\'IN\',\'IN\',\'1990-06-01\',\'approved\')',[ownerless,...scopeValues(a),null,`CLI-${ownerless.slice(0,8)}`,'Ownerless','***@***']));await expect(service.requestAccount(a,{offering_id:offeringId,currency:'USD',leverage:100},ownerless)).rejects.toMatchObject({code:'ACCOUNT_OWNER_REQUIRED'});});
   it('rejects inactive owner identities for self-service and staff provisioning',async()=>{
     try {
@@ -80,6 +81,30 @@ describe('Brokerage account registry, manual KYC and private connections',()=>{
     }
     await expect(service.listAccounts(a)).resolves.toMatchObject({pagination:{total:2}});
     expect(await records()).toEqual(before);
+  });
+  it('keeps support grants read-only at the account service boundary',async()=>{
+    const grantId=randomUUID();
+    await db.transaction({core:true},tx=>tx.query('INSERT INTO support_access_grants(id,organization_id,brand_id,environment_id,product_instance_id,user_id,granted_by,reason,scopes,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,now()+interval \'1 hour\')',[grantId,...scopeValues(a),core.userId,ownerId,'Account support review',JSON.stringify(['brokerage.accounts.read','brokerage.accounts.write'])]));
+    const support={...a,userId:core.userId,supportGrantId:grantId,permissions:['brokerage.accounts.read','brokerage.accounts.write']};
+    try {
+      await expect(service.listAccounts(support)).resolves.toMatchObject({pagination:{total:2}});
+      await expect(service.requestAccount(support,{offering_id:offeringId,currency:'USD',leverage:100},clientId)).rejects.toMatchObject({code:'BROKERAGE_SUPPORT_READ_ONLY'});
+    } finally {
+      await db.transaction({core:true},tx=>tx.query('DELETE FROM support_access_grants WHERE id=$1',[grantId]));
+    }
+  });
+  it('does not treat a Core identity with a tenant membership as business staff',async()=>{
+    const membershipId=randomUUID();
+    const staffScope={...a,userId:core.userId,permissions:[...permissions]};
+    const role=(await db.transaction({core:true},tx=>tx.query<{id:string}>('SELECT id FROM roles WHERE organization_id=$1 ORDER BY created_at,id LIMIT 1',[a.organizationId]))).rows[0].id;
+    await db.transaction({core:true},tx=>tx.query('INSERT INTO staff_memberships(id,organization_id,user_id,role_id,environment_id,product_instance_id) VALUES($1,$2,$3,$4,$5,$6)',[membershipId,a.organizationId,core.userId,role,a.environmentId,a.productInstanceId]));
+    try {
+      await expect(service.listAccounts(staffScope)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+      await expect(service.getAccount(staffScope,accountId)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+      await expect(service.requestAccount(staffScope,{offering_id:offeringId,currency:'USD',leverage:100},clientId)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+    } finally {
+      await db.transaction({core:true},tx=>tx.query('DELETE FROM staff_memberships WHERE id=$1',[membershipId]));
+    }
   });
   it('checks offered currency and leverage without lossy defaults',async()=>{await expect(service.requestAccount(customer,{offering_id:offeringId,currency:'GBP',leverage:100})).rejects.toMatchObject({code:'INVALID_OFFERING_OPTIONS'});await expect(service.requestAccount(customer,{offering_id:offeringId,currency:'USD',leverage:250})).rejects.toMatchObject({code:'INVALID_OFFERING_OPTIONS'});});
   it('requires manual account evidence and allows only controlled state transitions',async()=>{await expect(service.changeAccountStatus(a,accountId,{status:'active',reason:'External account confirmed'})).rejects.toMatchObject({code:'MANUAL_ACCOUNT_EVIDENCE_REQUIRED'});expect(await service.changeAccountStatus(a,accountId,{status:'active',reason:'External provider account confirmed',external_account_id:'EXT-1091',external_login:'1091',external_reference:'SUPPORT-191'})).toMatchObject({status:'active',external_account_id:'EXT-1091',sync_status:'unavailable'});await service.changeAccountStatus(a,accountId,{status:'restricted',reason:'Temporary CRM restriction'});await service.changeAccountStatus(a,accountId,{status:'closed',reason:'Account linkage closure requested'});await service.changeAccountStatus(a,accountId,{status:'archived',reason:'Closed account archived'});await expect(service.changeAccountStatus(a,accountId,{status:'active',reason:'Replay old activation'})).rejects.toMatchObject({code:'INVALID_ACCOUNT_TRANSITION'});});
