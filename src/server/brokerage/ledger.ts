@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { z } from 'zod';
 import type { TenantContext } from '../../shared/types.js';
 import type { Database, Executor } from '../db/database.js';
 import { AppError } from '../domain/errors.js';
@@ -6,6 +7,7 @@ import { scopeValues, scopeWhere } from './common.js';
 
 const amountPattern = /^-?(?:0|[1-9]\d{0,27})(?:\.\d{1,8})?$/;
 const idempotencyPattern = /^[A-Za-z0-9_.:-]{8,128}$/;
+const uuid = z.uuid();
 const kinds = ['opening_balance', 'deposit', 'withdrawal', 'transfer', 'realized_pnl', 'unrealized_pnl', 'commission', 'fee', 'swap', 'adjustment', 'reversal'] as const;
 export type LedgerEntryKind = typeof kinds[number];
 export type ReconciliationStatus = 'MATCHED' | 'MISMATCHED' | 'NOT_COMPARABLE';
@@ -19,6 +21,13 @@ function validAmount(amount: string): void { if (typeof amount !== 'string' || !
 function validIdempotency(key: string): void { if (typeof key !== 'string' || !idempotencyPattern.test(key)) throw new AppError(422, 'LEDGER_IDEMPOTENCY_INVALID', 'Ledger idempotency keys must contain 8-128 safe characters.'); }
 function validReference(reference?: string): void { if (reference !== undefined && (!reference.trim() || reference.length > 200)) throw new AppError(422, 'LEDGER_REFERENCE_INVALID', 'Ledger references must contain between 1 and 200 characters.'); }
 function normalize(value: string): string { const negative = value.startsWith('-'); const unsigned = negative ? value.slice(1) : value; const [whole, fraction = ''] = unsigned.split('.'); const normalized = `${whole}.${fraction.padEnd(8, '0')}`; return `${negative && normalized !== '0.00000000' ? '-' : ''}${normalized}`; }
+function validateScope(scope: TenantContext): void {
+  const candidate = scope as Partial<TenantContext> | null | undefined;
+  const uuidFields = [candidate?.userId, candidate?.organizationId, candidate?.brandId, candidate?.environmentId, candidate?.productInstanceId];
+  if (!candidate || candidate.core || candidate.productSlug !== 'brokerage-crm' || uuidFields.some(value => typeof value !== 'string' || !uuid.safeParse(value).success) || typeof candidate.requestId !== 'string' || candidate.requestId.length < 1 || candidate.requestId.length > 200 || !Array.isArray(candidate.permissions)) {
+    throw new AppError(403, 'TENANT_CONTEXT_REQUIRED', 'A complete authenticated brokerage tenant context is required.');
+  }
+}
 
 export class BrokerageLedgerService {
   constructor(private readonly db: Database) {}
@@ -30,6 +39,7 @@ export class BrokerageLedgerService {
   }
 
   async postEntry(scope: TenantContext, input: LedgerEntryInput): Promise<LedgerEntry> {
+    validateScope(scope);
     validCurrency(input.currency); validAmount(input.amount); validIdempotency(input.idempotency_key); validReference(input.reference);
     if (!kinds.includes(input.kind)) throw new AppError(422, 'LEDGER_KIND_INVALID', 'The ledger entry kind is not supported.');
     const amount = normalize(input.amount);
@@ -54,11 +64,13 @@ export class BrokerageLedgerService {
   }
 
   async balance(scope: TenantContext, accountId: string, currency: string): Promise<BalanceResult> {
+    validateScope(scope);
     validCurrency(currency);
     return this.db.transaction(scope, async tx => { await this.account(tx, scope, accountId, currency); return { account_id: accountId, currency, ...(await this.aggregate(tx, scope, accountId, currency)) }; });
   }
 
   async reconcile(scope: TenantContext, accountId: string, currency: string): Promise<ReconciliationResult> {
+    validateScope(scope);
     validCurrency(currency);
     return this.db.transaction(scope, async tx => {
       await this.account(tx, scope, accountId, currency);

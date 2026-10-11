@@ -270,24 +270,34 @@ export function valueAccount(input: AccountValuationInput): AccountValuation {
   if (!input || typeof input.accountId !== 'string' || input.accountId.length === 0 || !validCurrency(input.accountCurrency) || !Array.isArray(input.positions) || !Array.isArray(input.instruments) || !Array.isArray(input.quotes)) return { accountId: input?.accountId ?? '', accountCurrency: input?.accountCurrency ?? '', status: 'INVALID', unrealizedPnl: null, positionCount: 0, positionValuations: [], reason: 'ACCOUNT_INVALID' };
   const instruments = new Map<string, InstrumentSnapshot>();
   for (const instrument of input.instruments) {
+    if (!instrument || typeof instrument !== 'object' || typeof instrument.instrumentId !== 'string' || instrument.instrumentId.length === 0) {
+      return { accountId: input.accountId, accountCurrency: input.accountCurrency, status: 'INVALID', unrealizedPnl: null, positionCount: 0, positionValuations: [], reason: 'ACCOUNT_INVALID' };
+    }
     if (instruments.has(instrument.instrumentId)) return { accountId: input.accountId, accountCurrency: input.accountCurrency, status: 'INVALID', unrealizedPnl: null, positionCount: 0, positionValuations: [], reason: 'DUPLICATE_INSTRUMENT' };
     instruments.set(instrument.instrumentId, instrument);
   }
   const quotes = new Map<string, QuoteSnapshot>();
   for (const quote of input.quotes) {
+    if (!quote || typeof quote !== 'object' || typeof quote.instrumentId !== 'string' || quote.instrumentId.length === 0) {
+      return { accountId: input.accountId, accountCurrency: input.accountCurrency, status: 'INVALID', unrealizedPnl: null, positionCount: 0, positionValuations: [], reason: 'ACCOUNT_INVALID' };
+    }
     if (quotes.has(quote.instrumentId)) return { accountId: input.accountId, accountCurrency: input.accountCurrency, status: 'INVALID', unrealizedPnl: null, positionCount: 0, positionValuations: [], reason: 'DUPLICATE_QUOTE' };
     quotes.set(quote.instrumentId, quote);
   }
   const valuations: PositionValuation[] = [];
   const positionIds = new Set<string>();
   let total: Decimal = { coefficient: 0n, scale: 0 };
-  const ordered = [...input.positions].sort((a, b) => a.positionId.localeCompare(b.positionId));
+  const ordered = [...input.positions].sort((a, b) => String((a as Partial<PositionSnapshot> | null)?.positionId ?? '').localeCompare(String((b as Partial<PositionSnapshot> | null)?.positionId ?? '')));
   for (const position of ordered) {
-    if (positionIds.has(position.positionId)) return { accountId: input.accountId, accountCurrency: input.accountCurrency, status: 'INVALID', unrealizedPnl: null, positionCount: valuations.length, positionValuations: valuations, reason: 'DUPLICATE_POSITION' };
-    positionIds.add(position.positionId);
-    if (position.accountId !== input.accountId) return { accountId: input.accountId, accountCurrency: input.accountCurrency, status: 'INVALID', unrealizedPnl: null, positionCount: 0, positionValuations: valuations, reason: 'ACCOUNT_MISMATCH' };
-    const instrument = instruments.get(position.instrumentId);
-    const valuation = valuePosition(position, instrument, quotes.get(position.instrumentId));
+    const candidate = position as Partial<PositionSnapshot> | null;
+    if (!candidate || typeof candidate !== 'object' || typeof candidate.positionId !== 'string' || candidate.positionId.length === 0) {
+      return { accountId: input.accountId, accountCurrency: input.accountCurrency, status: 'INVALID', unrealizedPnl: null, positionCount: valuations.length, positionValuations: valuations, reason: 'ACCOUNT_INVALID' };
+    }
+    if (positionIds.has(candidate.positionId)) return { accountId: input.accountId, accountCurrency: input.accountCurrency, status: 'INVALID', unrealizedPnl: null, positionCount: valuations.length, positionValuations: valuations, reason: 'DUPLICATE_POSITION' };
+    positionIds.add(candidate.positionId);
+    if (candidate.accountId !== input.accountId) return { accountId: input.accountId, accountCurrency: input.accountCurrency, status: 'INVALID', unrealizedPnl: null, positionCount: 0, positionValuations: valuations, reason: 'ACCOUNT_MISMATCH' };
+    const instrument = instruments.get(candidate.instrumentId as string);
+    const valuation = valuePosition(candidate as PositionSnapshot, instrument, quotes.get(candidate.instrumentId as string));
     valuations.push(valuation);
     if (valuation.status === 'EXCLUDED') continue;
     if (valuation.status !== 'VALUED') {
@@ -303,12 +313,13 @@ export function valueAccount(input: AccountValuationInput): AccountValuation {
 
 export function composeEquity(input: EquityInput): EquityValuation {
   const base = { accountId: input?.accountId ?? '', accountCurrency: input?.accountCurrency ?? '' };
+  const valuation = input && typeof input === 'object' ? input.valuation : undefined;
   const cash = parseMoney(input?.cashBalance ?? null);
   if (typeof input?.accountId !== 'string' || !validCurrency(input?.accountCurrency)) return { ...base, status: 'INVALID', cashBalance: null, unrealizedPnl: null, equity: null, positionCount: 0, reason: 'CURRENCY_MISMATCH' };
   if (!cash) return { ...base, status: 'INCOMPLETE', cashBalance: null, unrealizedPnl: null, equity: null, positionCount: 0, reason: 'CASH_INVALID' };
-  if (!input.valuation || input.valuation.accountId !== input.accountId || input.valuation.accountCurrency !== input.accountCurrency) return { ...base, status: 'INVALID', cashBalance: formatDecimal(cash), unrealizedPnl: null, equity: null, positionCount: 0, reason: 'ACCOUNT_MISMATCH' };
-  if (input.valuation.status !== 'VALUED') return { ...base, status: 'INCOMPLETE', cashBalance: formatDecimal(cash), unrealizedPnl: null, equity: null, positionCount: input.valuation.positionCount, reason: 'UNREALIZED_PNL_UNAVAILABLE' };
-  const pnl = parseDecimal(input.valuation.unrealizedPnl);
-  if (!pnl || input.valuation.accountCurrency !== input.accountCurrency) return { ...base, status: 'INCOMPLETE', cashBalance: formatDecimal(cash), unrealizedPnl: null, equity: null, positionCount: input.valuation.positionCount, reason: 'CURRENCY_MISMATCH' };
-  return { ...base, status: 'VALUED', cashBalance: formatDecimal(cash), unrealizedPnl: formatDecimal(pnl), equity: formatDecimal(add(cash, pnl)), positionCount: input.valuation.positionCount, quoteSourceEventAt: input.valuation.quoteSourceEventAt, quoteReceivedAt: input.valuation.quoteReceivedAt };
+  if (!valuation || valuation.accountId !== input.accountId || valuation.accountCurrency !== input.accountCurrency) return { ...base, status: 'INVALID', cashBalance: formatDecimal(cash), unrealizedPnl: null, equity: null, positionCount: 0, reason: 'ACCOUNT_MISMATCH' };
+  if (valuation.status !== 'VALUED') return { ...base, status: 'INCOMPLETE', cashBalance: formatDecimal(cash), unrealizedPnl: null, equity: null, positionCount: valuation.positionCount, reason: 'UNREALIZED_PNL_UNAVAILABLE' };
+  const pnl = parseDecimal(valuation.unrealizedPnl);
+  if (!pnl || valuation.accountCurrency !== input.accountCurrency) return { ...base, status: 'INCOMPLETE', cashBalance: formatDecimal(cash), unrealizedPnl: null, equity: null, positionCount: valuation.positionCount, reason: 'CURRENCY_MISMATCH' };
+  return { ...base, status: 'VALUED', cashBalance: formatDecimal(cash), unrealizedPnl: formatDecimal(pnl), equity: formatDecimal(add(cash, pnl)), positionCount: valuation.positionCount, quoteSourceEventAt: valuation.quoteSourceEventAt, quoteReceivedAt: valuation.quoteReceivedAt };
 }

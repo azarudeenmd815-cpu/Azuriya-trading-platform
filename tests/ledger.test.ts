@@ -86,6 +86,14 @@ describe('authoritative account ledger replay and reconciliation', () => {
     await expect(service.balance(first, accountId, 'EUR')).rejects.toMatchObject({ code: 'ACCOUNT_CURRENCY_MISMATCH' });
   });
 
+  it('fails closed for core and malformed service contexts', async () => {
+    const accountId = await account();
+    await expect(service.balance({ ...first, core: true }, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });
+    await expect(service.balance({ ...first, productSlug: 'trading-hub' }, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });
+    await expect(service.balance({ ...first, organizationId: 'not-a-uuid' }, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });
+    await expect(service.balance({ ...first, permissions: undefined as never }, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });
+  });
+
   it('reports MATCHED, exact MISMATCHED differences, and NOT_COMPARABLE without repairing the projection', async () => {
     const accountId = await account();
     await service.postEntry(first, { account_id: accountId, currency: 'USD', amount: '12.34567891', kind: 'opening_balance', idempotency_key: 'ledger-reconcile-0001' });

@@ -116,6 +116,12 @@ describe('account unrealized P&L and equity composition', () => {
     expect(valueAccount({ accountId: 'account-1', accountCurrency: 'USD', positions: [long], instruments: [], quotes: [] })).toMatchObject({ status: 'INCOMPLETE', unrealizedPnl: null, reason: 'INSTRUMENT_MISSING' });
   });
 
+  it('fails closed for malformed snapshot collection members', () => {
+    expect(valueAccount({ accountId: 'account-1', accountCurrency: 'USD', positions: [null as never], instruments: [instrument], quotes: [quote] })).toMatchObject({ status: 'INVALID', reason: 'ACCOUNT_INVALID', unrealizedPnl: null });
+    expect(valueAccount({ accountId: 'account-1', accountCurrency: 'USD', positions: [long], instruments: [null as never], quotes: [quote] })).toMatchObject({ status: 'INVALID', reason: 'ACCOUNT_INVALID', unrealizedPnl: null });
+    expect(valueAccount({ accountId: 'account-1', accountCurrency: 'USD', positions: [long], instruments: [instrument], quotes: [null as never] })).toMatchObject({ status: 'INVALID', reason: 'ACCOUNT_INVALID', unrealizedPnl: null });
+  });
+
   it('rejects account, tenant-equivalent, and currency boundary violations without summing currencies', () => {
     expect(valueAccount({ accountId: 'account-1', accountCurrency: 'USD', positions: [position({ accountId: 'account-2' })], instruments: [instrument], quotes: [quote] })).toMatchObject({ status: 'INVALID', reason: 'ACCOUNT_MISMATCH' });
     expect(valueAccount({ accountId: 'account-1', accountCurrency: 'USD', positions: [position({ profitCurrency: 'EUR' })], instruments: [instrumentFor({ profitCurrency: 'EUR' })], quotes: [quote] })).toMatchObject({ status: 'INCOMPLETE', unrealizedPnl: null, reason: 'CURRENCY_CONVERSION_REQUIRED' });
@@ -140,5 +146,9 @@ describe('account unrealized P&L and equity composition', () => {
   it('requires canonical conversion for a profit currency different from account currency', () => {
     const valuation = valueAccount({ accountId: 'account-1', accountCurrency: 'USD', positions: [position({ profitCurrency: 'EUR' })], instruments: [instrumentFor({ profitCurrency: 'EUR' })], quotes: [quote] });
     expect(composeEquity({ accountId: 'account-1', accountCurrency: 'USD', cashBalance: '1000', valuation })).toMatchObject({ status: 'INCOMPLETE', equity: null, reason: 'UNREALIZED_PNL_UNAVAILABLE' });
+  });
+
+  it('fails closed for a malformed equity input instead of throwing', () => {
+    expect(composeEquity(null as never)).toMatchObject({ status: 'INVALID', equity: null });
   });
 });
