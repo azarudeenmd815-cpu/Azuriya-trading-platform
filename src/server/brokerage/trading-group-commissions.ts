@@ -12,7 +12,7 @@ export const tradingGroupCommissionUpsertSchema = z.object({
   close_commission_per_lot: z.unknown(),
   commission_currency: z.unknown(),
   enabled: z.boolean(),
-  expected_version: z.number().finite().int().min(0),
+  expected_version: z.number().finite().int().min(0).max(2147483647),
 }).strict();
 
 export interface TradingGroupCommissionConfiguration {
@@ -43,10 +43,14 @@ export interface TradingGroupCommissionInput {
 
 /** Exact nonnegative decimal with at most six fractional places and a 100000 maximum. */
 export function normalizeCommissionAmount(value: unknown, field: string): string {
+  // 100000.000000 is the longest valid representation (13 characters).
+  if (typeof value === 'string' && value.length > 13) throw new AppError(422, 'COMMISSION_AMOUNT_INVALID', `${field} must be a decimal string from 0 to 100000 with at most six fractional places.`);
   if (typeof value !== 'string' || !/^(?:0|[1-9]\d*)(?:\.\d{1,6})?$/.test(value)) {
     throw new AppError(422, 'COMMISSION_AMOUNT_INVALID', `${field} must be a nonnegative decimal string with at most six fractional places.`);
   }
   const [whole, fraction = ''] = value.split('.');
+  // Reject oversized integer parts before arbitrary-precision conversion.
+  if (whole.length > 6) throw new AppError(422, 'COMMISSION_AMOUNT_INVALID', `${field} must not exceed 100000 per lot.`);
   const scale = fraction.length;
   const units = BigInt(`${whole}${fraction}`);
   const maximum = 100000n * 10n ** BigInt(scale);
