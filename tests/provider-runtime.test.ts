@@ -141,6 +141,35 @@ describe('provider health runtime', () => {
     expect(runtime.observation(instance)).toMatchObject({ state: 'UNAVAILABLE', errorCode: 'TIMEOUT' });
   });
 
+  it('does not let an older timeout invalidate a newer overlapping initialization', async () => {
+    vi.useFakeTimers();
+    try {
+      let release!: () => void;
+      const gate = new Promise<void>((resolve) => { release = resolve; });
+      const initialize = vi.fn(async () => gate);
+      const health = vi.fn(async () => ({ status: 'healthy' as const }));
+      const registry = new ProviderCapabilityRegistry();
+      registry.register(adapterDefinition({ initialize, health }));
+      const runtime = new ProviderHealthRuntime(registry, { timeoutMs: 5 });
+      const instance = scope('staggered-timeout');
+      runtime.register(instance, 'test-provider', { token: 'fake-secret' });
+
+      const older = runtime.check(instance);
+      await vi.advanceTimersByTimeAsync(3);
+      const newer = runtime.check(instance);
+      await vi.advanceTimersByTimeAsync(2);
+
+      await expect(older).resolves.toMatchObject({ state: 'CONNECTING' });
+      release();
+      await expect(newer).resolves.toMatchObject({ state: 'HEALTHY' });
+      expect(initialize).toHaveBeenCalledOnce();
+      expect(health).toHaveBeenCalledOnce();
+      expect(runtime.observation(instance)).toMatchObject({ state: 'HEALTHY' });
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('retries initialization after a timeout and ignores the late first initializer', async () => {
     const releases: Array<() => void> = [];
     const initialize = vi.fn(() => new Promise<void>((resolve) => { releases.push(resolve); }));

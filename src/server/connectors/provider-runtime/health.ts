@@ -38,6 +38,11 @@ interface Entry {
   shutdownPromise?: Promise<void>;
 }
 
+interface InitializationHandle {
+  readonly token?: symbol;
+  readonly promise: Promise<void>;
+}
+
 function iso(clock: () => number): string { return new Date(clock()).toISOString(); }
 
 /** Deterministic, tenant-scoped state machine. It does not poll or make network calls by itself. */
@@ -84,6 +89,8 @@ export class ProviderHealthRuntime {
     const generation = ++entry.generation;
     entry.observation = Object.freeze({ provider: entry.provider, state: 'CONNECTING', checkedAt: iso(this.clock) });
     const definition = this.registry.resolve(entry.provider);
+    let initializationToken: symbol | undefined;
+    let active = true;
     try {
       const configured = definition.isConfigured
         ? definition.isConfigured(entry.context.configuration)
@@ -99,21 +106,32 @@ export class ProviderHealthRuntime {
         return generation === entry.generation ? result : this.observation(scope);
       }
       const signal = await this.withTimeout((async () => {
-        await this.initialize(entry);
+        const initialization = this.initialize(entry);
+        initializationToken = initialization.token;
+        await initialization.promise;
         if (entry.shutdown) throw new ProviderAdapterError('SHUTDOWN', 'The provider connection was shut down.');
+        if (!active) throw new ProviderAdapterError('TIMEOUT', 'Provider health validation timed out.', true);
         return entry.adapter.healthCheck();
-      })(), entry.timeoutMs);
+      })(), entry.timeoutMs, () => { active = false; });
       const result: ProviderHealthObservation = Object.freeze({ provider: entry.provider, state: signal.status === 'healthy' ? 'HEALTHY' : signal.status === 'degraded' ? 'DEGRADED' : 'UNAVAILABLE', checkedAt: iso(this.clock), diagnostic: sanitizeDiagnostic(signal.diagnostic, entry.context.configuration), ...(signal.status === 'healthy' ? {} : { errorCode: signal.status === 'degraded' ? 'PROVIDER_UNAVAILABLE' : 'PROVIDER_UNAVAILABLE' }) });
       if (generation === entry.generation && !entry.shutdown) entry.observation = result;
       return generation === entry.generation ? result : this.observation(scope);
     } catch (error) {
       const safe = classifyProviderError(error);
-      if (safe.code === 'TIMEOUT' && entry.initialization) {
+      // Only the current generation may invalidate its initialization promise.
+      // An older overlapping check can time out while a newer check is still
+      // waiting on the same initialization; clearing it there would make the
+      // newer check fail when the shared initializer eventually completes.
+      if (safe.code === 'TIMEOUT' && generation === entry.generation && initializationToken && entry.initialization?.token === initializationToken) {
         entry.initialization = undefined;
       }
       const result: ProviderHealthObservation = Object.freeze({ provider: entry.provider, state: safe.code === 'SHUTDOWN' ? 'DISCONNECTED' : safe.code === 'CONFIGURATION_MISSING' ? 'UNCONFIGURED' : safe.code === 'RATE_LIMITED' ? 'DEGRADED' : 'UNAVAILABLE', checkedAt: iso(this.clock), errorCode: safe.code, diagnostic: sanitizeDiagnostic(safe.diagnostic, entry.context.configuration) });
       if (generation === entry.generation && !entry.shutdown) entry.observation = result;
       return generation === entry.generation ? result : this.observation(scope);
+    } finally {
+      // Logical expiry also prevents a late shared initializer from starting
+      // another provider probe on behalf of a check that already returned.
+      active = false;
     }
   }
 
@@ -135,8 +153,8 @@ export class ProviderHealthRuntime {
     return entry;
   }
 
-  private initialize(entry: Entry): Promise<void> {
-    if (entry.initialized) return Promise.resolve();
+  private initialize(entry: Entry): InitializationHandle {
+    if (entry.initialized) return { promise: Promise.resolve() };
     if (!entry.initialization) {
       const token = Symbol('provider-initialization');
       const promise = Promise.resolve().then(() => entry.adapter.initialize()).then(() => {
@@ -145,12 +163,17 @@ export class ProviderHealthRuntime {
       }).finally(() => { if (entry.initialization?.token === token) entry.initialization = undefined; });
       entry.initialization = { token, promise };
     }
-    return entry.initialization.promise;
+    return entry.initialization;
   }
 
-  private async withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  private async withTimeout<T>(promise: Promise<T>, timeoutMs: number, onTimeout?: () => void): Promise<T> {
     let timer: ReturnType<typeof setTimeout> | undefined;
-    const timeout = new Promise<never>((_, reject) => { timer = setTimeout(() => reject(new ProviderAdapterError('TIMEOUT', 'Provider health validation timed out.', true)), timeoutMs); });
+    const timeout = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => {
+        onTimeout?.();
+        reject(new ProviderAdapterError('TIMEOUT', 'Provider health validation timed out.', true));
+      }, timeoutMs);
+    });
     // Attach a rejection handler to the underlying operation. Providers may not support cancellation;
     // generation checks above ensure a late completion cannot mutate the newer state.
     promise.catch(() => undefined);
