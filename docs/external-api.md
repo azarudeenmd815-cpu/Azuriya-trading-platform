@@ -1,6 +1,6 @@
 # External Developer API
 
-Cycle 1 exposes a read-only, tenant-scoped API for approved CRM integrations.
+Cycles 1 and 2 expose a read-only, tenant-scoped API for approved CRM integrations.
 
 ## Credential lifecycle
 
@@ -8,7 +8,7 @@ Tenant administrators with the existing `api.write` permission create credential
 
 `POST /api/v1/instances/:instanceId/external-credentials`
 
-The JSON body is `{ "name": "CRM", "scopes": ["accounts:read"], "expires_at": "2027-01-01T00:00:00Z" }`. Only `accounts:read` is supported. The response contains the `azk_` Bearer secret exactly once; it is generated from 256 random bits, stored only as a SHA-256 digest, and must be stored by the CRM immediately. It is never returned by list or revoke operations.
+The JSON body is `{ "name": "CRM", "scopes": ["accounts:read", "orders:read"], "expires_at": "2027-01-01T00:00:00Z" }`. Supported scopes are `accounts:read`, `orders:read`, and `positions:read`; each scope is independent and access is deny-by-default. The response contains the `azk_` Bearer secret exactly once; it is generated from 256 random bits, stored only as a SHA-256 digest, and must be stored by the CRM immediately. It is never returned by list or revoke operations.
 
 Metadata is listed with `GET /api/v1/instances/:instanceId/external-credentials` and a bounded `limit`/`offset`. A credential is revoked with `DELETE /api/v1/instances/:instanceId/external-credentials/:id`. Both operations are tenant-scoped through the existing organization, brand, environment, and product-instance authorization and RBAC checks.
 
@@ -29,6 +29,24 @@ Responses use the repository envelope `{ "data": ... }`. List responses include 
 
 Account responses contain only the account identifier, account number, type, currency, leverage, status, synchronization state/timestamp, timestamps, and the authorized product-instance identifier. Client profile data, provider snapshots, and credentials are not exposed.
 
+## Orders API
+
+Credentials with `orders:read` may call:
+
+* `GET /api/external/v1/accounts/:accountId/orders?status=pending&limit=20&offset=0`
+* `GET /api/external/v1/accounts/:accountId/orders/:orderId`
+
+Order collections are bounded to 100 items, ordered by `created_at` descending and `id` ascending, and return `{ "data": [...], "pagination": { "total", "limit", "offset" } }`. The optional `status` filter accepts the canonical pending, partially_filled, filled, rejected, expired, or cancelled values. Order fields are explicitly mapped from the native order store: identifier, account identifier, instrument, type, side, status, quantity, filled quantity, limit/stop prices, and timestamps. Numeric values remain exact decimal strings. Average fill price is omitted because the native order model does not expose an authoritative aggregate field.
+
+## Positions API
+
+Credentials with `positions:read` may call:
+
+* `GET /api/external/v1/accounts/:accountId/positions?status=open&limit=20&offset=0`
+* `GET /api/external/v1/accounts/:accountId/positions/:positionId`
+
+The current canonical repository persists provider-sanitized open-position observations in the account's tenant-scoped `trading_observations` snapshot. The API maps those observations without recalculating P&L, margin, or balances. Position identifiers, instrument, side, volume, entry/current prices, stop-loss, take-profit, P&L, and open timestamp are returned when present. `status=open` is supported; `status=closed` returns an empty page because no durable closed-position store exists yet. Snapshots are bounded by the connector to 100 positions and may be stale. Hedged positions remain separate observation records.
+
 ## Errors and isolation
 
 Missing, malformed, unknown, expired, or revoked credentials return `401`. A valid credential without `accounts:read` returns `403`. An inaccessible account returns `404`. Validation failures use the standard structured error envelope and never echo secrets. Client-supplied tenant filters are not accepted; the credential's four stored tenant identifiers are the sole account scope.
@@ -45,4 +63,4 @@ Typical error envelopes are:
 
 The API does not return internal tenant identifiers in authentication errors and does not fall back to session cookies on external routes.
 
-Future cycles may add orders, positions, WebSocket authentication, and outbound webhooks. They are not implemented or authorized by Cycle 1 credentials.
+Historical/closed positions, order fills as a dedicated resource, WebSocket authentication, outbound webhooks, and all trading mutations remain future work. W01 needs a canonical position read contract from the owning trading/financial workers before those position semantics can be expanded.
