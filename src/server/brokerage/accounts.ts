@@ -109,6 +109,7 @@ export class BrokerageAccountsService {
     // canonical membership and role grant instead of trusting that contract's
     // permission array alone.
     if(scope.supportGrantId){
+      if(/(?:\.write|\.review)$/.test(permission))throw new AppError(403,'BROKERAGE_SUPPORT_READ_ONLY','Brokerage changes require business staff.');
       const support=(await tx.query(`SELECT 1 FROM support_access_grants sag
         WHERE sag.id=$1 AND sag.user_id=$2 AND sag.organization_id=$3 AND sag.brand_id=$4
           AND sag.environment_id=$5 AND sag.product_instance_id=$6
