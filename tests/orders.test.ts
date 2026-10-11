@@ -141,6 +141,47 @@ describe('native order cancellation lifecycle', () => {
     expect(await service.fills(scope, order.id)).toEqual([]);
   });
 
+  it('guards direct fill inserts with the committed order aggregate and lifecycle', async () => {
+    const directInsert = async (orderId: string, account: string, quantity: string) => db.transaction(scope, tx => tx.query(
+      'INSERT INTO brokerage_order_fills(id,organization_id,brand_id,environment_id,product_instance_id,order_id,account_id,quantity,price) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)',
+      [randomUUID(), ...scopeValues(scope), orderId, account, quantity, '1'],
+    ));
+
+    const pending = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity: '2', limit_price: '1' });
+    await expect(directInsert(pending.id, accountId, '1')).rejects.toMatchObject({ code: '23514' });
+
+    const cancelled = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'stop', side: 'sell', quantity: '2', stop_price: '1' });
+    await service.cancel(scope, cancelled.id);
+    await expect(directInsert(cancelled.id, accountId, '1')).rejects.toMatchObject({ code: '23514' });
+
+    for (const status of ['rejected', 'expired'] as const) {
+      const terminal = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity: '2', limit_price: '1' });
+      await db.transaction(scope, tx => tx.query('UPDATE brokerage_orders SET status=$1 WHERE id=$2', [status, terminal.id]));
+      await expect(directInsert(terminal.id, accountId, '1')).rejects.toMatchObject({ code: '23514' });
+    }
+
+    const overfill = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'sell', quantity: '2', limit_price: '1' });
+    await db.transaction(scope, tx => tx.query('UPDATE brokerage_orders SET status=$1,filled_quantity=$2 WHERE id=$3', ['filled', '2', overfill.id]));
+    await expect(directInsert(overfill.id, accountId, '3')).rejects.toMatchObject({ code: '23514' });
+    await expect(directInsert(overfill.id, accountId, '2')).resolves.toBeDefined();
+
+    const aggregateMismatch = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity: '2', limit_price: '1' });
+    await db.transaction(scope, tx => tx.query('UPDATE brokerage_orders SET status=$1,filled_quantity=$2 WHERE id=$3', ['partially_filled', '1', aggregateMismatch.id]));
+    await expect(directInsert(aggregateMismatch.id, accountId, '2')).rejects.toMatchObject({ code: '23514' });
+
+    const partial = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity: '2', limit_price: '1' });
+    const partialState = await service.recordFill(scope, partial.id, { quantity: '1', price: '1' });
+    const partialFills = await service.fills(scope, partial.id);
+    const partialHistory = await service.history(scope, partial.id);
+    await expect(directInsert(partial.id, accountId, '1')).rejects.toMatchObject({ code: '23514' });
+    expect(await service.get(scope, partial.id)).toEqual(partialState);
+    expect(await service.fills(scope, partial.id)).toEqual(partialFills);
+    expect(await service.history(scope, partial.id)).toEqual(partialHistory);
+
+    const wrongAccount = randomUUID();
+    await expect(directInsert(overfill.id, wrongAccount, '1')).rejects.toMatchObject({ code: '23514' });
+  });
+
   it('locks cancellation against fills and hides cross-tenant and cross-account orders', async () => {
     const order = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity: '1', limit_price: '1' });
     const [cancel, fill] = await Promise.allSettled([service.cancel(scope, String(order.id)), service.recordFill(scope, String(order.id), { quantity: '1', price: '1' })]);

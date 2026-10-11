@@ -50,11 +50,23 @@ The change adds no API routes, request or response fields, event types, service 
 
 The constraint proves consistency between an order's stored status and aggregate filled quantity. It does not prove that `filled_quantity` equals the sum of `brokerage_order_fills.quantity`, that each fill has a matching lifecycle event, or that execution and financial effects are atomic. Those guarantees require the canonical transaction and execution integrations; this migration does not replace them.
 
+### Fill insertion guard (migration 043)
+
+Migration 043 adds a parent-row `FOR UPDATE` trigger on `brokerage_order_fills`. It resolves the parent using the complete organization, brand, environment, product-instance, order, and account scope before accepting an insert. It rejects fills for `pending`, `rejected`, `expired`, or `cancelled` orders, rejects cumulative quantities above the order quantity, and requires:
+
+```text
+existing fill sum + new fill quantity = brokerage_orders.filled_quantity
+```
+
+The equality check matches the canonical update-then-insert transaction in `BrokerageOrdersService.recordFill`. Any execution path that writes multiple split fills must update the parent aggregate immediately before each corresponding insert, while holding the same parent-row lock. This lock serializes direct inserts with cancellation and execution transactions that use the canonical order lock.
+
+The trigger protects the aggregate and scope boundary only. A direct SQL insert cannot supply the actor or lifecycle event metadata required by order history and audit events. W07 and other execution integrations must therefore continue to use the canonical fill transaction for durable history and must preserve the one aggregate update per fill contract. Out-of-band SQL inserts that satisfy the aggregate check can still lack history; they are outside the supported write path.
+
 ## Verification
 
-`tests/orders.test.ts` exercises the service and restricted database role: inconsistent statuses and decreasing quantities fail without changing orders or history; a later invariant violation rolls back a fill and its history in the same transaction; partial and full progress remain exact at the minimum decimal step and maximum `numeric(28,8)` boundary. `tests/order-fill-migration.test.ts` upgrades actual migrations through 041 with legacy inconsistent orders and verifies that 042 preserves their complete rows, fills, and history while rejecting invalid new inserts and subsequent updates.
+`tests/orders.test.ts` exercises the service and restricted database role: inconsistent statuses and decreasing quantities fail without changing orders or history; a later invariant violation rolls back a fill and its history in the same transaction; partial and full progress remain exact at the minimum decimal step and maximum `numeric(28,8)` boundary; direct fill inserts obey the lifecycle and aggregate guard. `tests/order-fill-migration.test.ts` upgrades actual migrations through 041 with legacy inconsistent orders and verifies that 042 preserves their complete rows, fills, and history while rejecting invalid new inserts and subsequent updates. `tests/order-fill-insertion-guard.test.ts` upgrades through 042, applies 043, and verifies scoped parent locking, terminal-state rejection, overfill rejection, aggregate mismatch rejection, and rollback preservation.
 
-Cycle 2 validation passed 78/78 targeted tests across orders, the upgrade, accounts, database, and pretrade risk, then 466/466 tests across 34 files with no skips. Typecheck, server typecheck, lint, and direct application of all 28 migration files also passed.
+Cycle 3 validation passed 23/23 focused W04 tests and 476/476 tests across 35 files with no skips. Typecheck, server typecheck, lint, and direct application of all 29 migration files also passed.
 
 The standard `npm test` and `npm run build` commands failed at esbuild startup with Windows sandbox `spawn EPERM`. Tests ran using an ignored temporary configuration under `artifacts/w04-validation` with native config loading, in-process TypeScript transpilation, and a thread worker. It changes no source or assertions. The controller must still run the normal test and build commands externally; this result does not claim a successful Vite build or network PostgreSQL concurrency verification.
 
