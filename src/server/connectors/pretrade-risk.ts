@@ -34,6 +34,7 @@ export type PretradeDecision = PretradeAllowedDecision | PretradeRejectedDecisio
 
 interface ExactDecimal { coefficient: bigint; scale: number }
 const decimalPattern = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/;
+const currencyPattern = /^[A-Z]{3}$/;
 function reject(code: PretradeRiskCode, message: string): PretradeRejectedDecision { return { allowed: false, code, message } }
 function factor(scale: number): bigint { return 10n ** BigInt(scale) }
 function parseDecimal(value: unknown, allowNegative = false): ExactDecimal | null {
@@ -69,20 +70,30 @@ function exactQuotient(numerator: bigint, denominator: bigint): Decimal | undefi
   const scale = Math.max(twos, fives); n *= 2n ** BigInt(scale - twos); n *= 5n ** BigInt(scale - fives); return decimalString({ coefficient: negative ? -n : n, scale });
 }
 
+function validCurrency(value: unknown): value is string { return typeof value === 'string' && currencyPattern.test(value); }
+function validTimestamp(value: unknown): value is string { return typeof value === 'string' && value.length > 0 && Number.isFinite(Date.parse(value)); }
+function validBoolean(value: unknown): value is boolean { return typeof value === 'boolean'; }
+
 function accountFailure(input: PretradeRiskInput): PretradeRejectedDecision | null {
   const { account } = input.account;
-  if (!input.account.scopeMatches || !input.account.accountOwned) return reject('TRADING_SCOPE_MISMATCH', 'This trading account is unavailable in the authorized workspace.');
+  if (input.account.scopeMatches !== true || input.account.accountOwned !== true) return reject('TRADING_SCOPE_MISMATCH', 'This trading account is unavailable in the authorized workspace.');
   if (!account) return reject('ACCOUNT_NOT_FOUND', 'The trading account does not exist in this scope.');
+  if (typeof account.provider_account_id !== 'string' || account.provider_account_id.length === 0 || !validCurrency(account.currency) || !['enabled', 'disabled'].includes(account.status)) return reject('TRADING_RISK_INFORMATION_MISSING', 'Authoritative trading account identity is unavailable.');
+  if (input.account.tradingEnabled !== undefined && !validBoolean(input.account.tradingEnabled)) return reject('TRADING_RISK_INFORMATION_MISSING', 'Authoritative account trading status is unavailable.');
+  if (input.account.restricted !== undefined && !validBoolean(input.account.restricted)) return reject('TRADING_RISK_INFORMATION_MISSING', 'Authoritative account restriction status is unavailable.');
   if (input.order.exposure === 'increase' && (account.status !== 'enabled' || input.account.tradingEnabled === false || input.account.restricted === true)) return reject('TRADING_ACCOUNT_INELIGIBLE', 'This trading account is not eligible for new exposure.');
-  if (!input.account.snapshot || input.account.snapshot.provider_account_id !== account.provider_account_id || input.account.snapshot.currency !== account.currency) return reject('TRADING_RISK_INFORMATION_MISSING', 'Authoritative account and margin information is unavailable.');
+  const snapshot = input.account.snapshot;
+  if (!snapshot || typeof snapshot.provider_account_id !== 'string' || snapshot.provider_account_id.length === 0 || snapshot.provider_account_id !== account.provider_account_id || !validCurrency(snapshot.currency) || snapshot.currency !== account.currency || !validTimestamp(snapshot.observed_at) || ![snapshot.balance, snapshot.equity, snapshot.margin, snapshot.free_margin].every(value => parseDecimal(value, true))) return reject('TRADING_RISK_INFORMATION_MISSING', 'Authoritative account and margin information is unavailable.');
   if (input.order.exposure === 'increase' && (account.leverage === undefined || !Number.isSafeInteger(account.leverage) || account.leverage <= 0)) return reject('TRADING_RISK_INFORMATION_MISSING', 'Authoritative account leverage and margin information is unavailable.');
   return null;
 }
 function quoteFailure(input: PretradeRiskInput): PretradeRejectedDecision | null {
-  const { quote, order, freshness } = input;
-  if (!quote || !quote.trusted || !quote.available || quote.symbol !== order.symbol) return reject('TRADING_QUOTE_INVALID', 'A trusted executable quote is unavailable for this instrument.');
+  const { quote, order, freshness, instrument } = input;
+  if (!quote || quote.trusted !== true || quote.available !== true || quote.symbol !== order.symbol) return reject('TRADING_QUOTE_INVALID', 'A trusted executable quote is unavailable for this instrument.');
   const bid = parseDecimal(quote.bid); const ask = parseDecimal(quote.ask);
   if (!bid || !ask || bid.coefficient <= 0n || ask.coefficient <= 0n || compare(bid, ask) > 0) return reject('TRADING_QUOTE_INVALID', 'The executable quote is invalid.');
+  const tick = parseDecimal(instrument?.tick_size);
+  if (!instrument || !Number.isSafeInteger(instrument.digits) || instrument.digits < 0 || !tick || tick.coefficient <= 0n || bid.scale > instrument.digits || ask.scale > instrument.digits || !multiple(bid, tick) || !multiple(ask, tick)) return reject('TRADING_QUOTE_INVALID', 'The executable quote does not satisfy the instrument precision or tick policy.');
   if (freshness && quote.observed_at === undefined) return reject('TRADING_QUOTE_INVALID', 'The executable quote timestamp is required for freshness validation.');
   if (quote.observed_at !== undefined) {
     const observed = Date.parse(quote.observed_at); if (!Number.isFinite(observed)) return reject('TRADING_QUOTE_INVALID', 'The executable quote timestamp is invalid.');
@@ -105,7 +116,8 @@ function orderFailure(order: PretradeOrder, instrument: PretradeInstrument): Pre
 export function evaluatePretradeRisk(input: PretradeRiskInput): PretradeDecision {
   if (!input || !input.account || !input.order) return reject('TRADING_RISK_INFORMATION_MISSING', 'Required account and order risk information is unavailable.');
   const failure = accountFailure(input); if (failure) return failure;
-  if (!input.instrument || !input.instrument.enabled || input.instrument.restricted === true) return reject('TRADING_INSTRUMENT_UNAVAILABLE', 'This instrument is unavailable for execution.');
+  if (!input.instrument || input.instrument.enabled !== true || input.instrument.restricted === true) return reject('TRADING_INSTRUMENT_UNAVAILABLE', 'This instrument is unavailable for execution.');
+  if (input.instrument.restricted !== undefined && !validBoolean(input.instrument.restricted)) return reject('TRADING_RISK_INFORMATION_MISSING', 'Authoritative instrument restriction status is unavailable.');
   const invalidOrder = orderFailure(input.order, input.instrument); if (invalidOrder) return invalidOrder;
   if (input.order.stage === 'submit' && input.order.type !== 'market') return { allowed: true, deferred: true };
   const invalidQuote = quoteFailure(input); if (invalidQuote) return invalidQuote;
@@ -114,6 +126,7 @@ export function evaluatePretradeRisk(input: PretradeRiskInput): PretradeDecision
   // or an explicit server-selected execution price supplied by the fill stage.
   const executionPrice = input.order.execution_price ? parseDecimal(input.order.execution_price)! : quotePrice;
   if (input.order.exposure !== 'increase') return { allowed: true, deferred: false };
+  if (!validCurrency(input.instrument.quote_currency) || input.account.account!.currency !== input.instrument.quote_currency) return reject('TRADING_RISK_INFORMATION_MISSING', 'A canonical currency conversion is required before opening this exposure.');
   const snapshot = input.account.snapshot!; const available = parseDecimal(snapshot.free_margin, true); const contractSize = parseDecimal(input.instrument.contract_size); const volume = parseDecimal(input.order.volume);
   if (!available || !contractSize || !volume || contractSize.coefficient <= 0n) return reject('TRADING_RISK_INFORMATION_MISSING', 'Authoritative available margin or contract size is unavailable.');
   if (available.coefficient < 0n) return reject('TRADING_INSUFFICIENT_MARGIN', 'Available margin does not permit additional exposure.');

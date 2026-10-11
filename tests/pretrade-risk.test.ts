@@ -52,6 +52,39 @@ describe('deterministic pretrade risk admission', () => {
     expect(evaluatePretradeRisk(input({ account: { ...base.account, scopeMatches: false, accountOwned: false, snapshot: null } }))).toMatchObject({ allowed: false, code: 'TRADING_SCOPE_MISMATCH' });
   });
 
+  it('fails closed when runtime trust flags are not literal booleans', () => {
+    const malformed = input({ account: { ...base.account, scopeMatches: 'false' as unknown as boolean, accountOwned: true } });
+    expect(evaluatePretradeRisk(malformed)).toMatchObject({ allowed: false, code: 'TRADING_SCOPE_MISMATCH' });
+    expect(evaluatePretradeRisk(input({ quote: { ...base.quote!, trusted: 'false' as unknown as boolean } }))).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
+  });
+
+  it('fails closed when account identity or snapshot money is malformed', () => {
+    const missingIdentity = input({
+      account: {
+        ...base.account,
+        account: { ...base.account.account!, provider_account_id: '' },
+        snapshot: { ...base.account.snapshot!, provider_account_id: '' },
+      },
+    });
+    expect(evaluatePretradeRisk(missingIdentity)).toMatchObject({ allowed: false, code: 'TRADING_RISK_INFORMATION_MISSING' });
+    const malformedMoney = input({ account: { ...base.account, snapshot: { ...base.account.snapshot!, equity: 'not-a-decimal' } } });
+    expect(evaluatePretradeRisk(malformedMoney)).toMatchObject({ allowed: false, code: 'TRADING_RISK_INFORMATION_MISSING' });
+  });
+
+  it('rejects executable quotes that violate instrument precision or tick size', () => {
+    expect(evaluatePretradeRisk(input({ quote: { ...base.quote!, ask: '1.100001' } }))).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
+    expect(evaluatePretradeRisk(input({
+      instrument: { ...instrument, tick_size: '0.00010' },
+      quote: { ...base.quote!, bid: '1.10000', ask: '1.10005' },
+    }))).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
+  });
+
+  it('rejects opening margin checks when no canonical currency conversion exists', () => {
+    expect(evaluatePretradeRisk(input({
+      account: { ...base.account, account: { ...base.account.account!, currency: 'EUR' }, snapshot: { ...base.account.snapshot!, currency: 'EUR' } },
+    }))).toMatchObject({ allowed: false, code: 'TRADING_RISK_INFORMATION_MISSING' });
+  });
+
   it('rejects invalid quotes and preserves deterministic decisions', () => {
     const invalid = input({ quote: { ...base.quote!, trusted: false } });
     expect(evaluatePretradeRisk(invalid)).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
