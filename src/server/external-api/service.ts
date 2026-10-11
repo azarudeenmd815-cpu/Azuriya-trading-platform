@@ -266,7 +266,10 @@ export class ExternalApiService {
       const openedAt = timestampValue(item?.opened_at);
       if (!id || itemProviderAccountId !== providerAccountId || !instrument || !side || !volume || !openPrice || !openedAt) return [];
       return [{ id, account_id: accountId, instrument, side, status: 'open' as const, volume, open_price: openPrice, current_price: decimalValue(item?.current_price), unrealized_pnl: decimalValue(item?.profit), stop_loss: decimalValue(item?.stop_loss), take_profit: decimalValue(item?.take_profit), opened_at: openedAt }];
-    }).sort((a, b) => `${b.opened_at}:${b.id}`.localeCompare(`${a.opened_at}:${a.id}`));
+    }).sort((a, b) => {
+      const timestampOrder = Date.parse(b.opened_at) - Date.parse(a.opened_at);
+      return timestampOrder || b.id.localeCompare(a.id);
+    });
   }
 
   async listPositions(context: TenantContext, accountId: string, input: z.infer<typeof externalPositionListSchema>) {
