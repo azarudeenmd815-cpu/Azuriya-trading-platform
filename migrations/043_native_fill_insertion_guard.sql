@@ -5,12 +5,12 @@
 CREATE FUNCTION enforce_native_fill_insertion_guard() RETURNS trigger
 LANGUAGE plpgsql AS $$
 DECLARE
-  order_row brokerage_orders%ROWTYPE;
+  order_row public.brokerage_orders%ROWTYPE;
   existing_quantity numeric;
 BEGIN
   SELECT *
     INTO order_row
-    FROM brokerage_orders
+    FROM public.brokerage_orders
    WHERE organization_id = NEW.organization_id
      AND brand_id = NEW.brand_id
      AND environment_id = NEW.environment_id
@@ -31,7 +31,7 @@ BEGIN
 
   SELECT COALESCE(SUM(quantity), 0)
     INTO existing_quantity
-    FROM brokerage_order_fills
+    FROM public.brokerage_order_fills
    WHERE organization_id = NEW.organization_id
      AND brand_id = NEW.brand_id
      AND environment_id = NEW.environment_id

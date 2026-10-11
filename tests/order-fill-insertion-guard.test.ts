@@ -75,7 +75,7 @@ describe('native order fill insertion guard', () => {
   afterAll(async () => { await db?.close(); });
 
   async function insertFill(orderId: string, accountId: string = ids.account, organizationId: string = ids.organization, quantity = '1'): Promise<void> {
-    await db.query(`INSERT INTO brokerage_order_fills(id,organization_id,brand_id,environment_id,product_instance_id,order_id,account_id,quantity,price) VALUES (gen_random_uuid(),$1,$2,$3,$4,$5,$6,$7,1)`, [organizationId, ids.brand, ids.environment, ids.instance, orderId, accountId, quantity]);
+    await db.query(`INSERT INTO public.brokerage_order_fills(id,organization_id,brand_id,environment_id,product_instance_id,order_id,account_id,quantity,price) VALUES (gen_random_uuid(),$1,$2,$3,$4,$5,$6,$7,1)`, [organizationId, ids.brand, ids.environment, ids.instance, orderId, accountId, quantity]);
   }
 
   it.each([
@@ -109,9 +109,22 @@ describe('native order fill insertion guard', () => {
     expect(count.rows[0].count).toBe('0');
   });
 
+  it('does not allow temporary table names to shadow guarded order tables', async () => {
+    await db.exec(`
+      CREATE TEMP TABLE brokerage_orders AS SELECT * FROM public.brokerage_orders WITH NO DATA;
+      CREATE TEMP TABLE brokerage_order_fills AS SELECT * FROM public.brokerage_order_fills WITH NO DATA;
+      INSERT INTO brokerage_orders SELECT * FROM public.brokerage_orders WHERE id='${ids.partial}';
+    `);
+    try {
+      await expect(insertFill(ids.partial, ids.account, ids.organization, '1')).rejects.toMatchObject({ code: '23514' });
+    } finally {
+      await db.exec('DROP TABLE brokerage_order_fills, brokerage_orders');
+    }
+  });
+
   it('rolls back a failed insertion and leaves the parent and fills unchanged', async () => {
     await db.query('BEGIN');
-    await expect(db.query(`INSERT INTO brokerage_order_fills(id,organization_id,brand_id,environment_id,product_instance_id,order_id,account_id,quantity,price) VALUES (gen_random_uuid(),$1,$2,$3,$4,$5,$6,3,1)`, [ids.organization, ids.brand, ids.environment, ids.instance, ids.partial, ids.account])).rejects.toMatchObject({ code: '23514' });
+    await expect(db.query(`INSERT INTO public.brokerage_order_fills(id,organization_id,brand_id,environment_id,product_instance_id,order_id,account_id,quantity,price) VALUES (gen_random_uuid(),$1,$2,$3,$4,$5,$6,3,1)`, [ids.organization, ids.brand, ids.environment, ids.instance, ids.partial, ids.account])).rejects.toMatchObject({ code: '23514' });
     await db.query('ROLLBACK');
     const parent = await db.query<{ status: string; filled_quantity: string }>('SELECT status,filled_quantity::text FROM brokerage_orders WHERE id=$1', [ids.partial]);
     const fills = await db.query<{ count: string }>('SELECT count(*)::text AS count FROM brokerage_order_fills WHERE order_id=$1', [ids.partial]);
