@@ -55,6 +55,32 @@ describe('Brokerage account registry, manual KYC and private connections',()=>{
       await db.transaction({core:true},tx=>tx.query("UPDATE users SET status='active' WHERE id=$1",[userId]));
     }
   });
+  it.each(['api_keys','service_accounts'] as const)('rejects stale %s contexts after creator deactivation',async table=>{
+    const credentialId=randomUUID();
+    const credentialScope={...a,credentialId,permissions:['brokerage.accounts.read','brokerage.accounts.write']};
+    await db.transaction({core:true},tx=>tx.query(`INSERT INTO ${table}(id,organization_id,brand_id,environment_id,product_instance_id,name,prefix,secret_hash,scopes,created_by) VALUES($1,$2,$3,$4,$5,'Accounts credential','test_',$6,$7::jsonb,$8)`,[credentialId,...scopeValues(a),randomUUID(),JSON.stringify(credentialScope.permissions),ownerId]));
+    const records=()=>db.transaction(a,tx=>tx.query('SELECT id FROM audit_events WHERE product_instance_id=$1 AND action=$2 ORDER BY id',[a.productInstanceId,'brokerage.account.requested']));
+    const before=await records();
+    try {
+      await expect(service.listAccounts(credentialScope)).resolves.toMatchObject({pagination:{total:2}});
+      await expect(service.getAccount(credentialScope,accountId)).resolves.toMatchObject({id:accountId});
+      await expect(service.resolveAccountOwner(credentialScope,accountId)).resolves.toMatchObject({owner_user_id:userId});
+      for(const status of ['invited','suspended','disabled']){
+        await db.transaction({core:true},tx=>tx.query('UPDATE users SET status=$1 WHERE id=$2',[status,ownerId]));
+        await expect(service.listAccounts(credentialScope)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+        await expect(service.getAccount(credentialScope,accountId)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+        await expect(service.resolveAccountOwner(credentialScope,accountId)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+        await expect(service.requestAccount(credentialScope,{offering_id:offeringId,currency:'USD',leverage:100},clientId)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+      }
+    } finally {
+      await db.transaction({core:true},async tx=>{
+        await tx.query("UPDATE users SET status='active' WHERE id=$1",[ownerId]);
+        await tx.query(`DELETE FROM ${table} WHERE id=$1`,[credentialId]);
+      });
+    }
+    await expect(service.listAccounts(a)).resolves.toMatchObject({pagination:{total:2}});
+    expect(await records()).toEqual(before);
+  });
   it('checks offered currency and leverage without lossy defaults',async()=>{await expect(service.requestAccount(customer,{offering_id:offeringId,currency:'GBP',leverage:100})).rejects.toMatchObject({code:'INVALID_OFFERING_OPTIONS'});await expect(service.requestAccount(customer,{offering_id:offeringId,currency:'USD',leverage:250})).rejects.toMatchObject({code:'INVALID_OFFERING_OPTIONS'});});
   it('requires manual account evidence and allows only controlled state transitions',async()=>{await expect(service.changeAccountStatus(a,accountId,{status:'active',reason:'External account confirmed'})).rejects.toMatchObject({code:'MANUAL_ACCOUNT_EVIDENCE_REQUIRED'});expect(await service.changeAccountStatus(a,accountId,{status:'active',reason:'External provider account confirmed',external_account_id:'EXT-1091',external_login:'1091',external_reference:'SUPPORT-191'})).toMatchObject({status:'active',external_account_id:'EXT-1091',sync_status:'unavailable'});await service.changeAccountStatus(a,accountId,{status:'restricted',reason:'Temporary CRM restriction'});await service.changeAccountStatus(a,accountId,{status:'closed',reason:'Account linkage closure requested'});await service.changeAccountStatus(a,accountId,{status:'archived',reason:'Closed account archived'});await expect(service.changeAccountStatus(a,accountId,{status:'active',reason:'Replay old activation'})).rejects.toMatchObject({code:'INVALID_ACCOUNT_TRANSITION'});});
   it('checks offering country, client type and minimum age',async()=>{const restricted=await service.createOffering(a,config({name:'Restricted',eligibility:{restricted_countries:['IN']}}));await expect(service.requestAccount(customer,{offering_id:restricted.id,currency:'USD',leverage:100})).rejects.toMatchObject({code:'ACCOUNT_INELIGIBLE',details:['COUNTRY_INELIGIBLE']});const corporate=await service.createOffering(a,config({name:'Corporate',eligibility:{client_types:['corporate']}}));await expect(service.requestAccount(customer,{offering_id:corporate.id,currency:'USD',leverage:100})).rejects.toMatchObject({code:'ACCOUNT_INELIGIBLE',details:['CLIENT_TYPE_INELIGIBLE']});const age=await service.createOffering(a,config({name:'Senior',eligibility:{minimum_age:99}}));await expect(service.requestAccount(customer,{offering_id:age.id,currency:'USD',leverage:100})).rejects.toMatchObject({code:'ACCOUNT_INELIGIBLE',details:['AGE_REQUIREMENT_UNMET']});expect(ageInYears('2008-10-04',new Date('2026-10-03T12:00:00Z'))).toBe(17);expect(ageInYears('2008-10-03',new Date('2026-10-03T12:00:00Z'))).toBe(18);});
