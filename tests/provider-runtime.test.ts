@@ -141,6 +141,48 @@ describe('provider health runtime', () => {
     expect(runtime.observation(instance)).toMatchObject({ state: 'UNAVAILABLE', errorCode: 'TIMEOUT' });
   });
 
+  it('retries initialization after a timeout and ignores the late first initializer', async () => {
+    const releases: Array<() => void> = [];
+    const initialize = vi.fn(() => new Promise<void>((resolve) => { releases.push(resolve); }));
+    const health = vi.fn(async () => ({ status: 'healthy' as const }));
+    const registry = new ProviderCapabilityRegistry();
+    registry.register(adapterDefinition({ initialize, health }));
+    const runtime = new ProviderHealthRuntime(registry, { timeoutMs: 5 });
+    const instance = scope('retry-init');
+    runtime.register(instance, 'test-provider', { token: 'fake-secret' });
+    const first = runtime.check(instance);
+    await expect(first).resolves.toMatchObject({ state: 'UNAVAILABLE', errorCode: 'TIMEOUT' });
+    releases[0]!();
+    await new Promise((done) => setTimeout(done, 0));
+    const second = runtime.check(instance);
+    await new Promise((done) => setTimeout(done, 0));
+    expect(initialize).toHaveBeenCalledTimes(2);
+    releases[1]!();
+    await expect(second).resolves.toMatchObject({ state: 'HEALTHY' });
+    expect(health).toHaveBeenCalledOnce();
+  });
+
+  it('fails closed when an adapter lacks the connection health capability', async () => {
+    const registry = new ProviderCapabilityRegistry();
+    registry.register({ ...adapterDefinition({ provider: 'no-health' }), descriptor: { ...adapterDefinition({ provider: 'no-health' }).descriptor, capabilities: [], unavailableCapabilities: providerCapabilities } });
+    const runtime = new ProviderHealthRuntime(registry);
+    const instance = scope('no-health');
+    runtime.register(instance, 'no-health', { token: 'fake-secret' });
+    await expect(runtime.check(instance)).resolves.toMatchObject({ state: 'UNAVAILABLE', errorCode: 'UNSUPPORTED_OPERATION' });
+  });
+
+  it('isolates an adapter factory failure as a sanitized unavailable result', async () => {
+    const registry = new ProviderCapabilityRegistry();
+    const definition = adapterDefinition({ provider: 'factory-failure' });
+    registry.register({ ...definition, create: () => { throw new Error('credential=do-not-leak'); } });
+    const runtime = new ProviderHealthRuntime(registry);
+    const instance = scope('factory-failure');
+    runtime.register(instance, 'factory-failure', { token: 'fake-secret' });
+    const observation = await runtime.check(instance);
+    expect(observation).toMatchObject({ state: 'UNAVAILABLE', errorCode: 'UNEXPECTED_FAILURE' });
+    expect(JSON.stringify(observation)).not.toContain('do-not-leak');
+  });
+
   it('prevents stale concurrent checks from overwriting the newer result', async () => {
     const resolvers: Array<(value: { status: 'healthy' | 'unavailable' }) => void> = [];
     const registry = new ProviderCapabilityRegistry();
@@ -156,6 +198,63 @@ describe('provider health runtime', () => {
     resolvers[0]!({ status: 'unavailable' });
     await expect(older).resolves.toMatchObject({ state: 'HEALTHY' });
     expect(runtime.observation(instance)).toMatchObject({ state: 'HEALTHY' });
+  });
+
+  it('initializes an instance once when concurrent checks overlap', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    const initialize = vi.fn(async () => gate);
+    const healthResolvers: Array<(value: { status: 'healthy' }) => void> = [];
+    const health = vi.fn(() => new Promise<{ status: 'healthy' }>((resolve) => healthResolvers.push(resolve)));
+    const registry = new ProviderCapabilityRegistry();
+    registry.register(adapterDefinition({ initialize, health }));
+    const runtime = new ProviderHealthRuntime(registry);
+    const instance = scope('single-init');
+    runtime.register(instance, 'test-provider', { token: 'fake-secret' });
+    const first = runtime.check(instance);
+    const second = runtime.check(instance);
+    await new Promise((done) => setTimeout(done, 0));
+    expect(initialize).toHaveBeenCalledOnce();
+    release();
+    await new Promise((done) => setTimeout(done, 0));
+    healthResolvers[1]!({ status: 'healthy' });
+    await expect(second).resolves.toMatchObject({ state: 'HEALTHY' });
+    healthResolvers[0]!({ status: 'healthy' });
+    await expect(first).resolves.toMatchObject({ state: 'HEALTHY' });
+    expect(health).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not let shutdown during initialization become healthy after a late completion', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((resolve) => { release = resolve; });
+    const initialize = vi.fn(async () => gate);
+    const health = vi.fn(async () => ({ status: 'healthy' as const }));
+    const shutdown = vi.fn(async () => undefined);
+    const registry = new ProviderCapabilityRegistry();
+    registry.register(adapterDefinition({ initialize, health, shutdown }));
+    const runtime = new ProviderHealthRuntime(registry);
+    const instance = scope('shutdown-init');
+    runtime.register(instance, 'test-provider', { token: 'fake-secret' });
+    const check = runtime.check(instance);
+    await new Promise((done) => setTimeout(done, 0));
+    await runtime.shutdown(instance);
+    release();
+    await expect(check).resolves.toMatchObject({ state: 'DISCONNECTED', errorCode: 'SHUTDOWN' });
+    expect(health).not.toHaveBeenCalled();
+    expect(runtime.observation(instance)).toMatchObject({ state: 'DISCONNECTED', errorCode: 'SHUTDOWN' });
+    expect(shutdown).toHaveBeenCalledOnce();
+  });
+
+  it('preserves the shutdown diagnostic when an older check completes after shutdown', async () => {
+    const registry = new ProviderCapabilityRegistry();
+    registry.register(adapterDefinition({ provider: 'shutdown-metadata', health: async () => ({ status: 'healthy' as const }) }));
+    const runtime = new ProviderHealthRuntime(registry);
+    const instance = scope('shutdown-metadata');
+    runtime.register(instance, 'shutdown-metadata', { token: 'fake-secret' });
+    await runtime.shutdown(instance);
+    const observation = runtime.observation(instance);
+    expect(observation).toMatchObject({ state: 'DISCONNECTED', errorCode: 'SHUTDOWN' });
+    expect(observation.diagnostic).toBeUndefined();
   });
 
   it('isolates provider A, same-family instances, and tenant scopes', async () => {
