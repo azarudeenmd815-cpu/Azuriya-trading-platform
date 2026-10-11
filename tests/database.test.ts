@@ -233,23 +233,36 @@ async function insertTenant(tx: Executor, label: string) {
   return { organization, brand, environment };
 }
 
-it('persists committed tenant data and reapplies the runtime role when reopened', async () => {
-  const directory = await mkdtemp(join(tmpdir(), 'azuriya-db-'));
-  let db: Database | undefined;
-  try {
+describe('persistent embedded database lifecycle', () => {
+  let directory: string | undefined;
+  let db: Database;
+  let tenant: Awaited<ReturnType<typeof insertTenant>>;
+
+  // A fresh disk-backed PGlite instance and the complete schema migration can exceed
+  // the ordinary 30-second test budget on Windows. Keep that setup in the hook,
+  // which uses Vitest's 60-second hook timeout, while the assertions remain focused.
+  beforeAll(async () => {
+    directory = await mkdtemp(join(tmpdir(), 'azuriya-db-'));
     db = await createDatabase({ dataDir: join(directory, 'nested', 'postgres') });
     await migrate(db);
-    const tenant = await db.transaction({ core: true }, tx => insertTenant(tx, 'persistent'));
+    tenant = await db.transaction({ core: true }, tx => insertTenant(tx, 'persistent'));
     await db.close();
     db = await createDatabase({ dataDir: join(directory, 'nested', 'postgres') });
     await migrate(db);
+  }, 60_000);
+
+  afterAll(async () => {
+    try { await db?.close(); }
+    finally { if (directory) await rm(directory, { recursive: true, force: true }); }
+  });
+
+  it('persists committed tenant data and reapplies the runtime role when reopened', async () => {
     expect((await db.query('SELECT id FROM organizations')).rows).toEqual([]);
     const records = await db.transaction({ organizationId: tenant.organization }, tx => tx.query<{ name: string }>('SELECT name FROM organizations'));
     expect(records.rows).toEqual([{ name: 'persistent' }]);
-    const role = await db.query<{ current_user: string }>('SELECT current_user');
-    expect(role.rows).toEqual([{ current_user: 'azuriya_app' }]);
-  } finally {
-    await db?.close();
-    await rm(directory, { recursive: true, force: true });
-  }
+    const role = await db.query<{ current_user: string; rolsuper: boolean; rolbypassrls: boolean }>(
+      'SELECT current_user,rolsuper,rolbypassrls FROM pg_roles WHERE rolname=current_user',
+    );
+    expect(role.rows).toEqual([{ current_user: 'azuriya_app', rolsuper: false, rolbypassrls: false }]);
+  });
 });
