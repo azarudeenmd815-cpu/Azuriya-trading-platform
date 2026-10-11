@@ -97,7 +97,7 @@ export class BrokerageAccountsService {
   private async accountScope(tx:Executor,scope:TenantContext,permission?:string):Promise<void>{
     if(!scope||typeof scope!=='object')throw new AppError(403,'TENANT_CONTEXT_REQUIRED','A complete authenticated brokerage tenant context is required.');
     const uuidFields=[scope.userId,scope.organizationId,scope.brandId,scope.environmentId,scope.productInstanceId];
-    if(scope.core||scope.productSlug!=='brokerage-crm'||uuidFields.some(value=>typeof value!=='string'||!z.uuid().safeParse(value).success)||typeof scope.requestId!=='string'||scope.requestId.length<1||scope.requestId.length>200||!Array.isArray(scope.permissions))throw new AppError(403,'TENANT_CONTEXT_REQUIRED','A complete authenticated brokerage tenant context is required.');
+    if(scope.core!==false||scope.productSlug!=='brokerage-crm'||uuidFields.some(value=>typeof value!=='string'||!z.uuid().safeParse(value).success)||typeof scope.requestId!=='string'||scope.requestId.length<1||scope.requestId.length>200||!Array.isArray(scope.permissions))throw new AppError(403,'TENANT_CONTEXT_REQUIRED','A complete authenticated brokerage tenant context is required.');
     if(permission&&!scope.permissions.includes(permission))throw new AppError(403,'PERMISSION_DENIED',`The ${permission} permission is required.`);
     const instance=(await tx.query(`SELECT i.id FROM product_instances i JOIN organizations o ON o.id=i.organization_id JOIN brands b ON b.id=i.brand_id AND b.organization_id=i.organization_id JOIN environments e ON e.id=i.environment_id AND e.organization_id=i.organization_id AND e.brand_id=i.brand_id JOIN products p ON p.id=i.product_id JOIN product_subscriptions s ON s.id=i.subscription_id AND s.organization_id=i.organization_id AND s.product_id=i.product_id WHERE i.organization_id=$1 AND i.brand_id=$2 AND i.environment_id=$3 AND i.id=$4 AND i.status='active' AND o.status='active' AND b.status='active' AND e.status='active' AND p.status='active' AND p.slug='brokerage-crm' AND s.status='active'`,[scope.organizationId,scope.brandId,scope.environmentId,scope.productInstanceId])).rows[0];
     if(!instance)throw new AppError(403,'TENANT_CONTEXT_INVALID','The authenticated tenant scope is not valid for this product instance.');
@@ -147,7 +147,7 @@ export class BrokerageAccountsService {
       JOIN users u ON u.id=m.user_id AND u.status='active'
       JOIN roles r ON r.id=m.role_id AND r.organization_id=m.organization_id
       JOIN role_permissions rp ON rp.role_id=r.id AND rp.organization_id=m.organization_id
-      WHERE m.user_id=$1 AND m.organization_id=$2 AND m.status='active'
+      WHERE m.user_id=$1 AND m.organization_id=$2 AND m.status='active' AND u.core_role IS NULL
         AND (m.environment_id IS NULL OR m.environment_id=$3)
         AND (m.product_instance_id IS NULL OR m.product_instance_id=$4)
         AND rp.permission_code=$5
@@ -159,12 +159,12 @@ export class BrokerageAccountsService {
     // Memberships are scoped by organization and product instance; keep the
     // parameter numbering contiguous so PostgreSQL/PGlite can infer every
     // parameter type (unused $2/$3 placeholders produce SQLSTATE 42P18).
-    const member=(await tx.query(`SELECT 1 FROM client_memberships m JOIN users u ON u.id=m.user_id AND u.status='active' WHERE m.organization_id=$1 AND m.user_id=$2 AND m.product_instance_id=$3 AND m.status='active' LIMIT 1`,[scope.organizationId,scope.userId,scope.productInstanceId])).rows[0];
+    const member=(await tx.query(`SELECT 1 FROM client_memberships m JOIN users u ON u.id=m.user_id AND u.status='active' AND u.core_role IS NULL WHERE m.organization_id=$1 AND m.user_id=$2 AND m.product_instance_id=$3 AND m.status='active' LIMIT 1`,[scope.organizationId,scope.userId,scope.productInstanceId])).rows[0];
     if(!member)throw new AppError(403,'CLIENT_ACCESS_DENIED','This client portal is not available to your account.');
   }
   private async accountOwner(tx:Executor,scope:TenantContext,client:ClientProfile):Promise<void>{
     if(!client.user_id)throw new AppError(422,'ACCOUNT_OWNER_REQUIRED','A trading account requires an authenticated owner identity.');
-    const owner=(await tx.query(`SELECT 1 FROM users u JOIN client_memberships m ON m.user_id=u.id AND m.organization_id=$1 AND m.product_instance_id=$2 AND m.status='active' WHERE u.id=$3 AND u.status='active' LIMIT 1`,[scope.organizationId,scope.productInstanceId,client.user_id])).rows[0];
+    const owner=(await tx.query(`SELECT 1 FROM users u JOIN client_memberships m ON m.user_id=u.id AND m.organization_id=$1 AND m.product_instance_id=$2 AND m.status='active' WHERE u.id=$3 AND u.status='active' AND u.core_role IS NULL LIMIT 1`,[scope.organizationId,scope.productInstanceId,client.user_id])).rows[0];
     if(!owner)throw new AppError(422,'ACCOUNT_OWNER_INACTIVE','The trading account owner must have an active identity and client membership in this workspace.');
   }
   private adapter(provider:{provider_id:string;slug:string;connector_available:boolean}) {if(!provider.connector_available)return undefined;const adapter=this.options.adapters?.get(provider.provider_id)??this.options.adapters?.get(provider.slug);return adapter?.descriptor.connectorAvailable?adapter:undefined;}
