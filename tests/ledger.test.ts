@@ -88,6 +88,13 @@ describe('authoritative account ledger replay and reconciliation', () => {
     await expect(service.reconcile(first, accountId, 'EUR')).rejects.toMatchObject({ code: 'ACCOUNT_CURRENCY_MISMATCH' });
   });
 
+  it('returns structured not-found errors for malformed account identifiers', async () => {
+    const malformed = 'not-an-account-uuid';
+    await expect(service.balance(first, malformed, 'USD')).rejects.toMatchObject({ statusCode: 404, code: 'ACCOUNT_NOT_FOUND' });
+    await expect(service.reconcile(first, malformed, 'USD')).rejects.toMatchObject({ statusCode: 404, code: 'ACCOUNT_NOT_FOUND' });
+    await expect(service.postEntry(first, { account_id: malformed, currency: 'USD', amount: '1', kind: 'deposit', idempotency_key: 'ledger-malformed-account' })).rejects.toMatchObject({ statusCode: 404, code: 'ACCOUNT_NOT_FOUND' });
+  });
+
   it('fails closed for core and malformed service contexts', async () => {
     const accountId = await account();
     await expect(service.balance({ ...first, core: true }, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });
