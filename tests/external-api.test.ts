@@ -18,6 +18,14 @@ describe('W08 external developer API', () => {
   let second: TenantContext;
   let cookie = '';
   let csrf = '';
+  let accountId = '';
+  let secondAccountId = '';
+  let orderId = '';
+  let historicalOrderId = '';
+  let secondOrderId = '';
+  const positionId = 'position-cycle2-1';
+  const secondPositionId = 'position-cycle2-2';
+  const mismatchedPositionId = 'position-cycle2-other-account';
   const ownerId = randomUUID();
   const password = 'external-api-owner-password';
   const email = ['external-api-owner', 'test.local'].join('@');
@@ -35,6 +43,28 @@ describe('W08 external developer API', () => {
       const scope: TenantContext = { core: false, userId: ownerId, requestId: randomUUID(), organizationId: String(organization.id), brandId: String(instance.brand_id), environmentId: String(instance.environment_id), productInstanceId: String(instance.id), productSlug: 'brokerage-crm', permissions: [...permissions] };
       if (!first) first = scope; else second = scope;
     }
+    accountId = randomUUID();
+    secondAccountId = randomUUID();
+    orderId = randomUUID();
+    historicalOrderId = randomUUID();
+    secondOrderId = randomUUID();
+    const clientId = randomUUID();
+    const offeringId = randomUUID();
+    const providerId = (await db.transaction({ core: true }, tx => tx.query<{ id: string }>('SELECT id FROM integration_providers ORDER BY id LIMIT 1'))).rows[0].id;
+    await db.transaction({ core: true }, async tx => {
+      await tx.query('INSERT INTO brokerage_clients(id,organization_id,brand_id,environment_id,product_instance_id,user_id,client_number,full_name,email,status,country,residence_country) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)', [clientId, first.organizationId, first.brandId, first.environmentId, first.productInstanceId, ownerId, 'CLI-EXTERNAL-CYCLE2', 'External API Client', email, 'active', 'IN', 'IN']);
+      await tx.query('INSERT INTO brokerage_offerings(id,organization_id,brand_id,environment_id,product_instance_id,name,provider_id,account_type,currencies,leverage_options,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)', [offeringId, first.organizationId, first.brandId, first.environmentId, first.productInstanceId, 'External API Offering', providerId, 'live', '["USD"]', '[100]', ownerId]);
+      const observations = { observed_at: '2026-10-11T00:00:00.000Z', connector_version: 'test', limited: true, positions: [
+        { provider_position_id: positionId, provider_account_id: 'provider-cycle2', symbol: 'EURUSD', side: 'sell', volume: '0.01000000', open_price: '1.12345678', current_price: '1.12000000', profit: '0.00000001', stop_loss: '1.13000000', take_profit: '1.10000000', opened_at: '2026-10-10T00:00:00.000Z' },
+        { provider_position_id: secondPositionId, provider_account_id: 'provider-cycle2', symbol: 'EURUSD', side: 'buy', volume: '12.34567890', open_price: '1.20000000', current_price: '1.21000000', profit: '-123.45000000', stop_loss: null, take_profit: '1.30000000', opened_at: '2026-10-09T00:00:00.000Z' },
+        { provider_position_id: mismatchedPositionId, provider_account_id: 'different-provider-account', symbol: 'EURUSD', side: 'buy', volume: '999.00000000', open_price: '9.99999999', profit: '999.00000000', opened_at: '2026-10-08T00:00:00.000Z' },
+      ] };
+      await tx.query('INSERT INTO brokerage_accounts(id,organization_id,brand_id,environment_id,product_instance_id,client_id,offering_id,provider_id,account_number,account_type,currency,leverage,status,external_account_id,server,created_by,trading_observations) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17::jsonb)', [accountId, first.organizationId, first.brandId, first.environmentId, first.productInstanceId, clientId, offeringId, providerId, 'ACC-CYCLE2', 'live', 'USD', 100, 'active', 'provider-cycle2', 'External', ownerId, JSON.stringify(observations)]);
+      await tx.query('INSERT INTO brokerage_accounts(id,organization_id,brand_id,environment_id,product_instance_id,client_id,offering_id,provider_id,account_number,account_type,currency,leverage,status,external_account_id,server,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)', [secondAccountId, first.organizationId, first.brandId, first.environmentId, first.productInstanceId, clientId, offeringId, providerId, 'ACC-CYCLE2-2', 'demo', 'USD', 50, 'active', 'provider-cycle2-2', 'External', ownerId]);
+      await tx.query('INSERT INTO brokerage_orders(id,organization_id,brand_id,environment_id,product_instance_id,account_id,instrument,order_type,side,quantity,limit_price,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)', [orderId, first.organizationId, first.brandId, first.environmentId, first.productInstanceId, accountId, 'EURUSD', 'limit', 'buy', '1.23000000', '1.10000000', ownerId]);
+      await tx.query("INSERT INTO brokerage_orders(id,organization_id,brand_id,environment_id,product_instance_id,account_id,instrument,order_type,side,quantity,filled_quantity,status,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,'filled',$12)", [historicalOrderId, first.organizationId, first.brandId, first.environmentId, first.productInstanceId, accountId, 'USDJPY', 'market', 'sell', '2.00000000', '2.00000000', ownerId]);
+      await tx.query('INSERT INTO brokerage_orders(id,organization_id,brand_id,environment_id,product_instance_id,account_id,instrument,order_type,side,quantity,limit_price,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)', [secondOrderId, first.organizationId, first.brandId, first.environmentId, first.productInstanceId, secondAccountId, 'GBPUSD', 'limit', 'sell', '3.00000000', '1.25000000', ownerId]);
+    });
     app = await buildApp({ db, origin: 'http://localhost', production: false, requireWorker: false });
     const login = await app.inject({ method: 'POST', url: '/api/v1/auth/login', payload: { email, password } });
     expect(login.statusCode, login.body).toBe(200);
@@ -61,6 +91,14 @@ describe('W08 external developer API', () => {
     const stored = (await db.transaction({ core: true }, tx => tx.query<Row>('SELECT secret_hash FROM api_keys WHERE id=$1', [body.credential.id]))).rows[0];
     expect(stored.secret_hash).not.toBe(body.secret);
     expect(String(stored.secret_hash)).toHaveLength(64);
+
+    const scoped = await app.inject({ method: 'POST', url: `/api/v1/instances/${first.productInstanceId}/external-credentials`, headers: { cookie, 'x-csrf-token': csrf }, payload: { name: 'CRM orders and positions', scopes: ['orders:read', 'positions:read'] } });
+    expect(scoped.statusCode, scoped.body).toBe(201);
+    expect(scoped.json().data.credential.scopes).toEqual(['orders:read', 'positions:read']);
+    const scopedListing = await app.inject({ url: `/api/v1/instances/${first.productInstanceId}/external-credentials`, headers: { cookie } });
+    expect(scopedListing.statusCode, scopedListing.body).toBe(200);
+    expect(scopedListing.json().data.find((item: { name: string }) => item.name === 'CRM orders and positions')).toMatchObject({ scopes: ['orders:read', 'positions:read'] });
+    expect(scopedListing.body).not.toContain(scoped.json().data.secret);
   });
 
   it('enforces Bearer auth, scope denial, tenant isolation, expiry, and revocation', async () => {
@@ -71,11 +109,15 @@ describe('W08 external developer API', () => {
     expect((await app.inject({ url: '/api/external/v1/accounts', headers: { cookie } })).statusCode).toBe(401);
     const list = await app.inject({ url: '/api/external/v1/accounts?limit=1&offset=0', headers: { authorization: `Bearer ${secret}` } });
     expect(list.statusCode, list.body).toBe(200);
-    expect(list.json().pagination).toEqual({ total: 0, limit: 1, offset: 0 });
+    expect(list.json().pagination).toEqual({ total: 2, limit: 1, offset: 0 });
+    expect(list.json().data).toHaveLength(1);
     expect((await app.inject({ url: `/api/external/v1/accounts/${randomUUID()}`, headers: { authorization: `Bearer ${secret}` } })).statusCode).toBe(404);
     expect((await app.inject({ url: `/api/external/v1/accounts?organization_id=${second.organizationId}`, headers: { authorization: `Bearer ${secret}` } })).statusCode).toBe(400);
     const crossCredential = await service.createCredential(second, { name: 'Second tenant', scopes: ['accounts:read'] });
     expect((await app.inject({ url: `/api/v1/instances/${second.productInstanceId}/external-credentials`, headers: { cookie } })).json().data).toHaveLength(1);
+    const secondTenantAccounts = await app.inject({ url: '/api/external/v1/accounts', headers: { authorization: `Bearer ${crossCredential.secret}` } });
+    expect(secondTenantAccounts.statusCode, secondTenantAccounts.body).toBe(200);
+    expect(secondTenantAccounts.json().pagination.total).toBe(0);
     await service.revokeCredential(first, String(credential.credential.id));
     expect((await app.inject({ url: '/api/external/v1/accounts', headers: { authorization: `Bearer ${secret}` } })).statusCode).toBe(401);
     const expired = await service.createCredential(first, { name: 'Expired', scopes: ['accounts:read'], expires_at: new Date(Date.now() + 1000).toISOString() });
@@ -90,5 +132,108 @@ describe('W08 external developer API', () => {
     expect((await app.inject({ url: '/api/external/v1/accounts', headers: { authorization: `Bearer ${noScope}` } })).statusCode).toBe(403);
     expect((await app.inject({ url: '/api/external/v1/accounts', headers: { authorization: 'Bearer malformed' } })).statusCode).toBe(401);
     expect(crossCredential.secret).not.toBe(secret);
+  });
+
+  it('reads tenant-scoped orders and positions with independent scopes', async () => {
+    const ordersCredential = await new ExternalApiService(db).createCredential(first, { name: 'Orders read', scopes: ['orders:read'] });
+    const positionsCredential = await new ExternalApiService(db).createCredential(first, { name: 'Positions read', scopes: ['positions:read'] });
+    const accountsCredential = await new ExternalApiService(db).createCredential(first, { name: 'Accounts only', scopes: ['accounts:read'] });
+    const orders = await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?limit=1&status=pending`, headers: { authorization: `Bearer ${ordersCredential.secret}` } });
+    expect(orders.statusCode, orders.body).toBe(200);
+    expect(orders.json()).toMatchObject({ pagination: { total: 1, limit: 1, offset: 0 }, data: [{ id: orderId, account_id: accountId, quantity: '1.23000000', limit_price: '1.10000000', filled_quantity: '0.00000000' }] });
+    const order = await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders/${orderId}`, headers: { authorization: `Bearer ${ordersCredential.secret}` } });
+    expect(order.statusCode, order.body).toBe(200);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders`, headers: { authorization: `Bearer ${accountsCredential.secret}` } })).statusCode).toBe(403);
+    const positions = await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions?status=open`, headers: { authorization: `Bearer ${positionsCredential.secret}` } });
+    expect(positions.statusCode, positions.body).toBe(200);
+    expect(positions.json()).toMatchObject({ pagination: { total: 2 } });
+    expect(positions.json().data).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: positionId, account_id: accountId, volume: '0.01000000', open_price: '1.12345678', unrealized_pnl: '0.00000001' }),
+    ]));
+    expect(positions.json().data.map((item: { id: string }) => item.id)).not.toContain(mismatchedPositionId);
+    const position = await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions/${positionId}`, headers: { authorization: `Bearer ${positionsCredential.secret}` } });
+    expect(position.statusCode, position.body).toBe(200);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions`, headers: { authorization: `Bearer ${ordersCredential.secret}` } })).statusCode).toBe(403);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?status=unknown`, headers: { authorization: `Bearer ${ordersCredential.secret}` } })).statusCode).toBe(400);
+    const historical = await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?status=filled`, headers: { authorization: `Bearer ${ordersCredential.secret}` } });
+    expect(historical.statusCode, historical.body).toBe(200);
+    expect(historical.json().data).toMatchObject([{ id: historicalOrderId, status: 'filled', filled_quantity: '2.00000000' }]);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${randomUUID()}/orders`, headers: { authorization: `Bearer ${ordersCredential.secret}` } })).statusCode).toBe(404);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders/${randomUUID()}`, headers: { authorization: `Bearer ${ordersCredential.secret}` } })).statusCode).toBe(404);
+  });
+
+  it('enforces account membership, bounded deterministic paging, filters, and read-only order access', async () => {
+    const credential = await new ExternalApiService(db).createCredential(first, { name: 'Orders coverage', scopes: ['orders:read'] });
+    const otherTenantCredential = await new ExternalApiService(db).createCredential(second, { name: 'Other tenant orders', scopes: ['orders:read'] });
+    const headers = { authorization: `Bearer ${credential.secret}` };
+    const firstPage = await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?limit=1&offset=0`, headers });
+    expect(firstPage.statusCode, firstPage.body).toBe(200);
+    expect(firstPage.json().pagination).toEqual({ total: 2, limit: 1, offset: 0 });
+    expect(firstPage.json().data).toHaveLength(1);
+    const secondPage = await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?limit=1&offset=1`, headers });
+    expect(secondPage.statusCode, secondPage.body).toBe(200);
+    expect(secondPage.json().data).toHaveLength(1);
+    expect(firstPage.json().data[0].id).not.toBe(secondPage.json().data[0].id);
+    const pending = await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?status=pending`, headers });
+    expect(pending.statusCode, pending.body).toBe(200);
+    expect(pending.json().data.map((row: { status: string }) => row.status)).toEqual(['pending']);
+    const filled = await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?status=filled`, headers });
+    expect(filled.statusCode, filled.body).toBe(200);
+    expect(filled.json().data.map((row: { id: string; status: string }) => [row.id, row.status])).toEqual([[historicalOrderId, 'filled']]);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?limit=0`, headers })).statusCode).toBe(400);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders?status=not-a-status`, headers })).statusCode).toBe(400);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${secondAccountId}/orders/${orderId}`, headers })).statusCode).toBe(404);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders/${secondOrderId}`, headers })).statusCode).toBe(404);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders`, headers: { authorization: `Bearer ${otherTenantCredential.secret}` } })).statusCode).toBe(404);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders/${orderId}`, headers: { authorization: `Bearer ${otherTenantCredential.secret}` } })).statusCode).toBe(404);
+    const before = (await db.transaction({ core: true }, tx => tx.query<Row>('SELECT status,filled_quantity FROM brokerage_orders WHERE id=$1', [orderId]))).rows[0];
+    await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders/${orderId}`, headers });
+    const after = (await db.transaction({ core: true }, tx => tx.query<Row>('SELECT status,filled_quantity FROM brokerage_orders WHERE id=$1', [orderId]))).rows[0];
+    expect(after).toMatchObject(before);
+    const adminAttempt = await app.inject({ url: `/api/v1/instances/${first.productInstanceId}/external-credentials`, headers });
+    expect(adminAttempt.statusCode).toBe(403);
+    expect(adminAttempt.json().error.code).toBe('PERMISSION_DENIED');
+  });
+
+  it('enforces position scope, account membership, exact decimals, and snapshot ownership', async () => {
+    const credential = await new ExternalApiService(db).createCredential(first, { name: 'Positions coverage', scopes: ['positions:read'] });
+    const otherTenantCredential = await new ExternalApiService(db).createCredential(second, { name: 'Other tenant positions', scopes: ['positions:read'] });
+    const headers = { authorization: `Bearer ${credential.secret}` };
+    const page = await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions?limit=1&offset=0`, headers });
+    expect(page.statusCode, page.body).toBe(200);
+    expect(page.json().pagination).toEqual({ total: 2, limit: 1, offset: 0 });
+    expect(page.json().data[0]).toMatchObject({ volume: '0.01000000', open_price: '1.12345678', unrealized_pnl: '0.00000001' });
+    const all = await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions?limit=100`, headers });
+    expect(all.statusCode, all.body).toBe(200);
+    expect(all.json().data).toHaveLength(2);
+    expect(all.json().data.map((row: { id: string }) => row.id)).not.toContain(mismatchedPositionId);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions?status=closed`, headers })).statusCode).toBe(200);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions?status=invalid`, headers })).statusCode).toBe(400);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${secondAccountId}/positions/${positionId}`, headers })).statusCode).toBe(404);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions/${positionId}`, headers })).statusCode).toBe(200);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions/${mismatchedPositionId}`, headers })).statusCode).toBe(404);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions`, headers: { authorization: `Bearer ${otherTenantCredential.secret}` } })).statusCode).toBe(404);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions/${positionId}`, headers: { authorization: `Bearer ${otherTenantCredential.secret}` } })).statusCode).toBe(404);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders`, headers })).statusCode).toBe(403);
+  });
+
+  it('does not expose a provider position whose provider account differs from the parent account', async () => {
+    const credential = await new ExternalApiService(db).createCredential(first, { name: 'Position ownership regression', scopes: ['positions:read'] });
+    const response = await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions/${mismatchedPositionId}`, headers: { authorization: `Bearer ${credential.secret}` } });
+    expect(response.statusCode).toBe(404);
+    expect(response.json().error.code).toBe('POSITION_NOT_FOUND');
+  });
+
+  it('rejects invalid and expired credentials for each new resource without session fallback', async () => {
+    const service = new ExternalApiService(db);
+    const expired = await service.createCredential(first, { name: 'Expired orders', scopes: ['orders:read'] });
+    await db.transaction({ core: true }, tx => tx.query("UPDATE api_keys SET expires_at=now()-interval '1 second' WHERE id=$1", [expired.credential.id]));
+    const expiredHeaders = { authorization: `Bearer ${expired.secret}` };
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders`, headers: expiredHeaders })).statusCode).toBe(401);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions`, headers: expiredHeaders })).statusCode).toBe(401);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders`, headers: { authorization: 'Bearer azk_invalid-token' } })).statusCode).toBe(401);
+    expect((await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions`, headers: { authorization: 'Bearer azk_invalid-token' } })).statusCode).toBe(401);
+    const sessionOnly = await app.inject({ url: `/api/external/v1/accounts/${accountId}/orders`, headers: { cookie } });
+    expect(sessionOnly.statusCode).toBe(401);
   });
 });

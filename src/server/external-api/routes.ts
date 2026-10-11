@@ -5,16 +5,17 @@ import type { Auth } from '../security/auth.js';
 import type { Tenancy } from '../security/tenancy.js';
 import type { TenantContext } from '../../shared/types.js';
 import { authenticateExternal } from './auth.js';
-import { ExternalApiService, externalCredentialInput, externalCredentialListSchema } from './service.js';
+import { ExternalApiService, externalAccountListSchema, externalCredentialInput, externalCredentialListSchema, externalOrderListSchema, externalPositionListSchema } from './service.js';
 
 const instanceParams = z.object({ instanceId: z.uuid() }).strict();
 const credentialParams = z.object({ instanceId: z.uuid(), id: z.uuid() }).strict();
 const accountParams = z.object({ accountId: z.uuid() }).strict();
-const externalPage = z.object({ limit: z.coerce.number().int().min(1).max(100).default(25), offset: z.coerce.number().int().min(0).max(1_000_000).default(0), status: z.string().max(40).optional(), sort: z.string().max(40).default('created_at'), direction: z.enum(['asc', 'desc']).default('desc') }).strict();
+const orderParams = z.object({ accountId: z.uuid(), orderId: z.uuid() }).strict();
+const positionParams = z.object({ accountId: z.uuid(), positionId: z.string().trim().min(1).max(160).regex(/^[A-Za-z0-9_.:-]+$/) }).strict();
 
 function externalContext(auth: Awaited<ReturnType<typeof authenticateExternal>>, request: FastifyRequest): TenantContext {
-  const permissions = auth.scopes.map(scope => scope === 'accounts:read' ? 'brokerage.accounts.read' : scope);
-  return { userId: auth.created_by, requestId: request.id, core: false, organizationId: auth.organization_id, brandId: auth.brand_id, environmentId: auth.environment_id, productInstanceId: auth.product_instance_id, productSlug: auth.product_slug ?? 'brokerage-crm', permissions };
+  const permissions = auth.scopes.map(scope => scope === 'accounts:read' ? 'brokerage.accounts.read' : scope === 'orders:read' ? 'brokerage.orders.read' : scope);
+  return { userId: auth.created_by, requestId: request.id, core: false, organizationId: auth.organization_id, brandId: auth.brand_id, environmentId: auth.environment_id, productInstanceId: auth.product_instance_id, productSlug: auth.product_slug ?? 'brokerage-crm', permissions, credentialId: auth.credentialId };
 }
 
 export function registerExternalApiRoutes(app: FastifyInstance, db: Database, auth: Auth, tenancy: Tenancy): void {
@@ -43,7 +44,7 @@ export function registerExternalApiRoutes(app: FastifyInstance, db: Database, au
   app.get(`${externalBase}/accounts`, async request => {
     const credential = await authenticateExternal(request, auth, 'accounts:read');
     const context = externalContext(credential, request);
-    const query = externalPage.parse(request.query);
+    const query = externalAccountListSchema.parse(request.query);
     return service.listAccounts(context, query);
   });
   app.get(`${externalBase}/accounts/:accountId`, async request => {
@@ -51,5 +52,29 @@ export function registerExternalApiRoutes(app: FastifyInstance, db: Database, au
     const context = externalContext(credential, request);
     const { accountId } = accountParams.parse(request.params);
     return { data: await service.getAccount(context, accountId) };
+  });
+  app.get(`${externalBase}/accounts/:accountId/orders`, async request => {
+    const credential = await authenticateExternal(request, auth, 'orders:read');
+    const context = externalContext(credential, request);
+    const { accountId } = accountParams.parse(request.params);
+    return service.listOrders(context, accountId, externalOrderListSchema.parse(request.query));
+  });
+  app.get(`${externalBase}/accounts/:accountId/orders/:orderId`, async request => {
+    const credential = await authenticateExternal(request, auth, 'orders:read');
+    const context = externalContext(credential, request);
+    const { accountId, orderId } = orderParams.parse(request.params);
+    return { data: await service.getOrder(context, accountId, orderId) };
+  });
+  app.get(`${externalBase}/accounts/:accountId/positions`, async request => {
+    const credential = await authenticateExternal(request, auth, 'positions:read');
+    const context = externalContext(credential, request);
+    const { accountId } = accountParams.parse(request.params);
+    return service.listPositions(context, accountId, externalPositionListSchema.parse(request.query));
+  });
+  app.get(`${externalBase}/accounts/:accountId/positions/:positionId`, async request => {
+    const credential = await authenticateExternal(request, auth, 'positions:read');
+    const context = externalContext(credential, request);
+    const { accountId, positionId } = positionParams.parse(request.params);
+    return { data: await service.getPosition(context, accountId, positionId) };
   });
 }

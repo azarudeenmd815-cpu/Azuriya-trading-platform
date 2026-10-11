@@ -2,7 +2,7 @@ import type { FastifyRequest } from 'fastify';
 import { AppError } from '../domain/errors.js';
 import type { Auth, ApiPrincipal } from '../security/auth.js';
 
-export const EXTERNAL_SCOPES = ['accounts:read'] as const;
+export const EXTERNAL_SCOPES = ['accounts:read', 'orders:read', 'positions:read'] as const;
 export type ExternalScope = typeof EXTERNAL_SCOPES[number];
 
 export interface ExternalAuthContext extends ApiPrincipal {
