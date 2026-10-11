@@ -23,14 +23,17 @@ describe('canonical quote binding for pretrade risk', () => {
     expect(adaptCanonicalQuote({ scope, quote: { ...quote, organizationId: 'org-2' }, instrumentId: 'instrument-1', symbol: 'EURUSD' })).toMatchObject({ allowed: false, code: 'TRADING_SCOPE_MISMATCH' });
   });
 
-  const malformedCases: Array<{ name: string; quote?: Partial<QuoteSnapshot>; instrumentId?: string }> = [
+  const malformedCases: Array<{ name: string; quote?: Partial<QuoteSnapshot>; instrumentId?: string; symbol?: string }> = [
     { name: 'instrument mismatch', quote: { instrumentId: 'instrument-2' }, instrumentId: 'instrument-1' },
     { name: 'unsupported provenance', quote: { provenance: 'unknown' as never } },
     { name: 'provider provenance mismatch', quote: { provenance: 'verified_provider', sourceKind: 'simulated' } },
     { name: 'event after receipt', quote: { sourceEventAt: '2026-01-01T00:00:01.000Z' } },
+    { name: 'malformed bid decimal', quote: { bid: 'not-a-decimal' } },
+    { name: 'crossed bid and ask', quote: { bid: '1.10003', ask: '1.10002' } },
+    { name: 'blank instrument symbol', symbol: '   ' },
   ];
   it.each(malformedCases)('rejects $name before producing an executable quote', override => {
-    expect(adaptCanonicalQuote({ scope, quote: { ...quote, ...(override.quote ?? {}) }, instrumentId: override.instrumentId ?? 'instrument-1', symbol: 'EURUSD' })).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
+    expect(adaptCanonicalQuote({ scope, quote: { ...quote, ...(override.quote ?? {}) }, instrumentId: override.instrumentId ?? 'instrument-1', symbol: override.symbol ?? 'EURUSD' })).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
   });
 
   it('does not mutate the canonical snapshot', () => {
