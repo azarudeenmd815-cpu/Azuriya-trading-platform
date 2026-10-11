@@ -71,7 +71,9 @@ function exactQuotient(numerator: bigint, denominator: bigint): Decimal | undefi
 }
 
 function validCurrency(value: unknown): value is string { return typeof value === 'string' && currencyPattern.test(value); }
-function validTimestamp(value: unknown): value is string { return typeof value === 'string' && value.length > 0 && Number.isFinite(Date.parse(value)); }
+function validTimestamp(value: unknown): value is string {
+  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/.test(value) && Number.isFinite(Date.parse(value));
+}
 function validBoolean(value: unknown): value is boolean { return typeof value === 'boolean'; }
 
 function accountFailure(input: PretradeRiskInput): PretradeRejectedDecision | null {

@@ -79,6 +79,10 @@ describe('deterministic pretrade risk admission', () => {
     }))).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
   });
 
+  it('rejects non-canonical account snapshot timestamps', () => {
+    expect(evaluatePretradeRisk(input({ account: { ...base.account, snapshot: { ...base.account.snapshot!, observed_at: '0' } } }))).toMatchObject({ allowed: false, code: 'TRADING_RISK_INFORMATION_MISSING' });
+  });
+
   it('rejects opening margin checks when no canonical currency conversion exists', () => {
     expect(evaluatePretradeRisk(input({
       account: { ...base.account, account: { ...base.account.account!, currency: 'EUR' }, snapshot: { ...base.account.snapshot!, currency: 'EUR' } },
