@@ -316,6 +316,37 @@ describe('W08 external developer API', () => {
     expect(response.json().error.code).toBe('POSITION_NOT_FOUND');
   });
 
+  it('omits malformed provider snapshot values instead of exposing invalid decimals', async () => {
+    const credential = await new ExternalApiService(db).createCredential(first, { name: 'Malformed snapshot regression', scopes: ['positions:read'] });
+    const malformedRequiredId = 'position-cycle3-malformed-required';
+    const malformedOptionalId = 'position-cycle3-malformed-optional';
+    const malformedTimestampId = 'position-cycle3-malformed-timestamp';
+    const original = (await db.transaction({ core: true }, tx => tx.query<{ trading_observations: unknown }>('SELECT trading_observations FROM brokerage_accounts WHERE id=$1', [accountId]))).rows[0].trading_observations as { positions: unknown[]; observed_at: string; connector_version: string; limited: boolean };
+    const observations = {
+      ...original,
+      positions: [
+        ...original.positions,
+        { provider_position_id: malformedRequiredId, provider_account_id: 'provider-cycle2', symbol: 'EURUSD', side: 'buy', volume: '1e3', open_price: '1.20000000', opened_at: '2026-10-11T00:00:00.000Z' },
+        { provider_position_id: malformedOptionalId, provider_account_id: 'provider-cycle2', symbol: 'EURUSD', side: 'buy', volume: '2.00000000', open_price: '1.20000000', current_price: 'NaN', profit: '1e3', stop_loss: 'Infinity', take_profit: '1.30000000', opened_at: '2026-10-11T00:00:00.000Z' },
+        { provider_position_id: malformedTimestampId, provider_account_id: 'provider-cycle2', symbol: 'EURUSD', side: 'buy', volume: '3.00000000', open_price: '1.20000000', opened_at: 'not-a-timestamp' },
+      ],
+    };
+    await db.transaction({ core: true }, tx => tx.query('UPDATE brokerage_accounts SET trading_observations=$2::jsonb WHERE id=$1', [accountId, JSON.stringify(observations)]));
+    try {
+      const response = await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions?limit=100`, headers: { authorization: `Bearer ${credential.secret}` } });
+      expect(response.statusCode, response.body).toBe(200);
+      const data = response.json().data as Array<Record<string, unknown>>;
+      expect(data.map(item => item.id)).not.toContain(malformedRequiredId);
+      expect(data.map(item => item.id)).not.toContain(malformedTimestampId);
+      expect(data.find(item => item.id === malformedOptionalId)).toMatchObject({ volume: '2.00000000', open_price: '1.20000000', take_profit: '1.30000000' });
+      expect(data.find(item => item.id === malformedOptionalId)).not.toHaveProperty('current_price');
+      expect(data.find(item => item.id === malformedOptionalId)).not.toHaveProperty('unrealized_pnl');
+      expect(data.find(item => item.id === malformedOptionalId)).not.toHaveProperty('stop_loss');
+    } finally {
+      await db.transaction({ core: true }, tx => tx.query('UPDATE brokerage_accounts SET trading_observations=$2::jsonb WHERE id=$1', [accountId, JSON.stringify(original)]));
+    }
+  });
+
   it('rejects invalid and expired credentials for each new resource without session fallback', async () => {
     const service = new ExternalApiService(db);
     const expired = await service.createCredential(first, { name: 'Expired orders', scopes: ['orders:read'] });

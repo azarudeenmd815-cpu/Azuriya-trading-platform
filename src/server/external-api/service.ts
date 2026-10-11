@@ -53,6 +53,19 @@ function objectValue(value: unknown): Record<string, unknown> | undefined {
   return value && typeof value === 'object' && !Array.isArray(value) ? value as Record<string, unknown> : undefined;
 }
 function stringValue(value: unknown): string | undefined { return typeof value === 'string' ? value : undefined; }
+const providerDecimalPattern = /^-?(?:0|[1-9]\d*)(?:\.\d+)?$/;
+function decimalValue(value: unknown): string | undefined {
+  if (typeof value !== 'string' || value.length === 0 || value.length > 100 || !providerDecimalPattern.test(value)) return undefined;
+  return value;
+}
+function timestampValue(value: unknown): string | undefined {
+  if (typeof value !== 'string' || value.length === 0 || value.length > 1000 || !Number.isFinite(Date.parse(value))) return undefined;
+  return value;
+}
+function positionIdValue(value: unknown): string | undefined {
+  if (typeof value !== 'string' || value.length < 1 || value.length > 160 || !/^[A-Za-z0-9_.:-]+$/.test(value)) return undefined;
+  return value;
+}
 const externalScopePermissions: Record<ExternalScope, string> = {
   'accounts:read': 'brokerage.accounts.read',
   'orders:read': 'brokerage.orders.read',
@@ -244,15 +257,15 @@ export class ExternalApiService {
     const values = Array.isArray(snapshot?.positions) ? snapshot.positions : [];
     return values.flatMap(value => {
       const item = objectValue(value);
-      const id = stringValue(item?.provider_position_id);
+      const id = positionIdValue(item?.provider_position_id);
       const itemProviderAccountId = stringValue(item?.provider_account_id);
       const instrument = stringValue(item?.symbol);
       const side: 'buy' | 'sell' | undefined = item?.side === 'buy' ? 'buy' : item?.side === 'sell' ? 'sell' : undefined;
-      const volume = stringValue(item?.volume);
-      const openPrice = stringValue(item?.open_price);
-      const openedAt = stringValue(item?.opened_at);
+      const volume = decimalValue(item?.volume);
+      const openPrice = decimalValue(item?.open_price);
+      const openedAt = timestampValue(item?.opened_at);
       if (!id || itemProviderAccountId !== providerAccountId || !instrument || !side || !volume || !openPrice || !openedAt) return [];
-      return [{ id, account_id: accountId, instrument, side, status: 'open' as const, volume, open_price: openPrice, current_price: stringValue(item?.current_price), unrealized_pnl: stringValue(item?.profit), stop_loss: stringValue(item?.stop_loss), take_profit: stringValue(item?.take_profit), opened_at: openedAt }];
+      return [{ id, account_id: accountId, instrument, side, status: 'open' as const, volume, open_price: openPrice, current_price: decimalValue(item?.current_price), unrealized_pnl: decimalValue(item?.profit), stop_loss: decimalValue(item?.stop_loss), take_profit: decimalValue(item?.take_profit), opened_at: openedAt }];
     }).sort((a, b) => `${b.opened_at}:${b.id}`.localeCompare(`${a.opened_at}:${a.id}`));
   }
 
@@ -263,7 +276,7 @@ export class ExternalApiService {
   }
 
   async getPosition(context: TenantContext, accountId: string, positionId: string) {
-    if (!positionId || positionId.length > 160 || !/^[A-Za-z0-9_.:-]+$/.test(positionId)) throw new AppError(404, 'POSITION_NOT_FOUND', 'The position does not exist in this account.');
+    if (!positionIdValue(positionId)) throw new AppError(404, 'POSITION_NOT_FOUND', 'The position does not exist in this account.');
     const position = (await this.positionSnapshot(context, accountId)).find(item => item.id === positionId);
     if (!position) throw new AppError(404, 'POSITION_NOT_FOUND', 'The position does not exist in this account.');
     return position;

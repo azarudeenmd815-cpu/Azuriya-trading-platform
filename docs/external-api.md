@@ -47,7 +47,7 @@ Credentials with `positions:read` may call:
 * `GET /api/external/v1/accounts/:accountId/positions?status=open&limit=20&offset=0`
 * `GET /api/external/v1/accounts/:accountId/positions/:positionId`
 
-The current canonical repository persists provider-sanitized open-position observations in the account's tenant-scoped `trading_observations` snapshot. The API maps those observations without recalculating P&L, margin, or balances. Position identifiers, instrument, side, volume, entry/current prices, stop-loss, take-profit, P&L, and open timestamp are returned when present. `status=open` is supported; `status=closed` returns an empty page because no durable closed-position store exists yet. Snapshots are bounded by the connector to 100 positions and may be stale. Hedged positions remain separate observation records.
+The current canonical repository persists provider-sanitized open-position observations in the account's tenant-scoped `trading_observations` snapshot. The API maps those observations without recalculating P&L, margin, or balances. Position identifiers, instrument, side, volume, entry/current prices, stop-loss, take-profit, P&L, and open timestamp are returned when present. `status=open` is supported; `status=closed` returns an empty page because no durable closed-position store exists yet. Snapshots are bounded by the connector to 100 positions and may be stale. Hedged positions remain separate observation records. Malformed snapshot entries are omitted at the external API boundary; malformed optional decimal fields are omitted while valid decimal strings are preserved exactly.
 
 ## Errors and isolation
 
