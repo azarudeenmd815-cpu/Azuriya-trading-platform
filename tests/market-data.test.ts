@@ -22,6 +22,16 @@ describe('market-data quote normalization', () => {
   });
 
   it.each([
+    ['2026-10-10T00:00:00Z', '2026-10-10T00:00:00.000000Z'],
+    ['2026-10-10T00:00:00.1Z', '2026-10-10T00:00:00.100000Z'],
+    ['2026-10-10T00:00:00.123456Z', '2026-10-10T00:00:00.123456Z'],
+  ])('preserves accepted source and receipt precision (%s)', (timestamp, expected) => {
+    const normalized = normalizeServerQuote({ ...base, sourceEventAt: timestamp, receivedAt: timestamp }, instrument, source);
+    expect(normalized.sourceEventAt).toBe(expected);
+    expect(normalized.receivedAt).toBe(expected);
+  });
+
+  it.each([
     ['malformed decimal', { bid: '1.1e0' }],
     ['numeric value', { bid: 1.1 }],
     ['zero bid', { bid: '0' }],
@@ -30,9 +40,17 @@ describe('market-data quote normalization', () => {
     ['precision violation', { bid: '1.100001' }],
     ['tick violation', { bid: '1.100011' }],
     ['source sequence overflow', { sourceSequence: '9223372036854775808' }],
+    ['fractional timestamp overflow', { sourceEventAt: '2026-10-10T00:00:00.1234567Z', receivedAt: '2026-10-10T00:00:00.1234567Z' }],
+    ['invalid calendar date', { sourceEventAt: '2026-02-29T00:00:00Z', receivedAt: '2026-02-29T00:00:00Z' }],
+    ['leap second', { sourceEventAt: '2016-12-31T23:59:60Z', receivedAt: '2016-12-31T23:59:60Z' }],
+    ['midnight overflow', { sourceEventAt: '2026-10-10T24:00:00Z', receivedAt: '2026-10-10T24:00:00Z' }],
     ['invalid timestamp', { sourceEventAt: 'invalid' }],
   ])('%s is rejected', (_label, change) => {
     expect(() => normalizeServerQuote({ ...base, ...change } as never, instrument, source)).toThrow(AppError);
+  });
+
+  it('rejects a source event later than receipt', () => {
+    expect(() => normalizeServerQuote({ ...base, sourceEventAt: '2026-10-10T00:00:00.123457Z', receivedAt: '2026-10-10T00:00:00.123456Z' }, instrument, source)).toThrow('sourceEventAt');
   });
 
   it('rejects zero spread when the instrument policy disallows it', () => {
@@ -89,6 +107,24 @@ describe('market-data latest snapshots and tenant entitlements', () => {
     expect((await service.ingest(scope, { instrumentId, sourceId, bid: '1.10010', ask: '1.10012', sourceEventAt: event(20), sourceSequence: '2', eventId: 'evt-2' }, 'internal-market-data')).status).toBe('duplicate');
     await expect(service.ingest(scope, { instrumentId, sourceId, bid: '1.10020', ask: '1.10010', sourceEventAt: event(1), eventId: 'evt-invalid' }, 'internal-market-data')).rejects.toMatchObject({ code: 'QUOTE_REJECTED' });
     expect((await service.getLatest(scope, instrumentId))?.bid).toBe('1.1001');
+  });
+
+  it('orders source events by microseconds and preserves precision through single, batch, and reinitialized reads', async () => {
+    const microSourceId = randomUUID();
+    await db.transaction({ core: true }, tx => tx.query('INSERT INTO market_data_sources(id,slug,source_kind,provenance) VALUES($1,$2,$3,$4)', [microSourceId, `simulated-${microSourceId.slice(0, 8)}`, 'simulated', 'simulated']));
+    const first = await service.ingest(scope, { instrumentId, sourceId: microSourceId, bid: '1.10000', ask: '1.10002', sourceEventAt: '2026-10-10T00:00:00.123100Z', receivedAt: '2026-10-10T00:00:00.123100Z', eventId: 'a-older' }, 'internal-market-data');
+    expect(first.status).toBe('accepted');
+    const newer = await service.ingest(scope, { instrumentId, sourceId: microSourceId, bid: '1.10010', ask: '1.10012', sourceEventAt: '2026-10-10T00:00:00.123900Z', receivedAt: '2026-10-10T00:00:00.123900Z', eventId: 'z-newer' }, 'internal-market-data');
+    expect(newer).toMatchObject({ status: 'accepted', snapshot: { eventId: 'z-newer', bid: '1.1001', sourceEventAt: '2026-10-10T00:00:00.123900Z' } });
+    expect((await service.ingest(scope, { instrumentId, sourceId: microSourceId, bid: '1.10020', ask: '1.10022', sourceEventAt: '2026-10-10T00:00:00.123100Z', receivedAt: '2026-10-10T00:00:00.123100Z', eventId: '0-stale' }, 'internal-market-data')).status).toBe('stale');
+    const reopened = new MarketDataService(db);
+    const single = await reopened.getLatest(scope, instrumentId, microSourceId);
+    const batch = await reopened.listLatest(scope, [instrumentId], microSourceId);
+    expect(single).toMatchObject({ eventId: 'z-newer', sourceEventAt: '2026-10-10T00:00:00.123900Z', receivedAt: '2026-10-10T00:00:00.123900Z' });
+    expect(batch[0]).toMatchObject({ eventId: 'z-newer', sourceEventAt: '2026-10-10T00:00:00.123900Z', receivedAt: '2026-10-10T00:00:00.123900Z' });
+    const sql = `SELECT to_char(source_event_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS source_event_at, to_char(received_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS received_at FROM market_data_latest_quotes WHERE instrument_id=$1 AND source_id=$2`;
+    const row = (await db.transaction(scope, tx => tx.query<{ source_event_at: string; received_at: string }>(sql, [instrumentId, microSourceId]))).rows[0];
+    expect(row).toEqual({ source_event_at: '2026-10-10T00:00:00.123900Z', received_at: '2026-10-10T00:00:00.123900Z' });
   });
 
   it('enforces explicit entitlements and tenant isolation', async () => {

@@ -1,3 +1,38 @@
+# W06 Cycle 3: timestamp precision and snapshot provenance
+
+Baseline: `8b0b567ec625403f9b710b15aa2b580774e1d7e8`.
+
+Cycle 3 hardens the existing normalized quote path at the timestamp and
+snapshot boundaries. Quote timestamps are canonical UTC values with six
+fractional digits (microsecond precision); values with more precision,
+invalid calendar values, or a source event later than its receipt are rejected.
+Ordering compares trusted source sequence values first and source timestamps at
+microsecond precision, then uses the stable event identity tie-breaker. This
+keeps sub-millisecond events replay-safe instead of collapsing them to a
+JavaScript millisecond `Date` value.
+
+Migration 065 stores `provenance` and `source_kind` on each latest snapshot and
+backfills existing rows from the registered source under the explicit Core
+context required by forced RLS. Snapshot reads use the persisted values, so
+changing a source's mutable catalog fields cannot relabel an already stored
+simulated quote as verified provider data. A database check and immutable
+trigger keep snapshot source identity and provenance source-matched and prevent
+Core maintenance writes from relabeling or replacing it. Migration 066 adds the matching database invariant
+that a source event cannot be later than its receipt, so trusted maintenance
+writes cannot bypass normalized-ingestion ordering.
+
+## Acceptance criteria
+
+1. Accepted source and receipt timestamps round-trip in canonical six-digit UTC
+   form, including through restart and non-UTC session settings.
+2. More-than-six-digit, invalid, future-dated, or source-after-receipt timestamps
+   are rejected before persistence.
+3. Distinct events inside one millisecond order deterministically; replay,
+   stale delivery, and equal-timestamp tie behavior remain unchanged.
+4. Every latest snapshot carries immutable-at-ingestion source provenance, and
+   reads do not join mutable source labels to determine whether data was
+   simulated or provider-sourced.
+
 # W06 Cycle 2: instrument entitlements
 
 Baseline: `574b5464ed93ab9f5f7d55d9ca2242903def1220`.
@@ -32,9 +67,11 @@ Authenticated GET routes:
 - `/api/v1/instances/:instanceId/brokerage/quotes/instruments`
 - `/api/v1/client/instances/:instanceId/brokerage/quotes/instruments`
 
-Migrations 061–064 create scoped access records, enable trusted Core catalog
+Migrations 061–066 create scoped access records, enable trusted Core catalog
 administration through the restricted runtime role, and add a restrictive
-snapshot SELECT policy. Runtime source updates are limited to slug/active:
+snapshot SELECT policy. Migration 065 also snapshots source provenance on each
+quote; migration 066 enforces source/receipt ordering in the database. Runtime
+source updates are limited to slug/active:
 source kind and provenance cannot change after registration, preventing old
 simulated quotes from being relabeled as provider prices. Migration 060 is unchanged. The migration runner
 checksums and transactionally applies each migration once.

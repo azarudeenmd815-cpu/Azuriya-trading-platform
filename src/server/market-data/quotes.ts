@@ -61,6 +61,14 @@ interface SnapshotRow {
   provenance: 'simulated' | 'verified_provider'; source_kind: 'simulated' | 'provider';
 }
 
+const TIMESTAMP_PATTERN = /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})(?:\.(\d{1,6}))?Z$/;
+const SNAPSHOT_COLUMNS = `q.id,q.organization_id,q.brand_id,q.environment_id,q.product_instance_id,q.instrument_id,q.source_id,q.bid,q.ask,
+  to_char(q.source_event_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS source_event_at,
+  to_char(q.received_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS received_at,
+  q.source_sequence,q.event_id,
+  to_char(q.updated_at AT TIME ZONE 'UTC','YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS updated_at,
+  q.provenance,q.source_kind`;
+
 function reject(message: string, details: Record<string, unknown> = {}): never {
   throw new AppError(422, 'QUOTE_REJECTED', message, [details]);
 }
@@ -89,11 +97,23 @@ function multipleOf(value: string, step: string): boolean {
 }
 
 function timestamp(value: unknown, field: string, allowFuture = false): string {
-  if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?Z$/.test(value) || !Number.isFinite(Date.parse(value))) reject(`${field} must be a valid ISO timestamp.`, { field });
-  const parsed = Date.parse(value);
-  if (new Date(parsed).toISOString().slice(0, 10) !== value.slice(0, 10)) reject(`${field} must be a valid ISO timestamp.`, { field });
+  const match = typeof value === 'string' ? TIMESTAMP_PATTERN.exec(value) : null;
+  if (!match) reject(`${field} must be a UTC ISO timestamp with at most six fractional digits.`, { field });
+  if (match[1].slice(0, 4) === '0000') reject(`${field} must be a valid ISO timestamp.`, { field });
+  const fraction = (match[2] ?? '').padEnd(6, '0');
+  const canonical = `${match[1]}.${fraction}Z`;
+  const parsed = Date.parse(`${match[1]}.${fraction.slice(0, 3)}Z`);
+  if (!Number.isFinite(parsed) || new Date(parsed).toISOString().slice(0, 19) !== match[1]) reject(`${field} must be a valid ISO timestamp.`, { field });
   if (!allowFuture && parsed > Date.now() + FUTURE_TOLERANCE_MS) reject(`${field} is too far in the future.`, { field });
-  return new Date(parsed).toISOString();
+  return canonical;
+}
+
+function timestampMicros(value: string): bigint {
+  const match = TIMESTAMP_PATTERN.exec(value);
+  if (!match) throw new Error('Internal timestamp is not canonical.');
+  const fraction = (match[2] ?? '').padEnd(6, '0');
+  const milliseconds = Date.parse(`${match[1]}.${fraction.slice(0, 3)}Z`);
+  return BigInt(milliseconds) * 1000n + BigInt(Number(fraction) - Number(fraction.slice(0, 3)) * 1000);
 }
 
 function sequence(value: unknown): string | null {
@@ -113,9 +133,9 @@ function normalized(row: SnapshotRow): QuoteSnapshot {
   return {
     id: row.id, organizationId: row.organization_id, brandId: row.brand_id, environmentId: row.environment_id,
     productInstanceId: row.product_instance_id, instrumentId: row.instrument_id, sourceId: row.source_id,
-    bid: canonicalDecimal(row.bid, 'bid'), ask: canonicalDecimal(row.ask, 'ask'), sourceEventAt: new Date(row.source_event_at).toISOString(),
-    receivedAt: new Date(row.received_at).toISOString(), sourceSequence: row.source_sequence === null ? null : String(row.source_sequence),
-    eventId: row.event_id, updatedAt: new Date(row.updated_at).toISOString(), provenance: row.provenance, sourceKind: row.source_kind,
+    bid: canonicalDecimal(row.bid, 'bid'), ask: canonicalDecimal(row.ask, 'ask'), sourceEventAt: timestamp(row.source_event_at, 'sourceEventAt', true),
+    receivedAt: timestamp(row.received_at, 'receivedAt', true), sourceSequence: row.source_sequence === null ? null : String(row.source_sequence),
+    eventId: row.event_id, updatedAt: timestamp(row.updated_at, 'updatedAt', true), provenance: row.provenance, sourceKind: row.source_kind,
   };
 }
 
@@ -127,8 +147,9 @@ function compareQuote(incoming: NormalizedQuote, current: QuoteSnapshot): number
     const a = BigInt(incoming.sourceSequence); const b = BigInt(current.sourceSequence);
     if (a !== b) return a > b ? 1 : -1;
   }
-  const event = Date.parse(incoming.sourceEventAt) - Date.parse(current.sourceEventAt);
-  if (event !== 0) return event > 0 ? 1 : -1;
+  const event = timestampMicros(incoming.sourceEventAt);
+  const currentEvent = timestampMicros(current.sourceEventAt);
+  if (event !== currentEvent) return event > currentEvent ? 1 : -1;
   // Equal trusted ordering metadata has no provider tie-breaker. The lower
   // event identity wins, so arrival order can never change the result.
   return incoming.eventId < current.eventId ? 1 : -1;
@@ -148,7 +169,10 @@ export function normalizeQuote(input: QuoteInput, instrument: Instrument, source
   if (bidUnits === askUnits && !instrument.zero_spread_allowed) reject('Zero-spread quotes are not allowed for this instrument.');
   if (!multipleOf(bid, instrument.tick_size) || !multipleOf(ask, instrument.tick_size)) reject('Price does not align to the instrument tick size.', { tick_size: instrument.tick_size });
   if (typeof input.eventId !== 'string' || input.eventId.length < 1 || input.eventId.length > 200) reject('eventId must be a non-empty bounded string.');
-  return { instrumentId: instrument.id, sourceId: source.id, bid, ask, sourceEventAt: timestamp(input.sourceEventAt, 'sourceEventAt'), receivedAt: timestamp(input.receivedAt ?? new Date().toISOString(), 'receivedAt', true), sourceSequence: sequence(input.sourceSequence), eventId: input.eventId, provenance: source.provenance, sourceKind: source.source_kind };
+  const sourceEventAt = timestamp(input.sourceEventAt, 'sourceEventAt');
+  const receivedAt = timestamp(input.receivedAt ?? new Date().toISOString(), 'receivedAt');
+  if (timestampMicros(sourceEventAt) > timestampMicros(receivedAt)) reject('sourceEventAt cannot be later than receivedAt.');
+  return { instrumentId: instrument.id, sourceId: source.id, bid, ask, sourceEventAt, receivedAt, sourceSequence: sequence(input.sourceSequence), eventId: input.eventId, provenance: source.provenance, sourceKind: source.source_kind };
 }
 
 export class MarketDataService {
@@ -171,21 +195,26 @@ export class MarketDataService {
     const source = (await tx.query<Source>('SELECT id,source_kind,provenance,active FROM market_data_sources WHERE id=$1', [input.sourceId])).rows[0];
     if (!source) throw new AppError(403, 'MARKET_DATA_SOURCE_UNAUTHORIZED', 'The market-data source is not approved.');
     const quote = normalizeQuote(input, instrument, source);
-    const current = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`SELECT q.*,s.provenance,s.source_kind FROM market_data_latest_quotes q JOIN market_data_sources s ON s.id=q.source_id WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=$5 AND q.source_id=$6 FOR UPDATE`, [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, quote.instrumentId, quote.sourceId])).rows[0];
+    const current = (await tx.query<SnapshotRow>(`SELECT ${SNAPSHOT_COLUMNS} FROM market_data_latest_quotes q WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=$5 AND q.source_id=$6 FOR UPDATE`, [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, quote.instrumentId, quote.sourceId])).rows[0];
     if (current) {
       const existing = normalized(current);
       const order = compareQuote(quote, existing);
       if (order <= 0) return { status: order === 0 ? 'duplicate' : 'stale', snapshot: existing };
-      const updated = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`UPDATE market_data_latest_quotes SET bid=$2,ask=$3,source_event_at=$4,received_at=$5,source_sequence=$6,event_id=$7,updated_at=now() WHERE id=$1 RETURNING market_data_latest_quotes.*, $8::text AS provenance, $9::text AS source_kind`, [current.id, quote.bid, quote.ask, quote.sourceEventAt, quote.receivedAt, quote.sourceSequence, quote.eventId, quote.provenance, quote.sourceKind])).rows[0];
+      await tx.query(`UPDATE market_data_latest_quotes SET bid=$2,ask=$3,source_event_at=$4,received_at=$5,source_sequence=$6,event_id=$7,provenance=$8,source_kind=$9,updated_at=now() WHERE id=$1`, [current.id, quote.bid, quote.ask, quote.sourceEventAt, quote.receivedAt, quote.sourceSequence, quote.eventId, quote.provenance, quote.sourceKind]);
+      const updated = (await tx.query<SnapshotRow>(`SELECT ${SNAPSHOT_COLUMNS} FROM market_data_latest_quotes q WHERE q.id=$1`, [current.id])).rows[0];
       return { status: 'accepted', snapshot: normalized(updated) };
     }
-    const inserted = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`INSERT INTO market_data_latest_quotes(id,organization_id,brand_id,environment_id,product_instance_id,instrument_id,source_id,bid,ask,source_event_at,received_at,source_sequence,event_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) ON CONFLICT (organization_id,brand_id,environment_id,product_instance_id,instrument_id,source_id) DO NOTHING RETURNING market_data_latest_quotes.*, $14::text AS provenance, $15::text AS source_kind`, [randomUUID(), scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, quote.instrumentId, quote.sourceId, quote.bid, quote.ask, quote.sourceEventAt, quote.receivedAt, quote.sourceSequence, quote.eventId, quote.provenance, quote.sourceKind])).rows[0];
-    if (inserted) return { status: 'accepted', snapshot: normalized(inserted) };
-    const winner = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`SELECT q.*,s.provenance,s.source_kind FROM market_data_latest_quotes q JOIN market_data_sources s ON s.id=q.source_id WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=$5 AND q.source_id=$6 FOR UPDATE`, [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, quote.instrumentId, quote.sourceId])).rows[0];
+    const inserted = (await tx.query<{ id: string }>(`INSERT INTO market_data_latest_quotes(id,organization_id,brand_id,environment_id,product_instance_id,instrument_id,source_id,bid,ask,source_event_at,received_at,source_sequence,event_id,provenance,source_kind) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) ON CONFLICT (organization_id,brand_id,environment_id,product_instance_id,instrument_id,source_id) DO NOTHING RETURNING id`, [randomUUID(), scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, quote.instrumentId, quote.sourceId, quote.bid, quote.ask, quote.sourceEventAt, quote.receivedAt, quote.sourceSequence, quote.eventId, quote.provenance, quote.sourceKind])).rows[0];
+    if (inserted) {
+      const snapshot = (await tx.query<SnapshotRow>(`SELECT ${SNAPSHOT_COLUMNS} FROM market_data_latest_quotes q WHERE q.id=$1`, [inserted.id])).rows[0];
+      return { status: 'accepted', snapshot: normalized(snapshot) };
+    }
+    const winner = (await tx.query<SnapshotRow>(`SELECT ${SNAPSHOT_COLUMNS} FROM market_data_latest_quotes q WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=$5 AND q.source_id=$6 FOR UPDATE`, [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, quote.instrumentId, quote.sourceId])).rows[0];
     if (!winner) throw new AppError(409, 'QUOTE_WRITE_CONFLICT', 'The quote snapshot changed concurrently; retry the quote.');
     const existing = normalized(winner); const order = compareQuote(quote, existing);
     if (order <= 0) return { status: order === 0 ? 'duplicate' : 'stale', snapshot: existing };
-    const updated = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`UPDATE market_data_latest_quotes SET bid=$2,ask=$3,source_event_at=$4,received_at=$5,source_sequence=$6,event_id=$7,updated_at=now() WHERE id=$1 RETURNING market_data_latest_quotes.*, $8::text AS provenance, $9::text AS source_kind`, [winner.id, quote.bid, quote.ask, quote.sourceEventAt, quote.receivedAt, quote.sourceSequence, quote.eventId, quote.provenance, quote.sourceKind])).rows[0];
+    await tx.query(`UPDATE market_data_latest_quotes SET bid=$2,ask=$3,source_event_at=$4,received_at=$5,source_sequence=$6,event_id=$7,provenance=$8,source_kind=$9,updated_at=now() WHERE id=$1`, [winner.id, quote.bid, quote.ask, quote.sourceEventAt, quote.receivedAt, quote.sourceSequence, quote.eventId, quote.provenance, quote.sourceKind]);
+    const updated = (await tx.query<SnapshotRow>(`SELECT ${SNAPSHOT_COLUMNS} FROM market_data_latest_quotes q WHERE q.id=$1`, [winner.id])).rows[0];
     return { status: 'accepted', snapshot: normalized(updated) };
   }
 
@@ -202,7 +231,7 @@ export class MarketDataService {
       const params: unknown[] = [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, instrumentId];
       const source = sourceId ? ' AND q.source_id=$6' : '';
       if (sourceId) params.push(sourceId);
-      const row = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`SELECT q.*,s.provenance,s.source_kind FROM market_data_latest_quotes q JOIN market_data_sources s ON s.id=q.source_id JOIN market_data_instrument_access a ON a.organization_id=q.organization_id AND a.brand_id=q.brand_id AND a.environment_id=q.environment_id AND a.product_instance_id=q.product_instance_id AND a.instrument_id=q.instrument_id AND a.enabled=true WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=$5${source} ORDER BY q.source_event_at DESC,q.source_id ASC LIMIT 1`, params)).rows[0];
+      const row = (await tx.query<SnapshotRow>(`SELECT ${SNAPSHOT_COLUMNS} FROM market_data_latest_quotes q JOIN market_data_instrument_access a ON a.organization_id=q.organization_id AND a.brand_id=q.brand_id AND a.environment_id=q.environment_id AND a.product_instance_id=q.product_instance_id AND a.instrument_id=q.instrument_id AND a.enabled=true WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=$5${source} ORDER BY q.source_event_at DESC,q.source_id ASC LIMIT 1`, params)).rows[0];
       return row ? normalized(row) : null;
     });
   }
@@ -214,7 +243,7 @@ export class MarketDataService {
       const params: unknown[] = [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, instrumentIds];
       const source = sourceId ? ' AND q.source_id=$6' : '';
       if (sourceId) params.push(sourceId);
-      const rows = (await tx.query<SnapshotRow & { provenance: Source['provenance']; source_kind: Source['source_kind'] }>(`SELECT q.*,s.provenance,s.source_kind FROM market_data_latest_quotes q JOIN market_data_sources s ON s.id=q.source_id JOIN market_data_instrument_access a ON a.organization_id=q.organization_id AND a.brand_id=q.brand_id AND a.environment_id=q.environment_id AND a.product_instance_id=q.product_instance_id AND a.instrument_id=q.instrument_id AND a.enabled=true WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=ANY($5::uuid[])${source} ORDER BY q.instrument_id,q.source_id`, params)).rows;
+      const rows = (await tx.query<SnapshotRow>(`SELECT ${SNAPSHOT_COLUMNS} FROM market_data_latest_quotes q JOIN market_data_instrument_access a ON a.organization_id=q.organization_id AND a.brand_id=q.brand_id AND a.environment_id=q.environment_id AND a.product_instance_id=q.product_instance_id AND a.instrument_id=q.instrument_id AND a.enabled=true WHERE q.organization_id=$1 AND q.brand_id=$2 AND q.environment_id=$3 AND q.product_instance_id=$4 AND q.instrument_id=ANY($5::uuid[])${source} ORDER BY q.instrument_id,q.source_id`, params)).rows;
       return rows.map(normalized);
     });
   }
