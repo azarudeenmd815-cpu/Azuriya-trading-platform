@@ -116,7 +116,7 @@ export class BrokerageAccountsService {
           AND sag.environment_id=$5 AND sag.product_instance_id=$6
           AND sag.revoked_at IS NULL AND sag.starts_at<=now() AND sag.expires_at>now()
           AND sag.scopes @> $7::jsonb
-          AND EXISTS (SELECT 1 FROM users u WHERE u.id=sag.user_id AND u.status='active') LIMIT 1`,[
+          AND EXISTS (SELECT 1 FROM users u WHERE u.id=sag.user_id AND u.status='active' AND u.core_role='super_admin') LIMIT 1`,[
         scope.supportGrantId,scope.userId,scope.organizationId,scope.brandId,
         scope.environmentId,scope.productInstanceId,JSON.stringify([permission])])).rows[0];
       if(!support)throw new AppError(403,'PERMISSION_DENIED',`The ${permission} permission is required.`);

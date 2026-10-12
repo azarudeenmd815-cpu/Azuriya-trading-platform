@@ -135,6 +135,18 @@ describe('Brokerage account registry, manual KYC and private connections',()=>{
       await db.transaction({core:true},tx=>tx.query('DELETE FROM support_access_grants WHERE id=$1',[grantId]));
     }
   });
+  it('rejects malformed support grants assigned to non-Core identities',async()=>{
+    const grantId=randomUUID();
+    await db.transaction({core:true},tx=>tx.query('INSERT INTO support_access_grants(id,organization_id,brand_id,environment_id,product_instance_id,user_id,granted_by,reason,scopes,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,now()+interval \'1 hour\')',[grantId,...scopeValues(a),ownerId,core.userId,'Malformed non-Core support grant',JSON.stringify(['brokerage.accounts.read'])]));
+    const malformed={...a,supportGrantId:grantId};
+    try {
+      await expect(service.listAccounts(malformed)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+      await expect(service.getAccount(malformed,accountId)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+      await expect(service.resolveAccountOwner(malformed,accountId)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+    } finally {
+      await db.transaction({core:true},tx=>tx.query('DELETE FROM support_access_grants WHERE id=$1',[grantId]));
+    }
+  });
   it('does not treat a Core identity with a tenant membership as business staff',async()=>{
     const membershipId=randomUUID();
     const staffScope={...a,userId:core.userId,permissions:[...permissions]};
