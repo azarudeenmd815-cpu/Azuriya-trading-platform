@@ -274,7 +274,8 @@ export class ExternalApiService {
       return [{ id, account_id: accountId, instrument, side, status: 'open' as const, volume, open_price: openPrice, current_price: decimalValue(item?.current_price), unrealized_pnl: decimalValue(item?.profit), stop_loss: decimalValue(item?.stop_loss), take_profit: decimalValue(item?.take_profit), opened_at: openedAt, observed_at: observedAt }];
     }).sort((a, b) => {
       const timestampOrder = Date.parse(b.opened_at) - Date.parse(a.opened_at);
-      return timestampOrder || b.id.localeCompare(a.id);
+      if (timestampOrder) return timestampOrder;
+      return a.id === b.id ? 0 : a.id < b.id ? 1 : -1;
     });
   }
 
