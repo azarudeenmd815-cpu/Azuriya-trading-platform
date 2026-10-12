@@ -12,12 +12,14 @@ keeps sub-millisecond events replay-safe instead of collapsing them to a
 JavaScript millisecond `Date` value.
 
 Migration 065 stores `provenance` and `source_kind` on each latest snapshot and
-backfills existing rows from the registered source. Snapshot reads use the
-persisted values, so changing a source's mutable catalog fields cannot relabel
-an already stored simulated quote as verified provider data. A database check
-keeps the two provenance fields consistent. Migration 066 adds the matching
-database invariant that a source event cannot be later than its receipt, so
-trusted maintenance writes cannot bypass normalized-ingestion ordering.
+backfills existing rows from the registered source under the explicit Core
+context required by forced RLS. Snapshot reads use the persisted values, so
+changing a source's mutable catalog fields cannot relabel an already stored
+simulated quote as verified provider data. A database check and immutable
+trigger keep snapshot source identity and provenance source-matched and prevent
+Core maintenance writes from relabeling or replacing it. Migration 066 adds the matching database invariant
+that a source event cannot be later than its receipt, so trusted maintenance
+writes cannot bypass normalized-ingestion ordering.
 
 ## Acceptance criteria
 

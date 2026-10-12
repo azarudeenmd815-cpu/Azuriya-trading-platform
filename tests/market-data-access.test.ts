@@ -127,8 +127,13 @@ describe('market-data entitlement and RLS boundaries', () => {
 
   it('keeps source provenance immutable while allowing controlled source administration', async () => {
     const current = (await db.transaction({ core: true }, tx => tx.query<{ slug: string; active: boolean; provenance: string }>('SELECT slug,active,provenance FROM market_data_sources WHERE id=$1', [sourceId]))).rows[0];
+    const alternateSourceId = randomUUID();
+    await db.transaction({ core: true }, tx => tx.query('INSERT INTO market_data_sources(id,slug,source_kind,provenance) VALUES($1,$2,$3,$4)', [alternateSourceId, `simulated-${alternateSourceId.slice(0, 8)}`, 'simulated', 'simulated']));
     expect((await db.transaction({ core: true }, tx => tx.query<{ slug: string; active: boolean; provenance: string }>('UPDATE market_data_sources SET slug=$1,active=false WHERE id=$2 RETURNING slug,active,provenance', [`renamed-${sourceId.slice(0, 8)}`, sourceId]))).rows[0]).toMatchObject({ active: false, provenance: 'simulated' });
     await expect(db.transaction({ core: true }, tx => tx.query('UPDATE market_data_sources SET provenance=$1 WHERE id=$2', ['verified_provider', sourceId]))).rejects.toMatchObject({ code: '42501' });
+    await expect(db.transaction({ core: true }, tx => tx.query('UPDATE market_data_latest_quotes SET provenance=$1,source_kind=$2 WHERE id=$3', ['verified_provider', 'provider', quoteId]))).rejects.toMatchObject({ code: '42501' });
+    await expect(db.transaction({ core: true }, tx => tx.query('UPDATE market_data_latest_quotes SET source_id=$1 WHERE id=$2', [alternateSourceId, quoteId]))).rejects.toMatchObject({ code: '42501' });
+    expect((await db.transaction({ core: true }, tx => tx.query<{ id: string; bid: string }>('UPDATE market_data_latest_quotes SET bid=$1 WHERE id=$2 RETURNING id,bid::text', ['1.10001', quoteId]))).rows[0]).toMatchObject({ id: quoteId, bid: '1.100010000000000000' });
     expect((await db.transaction({ core: true }, tx => tx.query<{ slug: string; active: boolean; provenance: string }>('UPDATE market_data_sources SET active=true WHERE id=$1 RETURNING slug,active,provenance', [sourceId]))).rows[0]).toMatchObject({ slug: `renamed-${sourceId.slice(0, 8)}`, active: true, provenance: current.provenance });
   });
 
