@@ -83,6 +83,11 @@ describe('deterministic pretrade risk admission', () => {
     expect(evaluatePretradeRisk(input({ account: { ...base.account, snapshot: { ...base.account.snapshot!, observed_at: '0' } } }))).toMatchObject({ allowed: false, code: 'TRADING_RISK_INFORMATION_MISSING' });
   });
 
+  it('rejects semantically invalid account and quote timestamps', () => {
+    expect(evaluatePretradeRisk(input({ account: { ...base.account, snapshot: { ...base.account.snapshot!, observed_at: '2026-02-30T00:00:00.000Z' } } }))).toMatchObject({ allowed: false, code: 'TRADING_RISK_INFORMATION_MISSING' });
+    expect(evaluatePretradeRisk(input({ quote: { ...base.quote!, observed_at: '2026-02-30T00:00:00.000Z' }, freshness: { maxAgeMs: 60_000, nowMs: Date.parse('2026-03-02T00:00:00.000Z') } }))).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
+  });
+
   it('rejects opening margin checks when no canonical currency conversion exists', () => {
     expect(evaluatePretradeRisk(input({
       account: { ...base.account, account: { ...base.account.account!, currency: 'EUR' }, snapshot: { ...base.account.snapshot!, currency: 'EUR' } },

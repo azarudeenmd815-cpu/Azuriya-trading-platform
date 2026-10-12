@@ -71,8 +71,16 @@ function exactQuotient(numerator: bigint, denominator: bigint): Decimal | undefi
 }
 
 function validCurrency(value: unknown): value is string { return typeof value === 'string' && currencyPattern.test(value); }
+const timestampPattern = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.\d{1,9})?(Z|[+-]\d{2}:\d{2})$/;
 function validTimestamp(value: unknown): value is string {
-  return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/.test(value) && Number.isFinite(Date.parse(value));
+  if (typeof value !== 'string') return false;
+  const parts = timestampPattern.exec(value); if (!parts) return false;
+  const year = Number(parts[1]); const month = Number(parts[2]); const day = Number(parts[3]);
+  const hour = Number(parts[4]); const minute = Number(parts[5]); const second = Number(parts[6]);
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const daysInMonth = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1] ?? 0;
+  const zone = parts[7]; const zoneHour = zone === 'Z' ? 0 : Number(zone.slice(1, 3)); const zoneMinute = zone === 'Z' ? 0 : Number(zone.slice(4, 6));
+  return year > 0 && month >= 1 && month <= 12 && day >= 1 && day <= daysInMonth && hour <= 23 && minute <= 59 && second <= 59 && zoneHour <= 23 && zoneMinute <= 59 && Number.isFinite(Date.parse(value));
 }
 function validBoolean(value: unknown): value is boolean { return typeof value === 'boolean'; }
 
@@ -98,7 +106,8 @@ function quoteFailure(input: PretradeRiskInput): PretradeRejectedDecision | null
   if (!instrument || !Number.isSafeInteger(instrument.digits) || instrument.digits < 0 || !tick || tick.coefficient <= 0n || bid.scale > instrument.digits || ask.scale > instrument.digits || !multiple(bid, tick) || !multiple(ask, tick)) return reject('TRADING_QUOTE_INVALID', 'The executable quote does not satisfy the instrument precision or tick policy.');
   if (freshness && quote.observed_at === undefined) return reject('TRADING_QUOTE_INVALID', 'The executable quote timestamp is required for freshness validation.');
   if (quote.observed_at !== undefined) {
-    const observed = Date.parse(quote.observed_at); if (!Number.isFinite(observed)) return reject('TRADING_QUOTE_INVALID', 'The executable quote timestamp is invalid.');
+    if (!validTimestamp(quote.observed_at)) return reject('TRADING_QUOTE_INVALID', 'The executable quote timestamp is invalid.');
+    const observed = Date.parse(quote.observed_at);
     if (freshness && (!Number.isFinite(freshness.maxAgeMs) || freshness.maxAgeMs < 0 || !Number.isFinite(freshness.nowMs) || observed > freshness.nowMs || freshness.nowMs - observed > freshness.maxAgeMs)) return reject('TRADING_QUOTE_INVALID', 'The executable quote is stale or its freshness information is invalid.');
   }
   return null;
