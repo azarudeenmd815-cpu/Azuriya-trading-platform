@@ -20,11 +20,17 @@ function reject(code: 'TRADING_SCOPE_MISMATCH' | 'TRADING_QUOTE_INVALID', messag
   return { allowed: false, code, message };
 }
 
-function canonicalTimestamp(value: unknown): value is string {
-  return typeof value === 'string'
-    && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?Z$/.test(value)
-    && Number.isFinite(Date.parse(value))
-    && new Date(Date.parse(value)).toISOString().slice(0, 10) === value.slice(0, 10);
+function canonicalTimestampKey(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const parts = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(?:\.(\d{1,9}))?Z$/.exec(value);
+  if (!parts) return null;
+  const year = Number(parts[1]); const month = Number(parts[2]); const day = Number(parts[3]);
+  const hour = Number(parts[4]); const minute = Number(parts[5]); const second = Number(parts[6]);
+  const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+  const daysInMonth = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month - 1] ?? 0;
+  if (year <= 0 || month < 1 || month > 12 || day < 1 || day > daysInMonth || hour > 23 || minute > 59 || second > 59 || !Number.isFinite(Date.parse(value))) return null;
+  const fraction = parts[7] ?? '';
+  return `${parts[1]}${parts[2]}${parts[3]}${parts[4]}${parts[5]}${parts[6]}${fraction.padEnd(9, '0')}`;
 }
 
 interface QuoteDecimal {
@@ -73,7 +79,9 @@ export function adaptCanonicalQuote(input: CanonicalQuoteBinding): PretradeQuote
   if (typeof input.instrumentId !== 'string' || input.instrumentId.length === 0 || quote.instrumentId !== input.instrumentId) return reject('TRADING_QUOTE_INVALID', 'The market-data quote does not belong to the requested instrument.');
   if (typeof input.symbol !== 'string' || input.symbol.trim().length === 0) return reject('TRADING_QUOTE_INVALID', 'The executable instrument identity is unavailable.');
   if (!['simulated', 'verified_provider'].includes(quote.provenance) || (quote.provenance === 'simulated' && quote.sourceKind !== 'simulated') || (quote.provenance === 'verified_provider' && quote.sourceKind !== 'provider')) return reject('TRADING_QUOTE_INVALID', 'The market-data quote provenance cannot be verified.');
-  if (!canonicalTimestamp(quote.sourceEventAt) || !canonicalTimestamp(quote.receivedAt) || Date.parse(quote.sourceEventAt) > Date.parse(quote.receivedAt)) return reject('TRADING_QUOTE_INVALID', 'The market-data quote timestamps are invalid.');
+  const sourceEventKey = canonicalTimestampKey(quote.sourceEventAt);
+  const receivedKey = canonicalTimestampKey(quote.receivedAt);
+  if (!sourceEventKey || !receivedKey || sourceEventKey > receivedKey) return reject('TRADING_QUOTE_INVALID', 'The market-data quote timestamps are invalid.');
   const bid = parseQuoteDecimal(quote.bid);
   const ask = parseQuoteDecimal(quote.ask);
   if (!bid || !ask || bid.units <= 0n || ask.units <= 0n || compareQuoteDecimals(bid, ask) > 0) return reject('TRADING_QUOTE_INVALID', 'The market-data quote prices are invalid.');
