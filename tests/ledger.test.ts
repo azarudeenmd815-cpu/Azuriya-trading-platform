@@ -95,6 +95,11 @@ describe('authoritative account ledger replay and reconciliation', () => {
     await expect(service.postEntry(first, { account_id: malformed, currency: 'USD', amount: '1', kind: 'deposit', idempotency_key: 'ledger-malformed-account' })).rejects.toMatchObject({ statusCode: 404, code: 'ACCOUNT_NOT_FOUND' });
   });
 
+  it('rejects non-object posting payloads with a structured ledger error', async () => {
+    await expect(service.postEntry(first, null as never)).rejects.toMatchObject({ statusCode: 422, code: 'LEDGER_INPUT_INVALID' });
+    await expect(service.postEntry(first, [] as never)).rejects.toMatchObject({ statusCode: 422, code: 'LEDGER_INPUT_INVALID' });
+  });
+
   it('fails closed for core and malformed service contexts', async () => {
     const accountId = await account();
     await expect(service.balance({ ...first, core: true }, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });

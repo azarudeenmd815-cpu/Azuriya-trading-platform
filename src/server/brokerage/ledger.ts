@@ -31,6 +31,9 @@ function validAccountId(accountId: string): void { if (typeof accountId !== 'str
 function validAmount(amount: string): void { if (typeof amount !== 'string' || !amountPattern.test(amount) || /^-?0(?:\.0{1,8})?$/.test(amount)) throw new AppError(422, 'LEDGER_AMOUNT_INVALID', 'Ledger amounts must be non-zero exact decimals with at most eight fractional places.'); }
 function validIdempotency(key: string): void { if (typeof key !== 'string' || !idempotencyPattern.test(key)) throw new AppError(422, 'LEDGER_IDEMPOTENCY_INVALID', 'Ledger idempotency keys must contain 8-128 safe characters.'); }
 function validReference(reference?: string): void { if (reference !== undefined && (!reference.trim() || reference.length > 200)) throw new AppError(422, 'LEDGER_REFERENCE_INVALID', 'Ledger references must contain between 1 and 200 characters.'); }
+function validLedgerInput(input: unknown): asserts input is LedgerEntryInput {
+  if (input === null || typeof input !== 'object' || Array.isArray(input)) throw new AppError(422, 'LEDGER_INPUT_INVALID', 'Ledger entry input must be an object.');
+}
 function normalize(value: string): string { const negative = value.startsWith('-'); const unsigned = negative ? value.slice(1) : value; const [whole, fraction = ''] = unsigned.split('.'); const normalized = `${whole}.${fraction.padEnd(8, '0')}`; return `${negative && normalized !== '0.00000000' ? '-' : ''}${normalized}`; }
 function validateScope(scope: TenantContext): void {
   const candidate = scope as Partial<TenantContext> | null | undefined;
@@ -51,6 +54,7 @@ export class BrokerageLedgerService {
 
   async postEntry(scope: TenantContext, input: LedgerEntryInput): Promise<LedgerEntry> {
     validateScope(scope);
+    validLedgerInput(input);
     validAccountId(input.account_id); validCurrency(input.currency); validAmount(input.amount); validIdempotency(input.idempotency_key); validReference(input.reference);
     if (!kinds.includes(input.kind)) throw new AppError(422, 'LEDGER_KIND_INVALID', 'The ledger entry kind is not supported.');
     const amount = normalize(input.amount);
