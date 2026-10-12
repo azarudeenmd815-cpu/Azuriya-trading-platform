@@ -64,6 +64,7 @@ describe('provider adapter contracts and registry', () => {
     expect(descriptor.name).toBe(name);
     expect(descriptor.knownFamily).toBe(true);
     expect(descriptor.connectorAvailable).toBe(false);
+    expect(descriptor.familyCapabilities).toEqual([]);
     expect(descriptor.capabilities).toEqual([]);
     expect(descriptor.unavailableCapabilities).toEqual(providerCapabilities);
   });
