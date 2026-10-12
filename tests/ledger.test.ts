@@ -143,6 +143,24 @@ describe('authoritative account ledger replay and reconciliation', () => {
     expect(await persisted()).toEqual(before);
   });
 
+  it('replays valid maximum-width numeric entries without aggregate typmod overflow', async () => {
+    const accountId = await account();
+    const maximum = '999999999999999999999999999999.99999999';
+    await db.transaction(first, tx => tx.query("INSERT INTO brokerage_ledger_entries(id,organization_id,brand_id,environment_id,product_instance_id,account_id,currency,kind,amount,idempotency_key,created_by) VALUES($1,$2,$3,$4,$5,$6,'USD','adjustment',$7::numeric,'ledger-range-a',$8),($9,$2,$3,$4,$5,$6,'USD','adjustment',$7::numeric,'ledger-range-b',$8)", [randomUUID(), ...values(first), accountId, maximum, ownerId, randomUUID()]));
+    await db.transaction(first, tx => tx.query("INSERT INTO brokerage_account_balance_projections(organization_id,brand_id,environment_id,product_instance_id,account_id,currency,balance) VALUES($1,$2,$3,$4,$5,'USD',-$6::numeric)", [...values(first), accountId, maximum]));
+
+    await expect(service.balance(first, accountId, 'USD')).resolves.toMatchObject({
+      balance: '1999999999999999999999999999999.99999998',
+      entry_count: 2,
+    });
+    await expect(service.reconcile(first, accountId, 'USD')).resolves.toMatchObject({
+      status: 'MISMATCHED',
+      ledger_derived_balance: '1999999999999999999999999999999.99999998',
+      stored_balance: '-999999999999999999999999999999.99999999',
+      difference: '2999999999999999999999999999999.99999997',
+    });
+  });
+
   it('isolates all scope dimensions, account projections and denominations under actual RLS', async () => {
     const accountId = await account();
     const otherAccountId = await account();
