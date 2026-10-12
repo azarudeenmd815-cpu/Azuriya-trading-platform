@@ -4,7 +4,7 @@ import type { Row, TenantContext } from '../../shared/types.js';
 import type { Database, Executor } from '../db/database.js';
 import { AppError } from '../domain/errors.js';
 import { dbCode } from '../domain/utils.js';
-import { recordEvent, scopeValues, scopeWhere } from './common.js';
+import { authorizeBrokerageStaff, recordEvent, scopeValues, scopeWhere } from './common.js';
 
 const uuid = z.uuid();
 const MAX_CONFIG_VERSION = 2147483647;
@@ -49,6 +49,7 @@ export class BrokerageTradingGroupsService {
     const input = tradingGroupCreateSchema.parse(raw); const id = randomUUID();
     try {
       return await this.db.transaction(scope, async tx => {
+        await authorizeBrokerageStaff(tx, scope, 'brokerage.settings.write', true);
         const row = (await tx.query<Row>('INSERT INTO brokerage_trading_groups (id,organization_id,brand_id,environment_id,product_instance_id,group_code,display_name,description,max_leverage,status,config_version,created_by,updated_by) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,\'active\',1,$10,$10) RETURNING ' + fields, [id, ...scopeValues(scope), input.group_code, input.display_name, input.description, input.max_leverage, scope.userId])).rows[0];
         const group = asGroup(row);
         await recordEvent(tx, scope, 'brokerage.trading_group.created', 'brokerage_trading_group', group.id, { config_version: 1, after: eventView(group) });
@@ -60,6 +61,7 @@ export class BrokerageTradingGroupsService {
   async list(scope: TenantContext, raw: unknown = {}): Promise<{ data: TradingGroup[]; pagination: { total: number; limit: number; offset: number } }> {
     const query = tradingGroupListSchema.parse(raw);
     return this.db.transaction(scope, async tx => {
+      await authorizeBrokerageStaff(tx, scope, 'settings.read');
       const values: unknown[] = [...scopeValues(scope)]; const statusClause = query.status ? ' AND status=$5' : ''; if (query.status) values.push(query.status);
       const count = Number((await tx.query<{ count: string }>('SELECT count(*)::text AS count FROM brokerage_trading_groups WHERE ' + scopeWhere() + statusClause, values)).rows[0]?.count ?? 0);
       const rows = (await tx.query<Row>('SELECT ' + fields + ' FROM brokerage_trading_groups WHERE ' + scopeWhere() + statusClause + ' ORDER BY group_code ASC,id ASC LIMIT $' + (values.length + 1) + ' OFFSET $' + (values.length + 2), [...values, query.limit, query.offset])).rows;
@@ -68,7 +70,7 @@ export class BrokerageTradingGroupsService {
   }
 
   async get(scope: TenantContext, id: string): Promise<TradingGroup> {
-    uuid.parse(id); return this.db.transaction(scope, async tx => asGroup((await tx.query<Row>('SELECT ' + fields + ' FROM brokerage_trading_groups WHERE ' + scopeWhere() + ' AND id=$5', [...scopeValues(scope), id])).rows[0]));
+    uuid.parse(id); return this.db.transaction(scope, async tx => { await authorizeBrokerageStaff(tx, scope, 'settings.read'); return asGroup((await tx.query<Row>('SELECT ' + fields + ' FROM brokerage_trading_groups WHERE ' + scopeWhere() + ' AND id=$5', [...scopeValues(scope), id])).rows[0]); });
   }
 
   private async current(tx: Executor, scope: TenantContext, id: string, lock = false): Promise<TradingGroup> {
@@ -79,6 +81,7 @@ export class BrokerageTradingGroupsService {
     uuid.parse(id); const input = tradingGroupUpdateSchema.parse(raw); const expected = expectedVersion(input)!;
     try {
       return await this.db.transaction(scope, async tx => {
+        await authorizeBrokerageStaff(tx, scope, 'brokerage.settings.write', true);
         const before = await this.current(tx, scope, id, true);
         if (before.config_version !== expected) stale();
         const next = { display_name: input.display_name ?? before.display_name, description: input.description ?? before.description, max_leverage: input.max_leverage ?? before.max_leverage };
@@ -95,6 +98,7 @@ export class BrokerageTradingGroupsService {
   private async changeStatus(scope: TenantContext, id: string, status: 'active' | 'inactive', raw: LifecycleInput = {}): Promise<TradingGroup> {
     uuid.parse(id); const input = tradingGroupLifecycleSchema.parse(raw); const supplied = expectedVersion(input);
     return this.db.transaction(scope, async tx => {
+      await authorizeBrokerageStaff(tx, scope, 'brokerage.settings.write', true);
       const before = await this.current(tx, scope, id, true); if (supplied !== undefined && before.config_version !== supplied) stale(); if (before.status === status) return before;
       const expected = supplied ?? before.config_version;
       if (before.config_version >= MAX_CONFIG_VERSION) versionExhausted();

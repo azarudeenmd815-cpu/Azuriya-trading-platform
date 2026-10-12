@@ -4,7 +4,7 @@ import type { Row, TenantContext } from '../../shared/types.js';
 import type { Database, Executor } from '../db/database.js';
 import { AppError } from '../domain/errors.js';
 import { dbCode } from '../domain/utils.js';
-import { recordEvent, scopeValues, scopeWhere } from './common.js';
+import { authorizeBrokerageStaff, recordEvent, scopeValues, scopeWhere } from './common.js';
 
 const uuid = z.uuid();
 const MAX_CONFIG_VERSION = 2147483647;
@@ -118,6 +118,7 @@ export class BrokerageTradingGroupCommissionService {
   async getGroupCommissionConfiguration(scope: TenantContext, groupId: string): Promise<TradingGroupCommissionConfiguration | null> {
     uuid.parse(groupId);
     return this.db.transaction(scope, async tx => {
+      await authorizeBrokerageStaff(tx, scope, 'settings.read');
       await parentExists(tx, scope, groupId);
       const row = (await tx.query<Row>(`SELECT ${fields} FROM brokerage_trading_group_commissions WHERE ${scopeWhere()} AND trading_group_id=$5`, [...scopeValues(scope), groupId])).rows[0];
       return row ? asConfiguration(row) : null;
@@ -129,6 +130,7 @@ export class BrokerageTradingGroupCommissionService {
     const input = parseTradingGroupCommissionInput(raw);
     try {
       return await this.db.transaction(scope, async tx => {
+        await authorizeBrokerageStaff(tx, scope, 'brokerage.settings.write', true);
         await parentExists(tx, scope, groupId);
         const existingRow = (await tx.query<Row>(`SELECT ${fields} FROM brokerage_trading_group_commissions WHERE ${scopeWhere()} AND trading_group_id=$5 FOR UPDATE`, [...scopeValues(scope), groupId])).rows[0];
         if (!existingRow) {

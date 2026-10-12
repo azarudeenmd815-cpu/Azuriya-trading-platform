@@ -13,6 +13,30 @@ import { renderTemplate } from './communications.js';
 
 export function scopeValues(scope: TenantContext): [string, string, string, string] { return [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId]; }
 export function scopeWhere(alias = ''): string { const prefix = alias ? `${alias}.` : ''; return ['organization_id', 'brand_id', 'environment_id', 'product_instance_id'].map((field, index) => `${prefix}${field}=$${index + 1}`).join(' AND '); }
+
+/** Re-authorize direct brokerage service calls against the canonical tenant grants. */
+export async function authorizeBrokerageStaff(tx: Executor, scope: TenantContext, permission: string, mutate = false): Promise<void> {
+  const uuidFields = [scope.userId, scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId];
+  if (scope.core !== false || scope.productSlug !== 'brokerage-crm' || uuidFields.some(value => typeof value !== 'string' || !z.uuid().safeParse(value).success) || typeof scope.requestId !== 'string' || scope.requestId.length < 1 || scope.requestId.length > 200 || !Array.isArray(scope.permissions)) {
+    throw new AppError(403, 'TENANT_CONTEXT_REQUIRED', 'A complete authenticated brokerage tenant context is required.');
+  }
+  if (!scope.permissions.includes(permission)) throw new AppError(403, 'PERMISSION_DENIED', `The ${permission} permission is required.`);
+  if (mutate && scope.supportGrantId) throw new AppError(403, 'BROKERAGE_SUPPORT_READ_ONLY', 'Brokerage changes require business staff.');
+  const instance = (await tx.query(`SELECT i.id FROM product_instances i JOIN organizations o ON o.id=i.organization_id JOIN brands b ON b.id=i.brand_id AND b.organization_id=i.organization_id JOIN environments e ON e.id=i.environment_id AND e.organization_id=i.organization_id AND e.brand_id=i.brand_id JOIN products p ON p.id=i.product_id JOIN product_subscriptions s ON s.id=i.subscription_id AND s.organization_id=i.organization_id AND s.product_id=i.product_id WHERE i.organization_id=$1 AND i.brand_id=$2 AND i.environment_id=$3 AND i.id=$4 AND i.status='active' AND o.status='active' AND b.status='active' AND e.status='active' AND p.status='active' AND p.slug='brokerage-crm' AND s.status='active'`, [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId])).rows[0];
+  if (!instance) throw new AppError(403, 'TENANT_CONTEXT_INVALID', 'The authenticated tenant scope is not valid for this product instance.');
+  if (scope.supportGrantId) {
+    const support = (await tx.query(`SELECT 1 FROM support_access_grants sag WHERE sag.id=$1 AND sag.user_id=$2 AND sag.organization_id=$3 AND sag.brand_id=$4 AND sag.environment_id=$5 AND sag.product_instance_id=$6 AND sag.revoked_at IS NULL AND sag.starts_at<=now() AND sag.expires_at>now() AND sag.scopes @> $7::jsonb AND EXISTS (SELECT 1 FROM users u WHERE u.id=sag.user_id AND u.status='active') LIMIT 1`, [scope.supportGrantId, scope.userId, scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, JSON.stringify([permission])])).rows[0];
+    if (!support) throw new AppError(403, 'PERMISSION_DENIED', `The ${permission} permission is required.`);
+    return;
+  }
+  if (scope.credentialId) {
+    const credential = (await tx.query(`SELECT 1 FROM api_keys k JOIN users u ON u.id=k.created_by AND u.status='active' AND u.core_role IS NULL WHERE k.id=$1 AND k.created_by=$2 AND k.organization_id=$3 AND k.brand_id=$4 AND k.environment_id=$5 AND k.product_instance_id=$6 AND k.revoked_at IS NULL AND (k.expires_at IS NULL OR k.expires_at>now()) AND k.scopes @> $7::jsonb UNION ALL SELECT 1 FROM service_accounts s JOIN users u ON u.id=s.created_by AND u.status='active' AND u.core_role IS NULL WHERE s.id=$1 AND s.created_by=$2 AND s.organization_id=$3 AND s.brand_id=$4 AND s.environment_id=$5 AND s.product_instance_id=$6 AND s.status='active' AND s.revoked_at IS NULL AND (s.expires_at IS NULL OR s.expires_at>now()) AND s.scopes @> $7::jsonb LIMIT 1`, [scope.credentialId, scope.userId, scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, JSON.stringify([permission])])).rows[0];
+    if (!credential) throw new AppError(403, 'PERMISSION_DENIED', `The ${permission} permission is required.`);
+    return;
+  }
+  const grant = (await tx.query(`SELECT 1 FROM staff_memberships m JOIN users u ON u.id=m.user_id AND u.status='active' AND u.core_role IS NULL JOIN roles r ON r.id=m.role_id AND r.organization_id=m.organization_id JOIN role_permissions rp ON rp.role_id=r.id AND rp.organization_id=m.organization_id WHERE m.user_id=$1 AND m.organization_id=$2 AND m.status='active' AND (m.environment_id IS NULL OR m.environment_id=$3) AND (m.product_instance_id IS NULL OR m.product_instance_id=$4) AND rp.permission_code=$5 LIMIT 1`, [scope.userId, scope.organizationId, scope.environmentId, scope.productInstanceId, permission])).rows[0];
+  if (!grant) throw new AppError(403, 'PERMISSION_DENIED', `The ${permission} permission is required.`);
+}
 export interface BrokerageRouteContext {
   db: Database; auth: Auth; tenancy: Tenancy;
   staff(request: FastifyRequest, permission: string, mutate?: boolean): Promise<TenantContext>;
