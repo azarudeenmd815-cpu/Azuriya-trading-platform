@@ -116,6 +116,32 @@ describe('native order cancellation lifecycle', () => {
     expect(await service.fills(scope, order.id)).toEqual([]);
   });
 
+  it('rejects malformed direct service shapes before database constraints run', async () => {
+    const counts = () => db.transaction(scope, async tx => (await tx.query(`SELECT
+      (SELECT count(*) FROM brokerage_orders) AS orders,
+      (SELECT count(*) FROM brokerage_order_history) AS history,
+      (SELECT count(*) FROM brokerage_order_fills) AS fills,
+      (SELECT count(*) FROM audit_events) AS audit,
+      (SELECT count(*) FROM outbox_events) AS outbox`)).rows[0]);
+    const before = await counts();
+    for (const input of [
+      { account_id: accountId, instrument: '', order_type: 'limit', side: 'buy', quantity: '1', limit_price: '1' },
+      { account_id: accountId, instrument: 'EURUSD', order_type: 'unsupported', side: 'buy', quantity: '1' },
+      { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'hold', quantity: '1', limit_price: '1' },
+      { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity: '1', limit_price: '1', unexpected: true },
+    ] as const) {
+      await expect(service.create(scope, input as never)).rejects.toMatchObject({ statusCode: 422, code: 'INVALID_INPUT' });
+    }
+    expect(await counts()).toEqual(before);
+
+    const order = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity: '2', limit_price: '1' });
+    const beforeFill = await counts();
+    await expect(service.recordFill(scope, order.id, { id: order.id } as never)).rejects.toMatchObject({ statusCode: 422, code: 'INVALID_INPUT' });
+    await expect(service.recordFill(scope, order.id, { quantity: '1', price: '1', unexpected: true } as never)).rejects.toMatchObject({ statusCode: 422, code: 'INVALID_INPUT' });
+    expect(await counts()).toEqual(beforeFill);
+    expect(await service.get(scope, order.id)).toMatchObject({ status: 'pending', filled_quantity: '0.00000000' });
+  });
+
   it('rejects market, filled, partially filled, rejected, and expired orders', async () => {
     const market = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'market', side: 'buy', quantity: '1' });
     await expect(service.cancel(scope, String(market.id))).rejects.toMatchObject({ code: 'ORDER_NOT_CANCELLABLE' });
