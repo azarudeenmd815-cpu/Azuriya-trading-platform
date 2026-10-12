@@ -143,6 +143,17 @@ describe('market-data latest snapshots and tenant entitlements', () => {
       await db.transaction({ core: true }, tx => tx.query('UPDATE market_data_instrument_access SET enabled=true WHERE organization_id=$1 AND brand_id=$2 AND environment_id=$3 AND product_instance_id=$4 AND instrument_id=$5', [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, instrumentId]));
     }
   });
+
+  it('rejects ingestion for an inactive tenant hierarchy or mismatched product scope', async () => {
+    await db.transaction({ core: true }, tx => tx.query('UPDATE organizations SET status=\'suspended\' WHERE id=$1', [scope.organizationId]));
+    try {
+      await expect(service.ingest(scope, { instrumentId, sourceId, bid: '1.20000', ask: '1.20002', sourceEventAt: event(1), eventId: 'inactive-tenant' }, 'internal-market-data')).rejects.toMatchObject({ code: 'TENANT_SCOPE_INVALID' });
+    } finally {
+      await db.transaction({ core: true }, tx => tx.query('UPDATE organizations SET status=\'active\' WHERE id=$1', [scope.organizationId]));
+    }
+    const mismatchedProduct = { ...scope, productSlug: 'prop-crm' as const };
+    await expect(service.ingest(mismatchedProduct, { instrumentId, sourceId, bid: '1.20000', ask: '1.20002', sourceEventAt: event(1), eventId: 'mismatched-product' }, 'internal-market-data')).rejects.toMatchObject({ code: 'TENANT_SCOPE_INVALID' });
+  });
 });
 
 const instruments: Instrument[] = [

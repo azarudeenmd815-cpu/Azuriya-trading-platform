@@ -83,6 +83,14 @@ Re-enabling access exposes the original snapshot and its original timestamps;
 consumers must continue applying their freshness policy. An inactive instrument
 is omitted from instrument listing and rejected on ingestion.
 
+## W06 Cycle 4: ingestion scope lifecycle
+
+Internal quote ingestion now requires the complete active tenant hierarchy:
+organization, brand, environment, product, subscription, and product instance.
+The supplied product slug must also match the canonical product bound to the
+instance. Suspending any hierarchy member or presenting a mismatched product
+scope rejects the quote before normalization or snapshot mutation.
+
 Database-backed validation also uncovered two defects in the integrated quote
 implementation: unused UPDATE parameters prevented newer snapshots from being
 stored, and numeric columns returned padded price strings. Both update paths
