@@ -321,6 +321,7 @@ describe('W08 external developer API', () => {
     const malformedRequiredId = 'position-cycle3-malformed-required';
     const malformedOptionalId = 'position-cycle3-malformed-optional';
     const malformedTimestampId = 'position-cycle3-malformed-timestamp';
+    const excessivePrecisionTimestampId = 'position-cycle5-excessive-precision-timestamp';
     const invalidCalendarId = 'position-cycle3-invalid-calendar';
     const original = (await db.transaction({ core: true }, tx => tx.query<{ trading_observations: unknown }>('SELECT trading_observations FROM brokerage_accounts WHERE id=$1', [accountId]))).rows[0].trading_observations as { positions: unknown[]; observed_at: string; connector_version: string; limited: boolean };
     const observations = {
@@ -330,6 +331,7 @@ describe('W08 external developer API', () => {
         { provider_position_id: malformedRequiredId, provider_account_id: 'provider-cycle2', symbol: 'EURUSD', side: 'buy', volume: '1e3', open_price: '1.20000000', opened_at: '2026-10-11T00:00:00.000Z' },
         { provider_position_id: malformedOptionalId, provider_account_id: 'provider-cycle2', symbol: 'EURUSD', side: 'buy', volume: '2.00000000', open_price: '1.20000000', current_price: 'NaN', profit: '1e3', stop_loss: 'Infinity', take_profit: '1.30000000', opened_at: '2026-10-11T00:00:00.000Z' },
         { provider_position_id: malformedTimestampId, provider_account_id: 'provider-cycle2', symbol: 'EURUSD', side: 'buy', volume: '3.00000000', open_price: '1.20000000', opened_at: 'not-a-timestamp' },
+        { provider_position_id: excessivePrecisionTimestampId, provider_account_id: 'provider-cycle2', symbol: 'EURUSD', side: 'buy', volume: '4.00000000', open_price: '1.20000000', opened_at: '2026-10-11T00:00:00.1234567890Z' },
         { provider_position_id: invalidCalendarId, provider_account_id: 'provider-cycle2', symbol: 'EURUSD', side: 'buy', volume: '4.00000000', open_price: '1.20000000', opened_at: '2026-02-29T00:00:00.000Z' },
       ],
     };
@@ -340,6 +342,7 @@ describe('W08 external developer API', () => {
       const data = response.json().data as Array<Record<string, unknown>>;
       expect(data.map(item => item.id)).not.toContain(malformedRequiredId);
       expect(data.map(item => item.id)).not.toContain(malformedTimestampId);
+      expect(data.map(item => item.id)).not.toContain(excessivePrecisionTimestampId);
       expect(data.map(item => item.id)).not.toContain(invalidCalendarId);
       expect(data.find(item => item.id === malformedOptionalId)).toMatchObject({ volume: '2.00000000', open_price: '1.20000000', take_profit: '1.30000000' });
       expect(data.find(item => item.id === malformedOptionalId)).not.toHaveProperty('current_price');
