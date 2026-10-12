@@ -17,7 +17,8 @@ export function scopeWhere(alias = ''): string { const prefix = alias ? `${alias
 /** Re-authorize direct brokerage service calls against the canonical tenant grants. */
 export async function authorizeBrokerageStaff(tx: Executor, scope: TenantContext, permission: string, mutate = false): Promise<void> {
   const uuidFields = [scope.userId, scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId];
-  if (scope.core !== false || scope.productSlug !== 'brokerage-crm' || uuidFields.some(value => typeof value !== 'string' || !z.uuid().safeParse(value).success) || typeof scope.requestId !== 'string' || scope.requestId.length < 1 || scope.requestId.length > 200 || !Array.isArray(scope.permissions)) {
+  const optionalMarkers = [scope.credentialId, scope.supportGrantId];
+  if ((scope.credentialId !== undefined && scope.supportGrantId !== undefined) || scope.core !== false || scope.productSlug !== 'brokerage-crm' || uuidFields.some(value => typeof value !== 'string' || !z.uuid().safeParse(value).success) || optionalMarkers.some(value => value !== undefined && (typeof value !== 'string' || !z.uuid().safeParse(value).success)) || typeof scope.requestId !== 'string' || scope.requestId.length < 1 || scope.requestId.length > 200 || !Array.isArray(scope.permissions) || scope.permissions.some(value => typeof value !== 'string')) {
     throw new AppError(403, 'TENANT_CONTEXT_REQUIRED', 'A complete authenticated brokerage tenant context is required.');
   }
   if (!scope.permissions.includes(permission)) throw new AppError(403, 'PERMISSION_DENIED', `The ${permission} permission is required.`);
