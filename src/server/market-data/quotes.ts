@@ -181,7 +181,17 @@ export class MarketDataService {
   async ingest(scope: TenantContext, input: QuoteInput, authority: string): Promise<QuoteIngestionResult> {
     if (authority !== INTERNAL_MARKET_DATA_AUTHORITY) throw new AppError(403, 'MARKET_DATA_AUTHORITY_REQUIRED', 'Only the internal market-data authority may ingest quotes.');
     return this.db.transaction({ core: true }, async tx => {
-      const owned = (await tx.query<{ id: string }>('SELECT id FROM product_instances WHERE id=$1 AND organization_id=$2 AND brand_id=$3 AND environment_id=$4 AND status=\'active\'', [scope.productInstanceId, scope.organizationId, scope.brandId, scope.environmentId])).rows[0];
+      const owned = (await tx.query<{ id: string }>(`SELECT i.id
+        FROM product_instances i
+        JOIN organizations o ON o.id=i.organization_id
+        JOIN brands b ON b.id=i.brand_id AND b.organization_id=i.organization_id
+        JOIN environments e ON e.id=i.environment_id AND e.organization_id=i.organization_id AND e.brand_id=i.brand_id
+        JOIN products p ON p.id=i.product_id
+        JOIN product_subscriptions s ON s.id=i.subscription_id AND s.organization_id=i.organization_id AND s.product_id=i.product_id
+        WHERE i.id=$1 AND i.organization_id=$2 AND i.brand_id=$3 AND i.environment_id=$4
+          AND p.slug=$5
+          AND i.status='active' AND o.status='active' AND b.status='active'
+          AND e.status='active' AND p.status='active' AND s.status='active'`, [scope.productInstanceId, scope.organizationId, scope.brandId, scope.environmentId, scope.productSlug])).rows[0];
       if (!owned) throw new AppError(403, 'TENANT_SCOPE_INVALID', 'The quote tenant scope is unavailable.');
       return this.ingestInTransaction(tx, scope, input);
     });
