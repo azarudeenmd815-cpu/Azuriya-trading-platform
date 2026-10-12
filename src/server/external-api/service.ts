@@ -59,7 +59,11 @@ function decimalValue(value: unknown): string | undefined {
   return value;
 }
 function timestampValue(value: unknown): string | undefined {
-  if (typeof value !== 'string' || value.length === 0 || value.length > 1000 || !Number.isFinite(Date.parse(value))) return undefined;
+  if (typeof value !== 'string' || value.length === 0 || value.length > 1000) return undefined;
+  const match = /^(\d{4})-(\d{2})-(\d{2})T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$/.exec(value);
+  if (!match || !Number.isFinite(Date.parse(value))) return undefined;
+  const year = Number(match[1]); const month = Number(match[2]); const day = Number(match[3]);
+  if (month < 1 || month > 12 || day < 1 || day > new Date(Date.UTC(year, month, 0)).getUTCDate()) return undefined;
   return value;
 }
 function positionIdValue(value: unknown): string | undefined {
