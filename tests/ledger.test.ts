@@ -98,6 +98,7 @@ describe('authoritative account ledger replay and reconciliation', () => {
   it('fails closed for core and malformed service contexts', async () => {
     const accountId = await account();
     await expect(service.balance({ ...first, core: true }, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });
+    await expect(service.balance({ ...first, core: undefined } as unknown as TenantContext, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });
     await expect(service.balance({ ...first, productSlug: 'trading-hub' }, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });
     await expect(service.balance({ ...first, organizationId: 'not-a-uuid' }, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });
     await expect(service.balance({ ...first, permissions: undefined as never }, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });
