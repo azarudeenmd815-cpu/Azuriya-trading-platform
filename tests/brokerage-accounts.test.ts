@@ -65,6 +65,16 @@ describe('Brokerage account registry, manual KYC and private connections',()=>{
       await expect(service.requestAccount(markedClient,{offering_id:offeringId,currency:'USD',leverage:100})).rejects.toMatchObject({statusCode:403,code:'TENANT_CONTEXT_REQUIRED'});
     }
   });
+  it('rejects an ambiguous context carrying both credential and support authorization',async()=>{
+    const ambiguous={...a,credentialId:randomUUID(),supportGrantId:randomUUID()};
+    await expect(service.listAccounts(ambiguous)).rejects.toMatchObject({statusCode:403,code:'TENANT_CONTEXT_REQUIRED'});
+    await expect(service.listAccounts({...customer,credentialId:ambiguous.credentialId,supportGrantId:ambiguous.supportGrantId},{},true)).rejects.toMatchObject({statusCode:403,code:'TENANT_CONTEXT_REQUIRED'});
+  });
+  it('rejects contexts with malformed permission entries before authorization',async()=>{
+    const malformed={...a,permissions:[null]} as unknown as TenantContext;
+    await expect(service.listAccounts(malformed)).rejects.toMatchObject({statusCode:403,code:'TENANT_CONTEXT_REQUIRED'});
+    await expect(service.listAccounts({...customer,permissions:[{}]} as unknown as TenantContext,{},true)).rejects.toMatchObject({statusCode:403,code:'TENANT_CONTEXT_REQUIRED'});
+  });
   it('requires a canonical owner identity before provisioning',async()=>{const ownerless=randomUUID();await db.transaction({core:true},tx=>tx.query('INSERT INTO brokerage_clients(id,organization_id,brand_id,environment_id,product_instance_id,user_id,client_number,full_name,email,status,country,residence_country,birth_date,kyc_status) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,\'active\',\'IN\',\'IN\',\'1990-06-01\',\'approved\')',[ownerless,...scopeValues(a),null,`CLI-${ownerless.slice(0,8)}`,'Ownerless','***@***']));await expect(service.requestAccount(a,{offering_id:offeringId,currency:'USD',leverage:100},ownerless)).rejects.toMatchObject({code:'ACCOUNT_OWNER_REQUIRED'});});
   it('rejects inactive owner identities for self-service and staff provisioning',async()=>{
     try {
