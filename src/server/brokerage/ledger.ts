@@ -5,7 +5,8 @@ import type { Database, Executor } from '../db/database.js';
 import { AppError } from '../domain/errors.js';
 import { scopeValues, scopeWhere } from './common.js';
 
-const amountPattern = /^-?(?:0|[1-9]\d{0,27})(?:\.\d{1,8})?$/;
+// numeric(38,8) permits thirty integer digits and eight fractional digits.
+const amountPattern = /^-?(?:0|[1-9]\d{0,29})(?:\.\d{1,8})?$/;
 const idempotencyPattern = /^[A-Za-z0-9_.:-]{8,128}$/;
 const uuid = z.uuid();
 const kinds = ['opening_balance', 'deposit', 'withdrawal', 'transfer', 'realized_pnl', 'unrealized_pnl', 'commission', 'fee', 'swap', 'adjustment', 'reversal'] as const;

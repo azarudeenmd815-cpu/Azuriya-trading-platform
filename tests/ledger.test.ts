@@ -146,7 +146,9 @@ describe('authoritative account ledger replay and reconciliation', () => {
   it('replays valid maximum-width numeric entries without aggregate typmod overflow', async () => {
     const accountId = await account();
     const maximum = '999999999999999999999999999999.99999999';
-    await db.transaction(first, tx => tx.query("INSERT INTO brokerage_ledger_entries(id,organization_id,brand_id,environment_id,product_instance_id,account_id,currency,kind,amount,idempotency_key,created_by) VALUES($1,$2,$3,$4,$5,$6,'USD','adjustment',$7::numeric,'ledger-range-a',$8),($9,$2,$3,$4,$5,$6,'USD','adjustment',$7::numeric,'ledger-range-b',$8)", [randomUUID(), ...values(first), accountId, maximum, ownerId, randomUUID()]));
+    await service.postEntry(first, { account_id: accountId, currency: 'USD', amount: maximum, kind: 'adjustment', idempotency_key: 'ledger-range-a' });
+    await service.postEntry(first, { account_id: accountId, currency: 'USD', amount: maximum, kind: 'adjustment', idempotency_key: 'ledger-range-b' });
+    await expect(service.postEntry(first, { account_id: accountId, currency: 'USD', amount: '1000000000000000000000000000000.00000000', kind: 'adjustment', idempotency_key: 'ledger-range-overflow' })).rejects.toMatchObject({ code: 'LEDGER_AMOUNT_INVALID' });
     await db.transaction(first, tx => tx.query("INSERT INTO brokerage_account_balance_projections(organization_id,brand_id,environment_id,product_instance_id,account_id,currency,balance) VALUES($1,$2,$3,$4,$5,'USD',-$6::numeric)", [...values(first), accountId, maximum]));
 
     await expect(service.balance(first, accountId, 'USD')).resolves.toMatchObject({
