@@ -113,6 +113,23 @@ describe('Brokerage trading-group commission configuration', () => {
     expect(await auditCount()).toBe(auditBefore);
   });
 
+  it('returns a version conflict instead of overflowing at the database integer limit', async () => {
+    const base = { open_commission_per_lot: '1', close_commission_per_lot: '1', commission_currency: 'USD', enabled: true };
+    const exhaustionGroup = await new BrokerageTradingGroupsService(db).create(scope, { group_code: 'COMM_MAXVER', display_name: 'Commission Maximum Version Group', max_leverage: 100 });
+    const created = await service.upsertGroupCommissionConfiguration(scope, exhaustionGroup.id, { ...base, expected_version: 0 });
+    await db.transaction({ core: true }, tx => tx.query('UPDATE brokerage_trading_group_commissions SET config_version=2147483647 WHERE id=$1', [created.id]));
+    const before = await service.get(scope, exhaustionGroup.id);
+    const auditCount = async () => (await db.transaction(scope, tx => tx.query<{ count: number }>("SELECT count(*)::int AS count FROM audit_events WHERE resource_type='brokerage_trading_group_commission' AND resource_id=$1", [created.id]))).rows[0].count;
+    const auditBefore = await auditCount();
+    const noOp = await service.upsertGroupCommissionConfiguration(scope, exhaustionGroup.id, { ...base, expected_version: 2147483647 });
+    expect(noOp).toEqual(before);
+    expect(await auditCount()).toBe(auditBefore);
+    await expect(service.upsertGroupCommissionConfiguration(scope, exhaustionGroup.id, { ...base, open_commission_per_lot: '2', expected_version: 2147483646 })).rejects.toMatchObject({ code: 'TRADING_GROUP_COMMISSION_VERSION_CONFLICT', statusCode: 409 });
+    await expect(service.upsertGroupCommissionConfiguration(scope, exhaustionGroup.id, { ...base, open_commission_per_lot: '2', expected_version: 2147483647 })).rejects.toMatchObject({ code: 'TRADING_GROUP_COMMISSION_VERSION_EXHAUSTED', statusCode: 409 });
+    expect(await service.get(scope, exhaustionGroup.id)).toEqual(before);
+    expect(await auditCount()).toBe(auditBefore);
+  });
+
   it('creates, reads, versions, and preserves no-op configurations', async () => {
     const created = await service.upsertGroupCommissionConfiguration(scope, groupId, { open_commission_per_lot: '2.50', close_commission_per_lot: '3.125000', commission_currency: ' usd ', enabled: true, expected_version: 0 });
     expect(created).toMatchObject({ open_commission_per_lot: '2.5', close_commission_per_lot: '3.125', commission_currency: 'USD', config_version: 1 });

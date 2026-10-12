@@ -7,12 +7,13 @@ import { dbCode } from '../domain/utils.js';
 import { recordEvent, scopeValues, scopeWhere } from './common.js';
 
 const uuid = z.uuid();
+const MAX_CONFIG_VERSION = 2147483647;
 export const tradingGroupCommissionUpsertSchema = z.object({
   open_commission_per_lot: z.unknown(),
   close_commission_per_lot: z.unknown(),
   commission_currency: z.unknown(),
   enabled: z.boolean(),
-  expected_version: z.number().finite().int().min(0).max(2147483647),
+  expected_version: z.number().finite().int().min(0).max(MAX_CONFIG_VERSION),
 }).strict();
 
 export interface TradingGroupCommissionConfiguration {
@@ -93,6 +94,10 @@ function conflict(): never {
   throw new AppError(409, 'TRADING_GROUP_COMMISSION_VERSION_CONFLICT', 'The commission configuration was changed by another administrator. Reload it and retry with the current expected_version.');
 }
 
+function versionExhausted(): never {
+  throw new AppError(409, 'TRADING_GROUP_COMMISSION_VERSION_EXHAUSTED', 'The commission configuration has reached its version limit and cannot be changed.');
+}
+
 function eventView(configuration: TradingGroupCommissionConfiguration): Record<string, unknown> {
   return {
     id: configuration.id, trading_group_id: configuration.trading_group_id, open_commission_per_lot: configuration.open_commission_per_lot,
@@ -141,6 +146,8 @@ export class BrokerageTradingGroupCommissionService {
           && before.commission_currency === input.commission_currency
           && before.enabled === input.enabled;
         if (unchanged) return before;
+        // Preserve no-ops at the limit; material changes cannot fit the next PostgreSQL integer version.
+        if (before.config_version >= MAX_CONFIG_VERSION) versionExhausted();
         const row = (await tx.query<Row>(`UPDATE brokerage_trading_group_commissions SET open_commission_per_lot=$6::numeric,close_commission_per_lot=$7::numeric,commission_currency=$8,enabled=$9,config_version=config_version+1,updated_at=now(),updated_by=$10 WHERE ${scopeWhere()} AND trading_group_id=$5 AND config_version=$11 RETURNING ${fields}`, [...scopeValues(scope), groupId, input.open_commission_per_lot, input.close_commission_per_lot, input.commission_currency, input.enabled, scope.userId, input.expected_version])).rows[0];
         if (!row) conflict();
         const updated = asConfiguration(row);
