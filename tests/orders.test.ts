@@ -93,6 +93,29 @@ describe('native order cancellation lifecycle', () => {
     }
   });
 
+  it('rejects non-string quantity and fill inputs before mutation', async () => {
+    const counts = () => db.transaction(scope, async tx => (await tx.query(`SELECT
+      (SELECT count(*) FROM brokerage_orders) AS orders,
+      (SELECT count(*) FROM brokerage_order_history) AS history,
+      (SELECT count(*) FROM brokerage_order_fills) AS fills,
+      (SELECT count(*) FROM audit_events) AS audit,
+      (SELECT count(*) FROM outbox_events) AS outbox`)).rows[0]);
+    const beforeOrder = await counts();
+    for (const quantity of [1, true, null] as const) {
+      await expect(service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity, limit_price: '1' } as never)).rejects.toMatchObject({ statusCode: 422, code: 'INVALID_INPUT' });
+    }
+    expect(await counts()).toEqual(beforeOrder);
+
+    const order = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'limit', side: 'buy', quantity: '2', limit_price: '1' });
+    const beforeFill = await counts();
+    for (const input of [{ quantity: 1, price: '1' }, { quantity: '1', price: 1 }, { quantity: true, price: '1' }, { quantity: '1', price: null }] as const) {
+      await expect(service.recordFill(scope, order.id, input as never)).rejects.toMatchObject({ statusCode: 422, code: 'INVALID_INPUT' });
+    }
+    expect(await counts()).toEqual(beforeFill);
+    expect(await service.get(scope, order.id)).toMatchObject({ status: 'pending', filled_quantity: '0.00000000' });
+    expect(await service.fills(scope, order.id)).toEqual([]);
+  });
+
   it('rejects market, filled, partially filled, rejected, and expired orders', async () => {
     const market = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'market', side: 'buy', quantity: '1' });
     await expect(service.cancel(scope, String(market.id))).rejects.toMatchObject({ code: 'ORDER_NOT_CANCELLABLE' });

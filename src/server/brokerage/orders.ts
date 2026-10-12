@@ -26,8 +26,8 @@ function row<T extends Record<string, unknown>>(value: T): T { return serializab
 function transitionError(status: string): AppError {
   return new AppError(409, 'ORDER_NOT_CANCELLABLE', `An order in ${status} state cannot be cancelled.`);
 }
-function ensurePositive(value: string, label: string): void {
-  if (!decimalPattern.test(value) || /^0(?:\.0+)?$/.test(value)) throw new AppError(422, 'INVALID_INPUT', `${label} must be greater than zero.`);
+function ensurePositive(value: unknown, label: string): void {
+  if (typeof value !== 'string' || !decimalPattern.test(value) || /^0(?:\.0+)?$/.test(value)) throw new AppError(422, 'INVALID_INPUT', `${label} must be a positive decimal string.`);
 }
 
 export class BrokerageOrdersService {
