@@ -4,7 +4,7 @@ import { createDatabase, type Database } from '../src/server/db/database.js';
 import { migrate } from '../src/server/db/migrate.js';
 import { seedCatalog } from '../src/server/db/seed.js';
 import { FoundationService } from '../src/server/domain/service.js';
-import { BrokerageOrdersService } from '../src/server/brokerage/orders.js';
+import { BrokerageOrdersService, orderCreateSchema } from '../src/server/brokerage/orders.js';
 import { scopeValues } from '../src/server/brokerage/common.js';
 import { boundDatabase } from '../src/server/api/idempotency.js';
 import type { Row, TenantContext } from '../src/shared/types.js';
@@ -63,6 +63,34 @@ describe('native order cancellation lifecycle', () => {
     expect(replay).toMatchObject({ id: created.id, status: 'cancelled', cancellation_reason: 'user requested' });
     expect((await service.history(scope, String(created.id))).filter((event: { event_type: string }) => event.event_type === 'cancelled')).toHaveLength(1);
     expect(String((await db.transaction(scope, tx => tx.query<{ count: string | number }>("SELECT count(*) FROM audit_events WHERE resource_id=$1 AND action='brokerage.order.cancelled'", [created.id]))).rows[0].count)).toBe('1');
+  });
+
+  it('rejects invalid pending trigger prices before persisting an order', async () => {
+    const counts = () => db.transaction(scope, async tx => (await tx.query(`SELECT
+      (SELECT count(*) FROM brokerage_orders) AS orders,
+      (SELECT count(*) FROM brokerage_order_history) AS history,
+      (SELECT count(*) FROM audit_events WHERE action='brokerage.order.created') AS audit,
+      (SELECT count(*) FROM outbox_events WHERE event_type='brokerage.order.created') AS outbox`)).rows[0]);
+    const before = await counts();
+    for (const order_type of ['limit', 'stop'] as const) {
+      for (const price of [undefined, null, 1, true, '', '0', '0.00000000', '-1', '1.123456789', '100000000000000000000', '1e-8', '1\n', '1.00000000\r\n', ' 1']) {
+        const prices = order_type === 'limit' ? { limit_price: price } : { stop_price: price };
+        const input = { account_id: accountId, instrument: 'EURUSD', order_type, side: 'buy' as const, quantity: '1', ...prices };
+        expect(orderCreateSchema.safeParse(input).success).toBe(false);
+        await expect(service.create(scope, input as Parameters<BrokerageOrdersService['create']>[1])).rejects.toMatchObject({ statusCode: 422, code: 'INVALID_INPUT' });
+      }
+    }
+    expect(await counts()).toEqual(before);
+  });
+
+  it.each(['limit', 'stop'] as const)('preserves exact decimal trigger-price boundaries for %s orders', async order_type => {
+    for (const price of ['0.00000001', '99999999999999999999.99999999']) {
+      const prices = order_type === 'limit' ? { limit_price: price } : { stop_price: price };
+      const input = orderCreateSchema.parse({ account_id: accountId, instrument: 'EURUSD', order_type, side: 'buy', quantity: '1', ...prices });
+      const created = await service.create(scope, input);
+      expect(created).toMatchObject({ status: 'pending', ...prices });
+      expect(await service.get(scope, created.id)).toMatchObject(prices);
+    }
   });
 
   it('rejects market, filled, partially filled, rejected, and expired orders', async () => {

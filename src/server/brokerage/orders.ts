@@ -8,10 +8,11 @@ import { recordEvent, scopeValues, scopeWhere } from './common.js';
 
 const decimalPattern = /^(?:0|[1-9]\d{0,19})(?:\.\d{1,8})?$/;
 const decimal = z.string().regex(decimalPattern, 'Use a positive decimal with at most 8 fractional digits.');
+const positivePrice = decimal.refine(value => !/^0(?:\.0+)?$/.test(value), 'Price must be greater than zero.');
 export const orderTypes = ['limit', 'stop', 'market'] as const;
 export const orderSides = ['buy', 'sell'] as const;
 export const orderStatuses = ['pending', 'partially_filled', 'filled', 'rejected', 'expired', 'cancelled'] as const;
-export const orderCreateSchema = z.object({ account_id: z.uuid(), instrument: z.string().trim().min(1).max(80), order_type: z.enum(orderTypes), side: z.enum(orderSides), quantity: decimal, limit_price: decimal.optional(), stop_price: decimal.optional() }).strict().superRefine((value, ctx) => {
+export const orderCreateSchema = z.object({ account_id: z.uuid(), instrument: z.string().trim().min(1).max(80), order_type: z.enum(orderTypes), side: z.enum(orderSides), quantity: decimal, limit_price: positivePrice.optional(), stop_price: positivePrice.optional() }).strict().superRefine((value, ctx) => {
   if (value.order_type === 'limit' && (!value.limit_price || value.stop_price)) ctx.addIssue({ code: 'custom', path: ['limit_price'], message: 'Limit orders require limit_price only.' });
   if (value.order_type === 'stop' && (!value.stop_price || value.limit_price)) ctx.addIssue({ code: 'custom', path: ['stop_price'], message: 'Stop orders require stop_price only.' });
   if (value.order_type === 'market' && (value.limit_price || value.stop_price)) ctx.addIssue({ code: 'custom', path: ['order_type'], message: 'Market orders cannot include trigger prices.' });
@@ -34,6 +35,8 @@ export class BrokerageOrdersService {
 
   async create(scope: TenantContext, input: z.infer<typeof orderCreateSchema>, ownerUserId?: string) {
     ensurePositive(input.quantity, 'quantity');
+    const priceField = input.order_type === 'limit' ? 'limit_price' : input.order_type === 'stop' ? 'stop_price' : undefined;
+    if (priceField && !positivePrice.safeParse(input[priceField]).success) throw new AppError(422, 'INVALID_INPUT', `${priceField} must be a positive decimal with at most 20 integer and 8 fractional digits, without whitespace.`);
     return this.db.transaction(scope, async tx => {
       const account = (await tx.query<{ id: string; client_id: string }>(`SELECT id,client_id FROM brokerage_accounts WHERE ${scopeWhere()} AND id=$5`, [...scopeValues(scope), input.account_id])).rows[0];
       if (!account) throw new AppError(404, 'ACCOUNT_NOT_FOUND', 'The trading account does not exist in this scope.');
