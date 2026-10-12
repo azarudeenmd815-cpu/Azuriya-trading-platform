@@ -20,7 +20,9 @@ Initialization is deduplicated per scoped instance. Overlapping checks share one
 
 Cycle 3 acceptance: when a second check starts before the first check's deadline, expiry of the first must preserve the shared initializer for the second. Only the still-active check may start a health probe after initialization completes, and successful validation must leave the instance `HEALTHY`. The timeout callback marks a check inactive at the deadline, before any late initializer continuation can run. The expired caller receives the latest observation available at its own deadline (`CONNECTING` while the newer check is pending). A current-generation timeout must still invalidate initialization for retry, and shutdown remains terminal. The staggered fake-timer regression and existing retry/shutdown tests cover these rules.
 
-`shutdown` is idempotent, invalidates in-flight generations, and leaves the instance `DISCONNECTED`. There is no automatic polling in this cycle.
+`shutdown` is idempotent, invalidates in-flight generations, and leaves the instance `DISCONNECTED`. Adapter shutdown is logically bounded by the runtime timeout; a provider that cannot be physically cancelled cannot block application shutdown forever. There is no automatic polling in this cycle.
+
+Cycle 4 acceptance: a provider adapter whose shutdown promise never settles must not hold `shutdown` or `shutdownAll` open beyond the configured bounded timeout. The first call records terminal `DISCONNECTED` state immediately; repeated calls share the same bounded promise and invoke the adapter once. The hung-shutdown fake-timer regression covers this lifecycle boundary without performing provider I/O.
 
 ## Tenant and future adapters
 

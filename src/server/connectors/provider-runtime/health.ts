@@ -141,7 +141,12 @@ export class ProviderHealthRuntime {
     entry.shutdown = true;
     ++entry.generation;
     entry.observation = Object.freeze({ provider: entry.provider, state: 'DISCONNECTED', checkedAt: iso(this.clock), errorCode: 'SHUTDOWN' });
-    entry.shutdownPromise = Promise.resolve().then(() => entry.adapter.shutdown()).catch(() => undefined);
+    // Adapter shutdown is provider-controlled and may not support cancellation.
+    // Bound it so a hung provider cannot block application shutdown forever;
+    // the terminal observation is already recorded before this promise runs.
+    entry.shutdownPromise = Promise.resolve()
+      .then(() => this.withTimeout(entry.adapter.shutdown(), entry.timeoutMs))
+      .catch(() => undefined);
     return entry.shutdownPromise;
   }
 

@@ -286,6 +286,28 @@ describe('provider health runtime', () => {
     expect(observation.diagnostic).toBeUndefined();
   });
 
+  it('bounds a hung adapter shutdown and keeps repeated shutdown calls idempotent', async () => {
+    vi.useFakeTimers();
+    try {
+      const shutdown = vi.fn(() => new Promise<void>(() => undefined));
+      const registry = new ProviderCapabilityRegistry();
+      registry.register(adapterDefinition({ provider: 'hung-shutdown', shutdown }));
+      const runtime = new ProviderHealthRuntime(registry, { timeoutMs: 5 });
+      const instance = scope('hung-shutdown');
+      runtime.register(instance, 'hung-shutdown', { token: 'fake-secret' });
+
+      const first = runtime.shutdown(instance);
+      const second = runtime.shutdown(instance);
+      expect(runtime.observation(instance)).toMatchObject({ state: 'DISCONNECTED', errorCode: 'SHUTDOWN' });
+      await vi.advanceTimersByTimeAsync(5);
+      await expect(first).resolves.toBeUndefined();
+      await expect(second).resolves.toBeUndefined();
+      expect(shutdown).toHaveBeenCalledOnce();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('isolates provider A, same-family instances, and tenant scopes', async () => {
     const registry = new ProviderCapabilityRegistry();
     const states = new Map<string, 'healthy' | 'unavailable'>();
