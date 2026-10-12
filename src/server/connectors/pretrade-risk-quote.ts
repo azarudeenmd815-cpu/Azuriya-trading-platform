@@ -56,10 +56,10 @@ function compareQuoteDecimals(left: QuoteDecimal, right: QuoteDecimal): number {
 
 function scopeMatches(scope: CanonicalQuoteScope, quote: QuoteSnapshot): boolean {
   return !!scope && typeof scope === 'object'
-    && typeof scope.organizationId === 'string' && scope.organizationId.length > 0
-    && typeof scope.brandId === 'string' && scope.brandId.length > 0
-    && typeof scope.environmentId === 'string' && scope.environmentId.length > 0
-    && typeof scope.productInstanceId === 'string' && scope.productInstanceId.length > 0
+    && typeof scope.organizationId === 'string' && scope.organizationId.trim().length > 0
+    && typeof scope.brandId === 'string' && scope.brandId.trim().length > 0
+    && typeof scope.environmentId === 'string' && scope.environmentId.trim().length > 0
+    && typeof scope.productInstanceId === 'string' && scope.productInstanceId.trim().length > 0
     && quote.organizationId === scope.organizationId
     && quote.brandId === scope.brandId
     && quote.environmentId === scope.environmentId
@@ -76,7 +76,7 @@ export function adaptCanonicalQuote(input: CanonicalQuoteBinding): PretradeQuote
   if (!input || !input.quote) return reject('TRADING_QUOTE_INVALID', 'A canonical executable quote is unavailable.');
   const { quote } = input;
   if (!scopeMatches(input.scope, quote)) return reject('TRADING_SCOPE_MISMATCH', 'This market-data quote is unavailable in the authorized workspace.');
-  if (typeof input.instrumentId !== 'string' || input.instrumentId.length === 0 || quote.instrumentId !== input.instrumentId) return reject('TRADING_QUOTE_INVALID', 'The market-data quote does not belong to the requested instrument.');
+  if (typeof input.instrumentId !== 'string' || input.instrumentId.trim().length === 0 || quote.instrumentId !== input.instrumentId) return reject('TRADING_QUOTE_INVALID', 'The market-data quote does not belong to the requested instrument.');
   if (typeof input.symbol !== 'string' || input.symbol.trim().length === 0) return reject('TRADING_QUOTE_INVALID', 'The executable instrument identity is unavailable.');
   if (!['simulated', 'verified_provider'].includes(quote.provenance) || (quote.provenance === 'simulated' && quote.sourceKind !== 'simulated') || (quote.provenance === 'verified_provider' && quote.sourceKind !== 'provider')) return reject('TRADING_QUOTE_INVALID', 'The market-data quote provenance cannot be verified.');
   const sourceEventKey = canonicalTimestampKey(quote.sourceEventAt);

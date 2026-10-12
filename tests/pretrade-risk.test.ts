@@ -48,6 +48,11 @@ describe('deterministic pretrade risk admission', () => {
     expect(evaluatePretradeRisk(input({ instrument: { ...instrument, enabled: false } }))).toMatchObject({ allowed: false, code: 'TRADING_INSTRUMENT_UNAVAILABLE' });
   });
 
+  it('rejects an instrument with a whitespace-only symbol', () => {
+    const malformedInstrument = { ...instrument, symbol: ' ' };
+    expect(evaluatePretradeRisk(input({ instrument: malformedInstrument, order: { ...base.order, symbol: ' ' }, quote: { ...base.quote!, symbol: ' ' } }))).toMatchObject({ allowed: false, code: 'TRADING_INSTRUMENT_UNAVAILABLE' });
+  });
+
   it('rejects cross-tenant state before inspecting balances', () => {
     expect(evaluatePretradeRisk(input({ account: { ...base.account, scopeMatches: false, accountOwned: false, snapshot: null } }))).toMatchObject({ allowed: false, code: 'TRADING_SCOPE_MISMATCH' });
   });

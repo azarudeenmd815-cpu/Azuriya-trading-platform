@@ -127,7 +127,7 @@ function orderFailure(order: PretradeOrder, instrument: PretradeInstrument): Pre
 export function evaluatePretradeRisk(input: PretradeRiskInput): PretradeDecision {
   if (!input || !input.account || !input.order) return reject('TRADING_RISK_INFORMATION_MISSING', 'Required account and order risk information is unavailable.');
   const failure = accountFailure(input); if (failure) return failure;
-  if (!input.instrument || input.instrument.enabled !== true || input.instrument.restricted === true) return reject('TRADING_INSTRUMENT_UNAVAILABLE', 'This instrument is unavailable for execution.');
+  if (!input.instrument || typeof input.instrument.symbol !== 'string' || input.instrument.symbol.trim().length === 0 || input.instrument.enabled !== true || input.instrument.restricted === true) return reject('TRADING_INSTRUMENT_UNAVAILABLE', 'This instrument is unavailable for execution.');
   if (input.instrument.restricted !== undefined && !validBoolean(input.instrument.restricted)) return reject('TRADING_RISK_INFORMATION_MISSING', 'Authoritative instrument restriction status is unavailable.');
   const invalidOrder = orderFailure(input.order, input.instrument); if (invalidOrder) return invalidOrder;
   if (input.order.stage === 'submit' && input.order.type !== 'market') return { allowed: true, deferred: true };
