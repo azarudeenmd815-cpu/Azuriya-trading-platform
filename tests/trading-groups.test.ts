@@ -85,4 +85,18 @@ describe('Brokerage trading-group administration', () => {
     expect((await service.list(second)).data.some(item => item.id === group.id)).toBe(false);
     await expect(db.transaction({ core: true }, tx => tx.query("UPDATE brokerage_trading_groups SET group_code='MUTATED' WHERE id=$1", [group.id]))).rejects.toMatchObject({ code: '42501' });
   });
+
+  it('rejects material changes at the terminal config version without mutating state or audits', async () => {
+    const group = await service.create(first, { group_code: 'MAX_VERSION', display_name: 'Terminal Version', max_leverage: 100 });
+    await db.transaction({ core: true }, tx => tx.query('UPDATE brokerage_trading_groups SET config_version=2147483647 WHERE id=$1', [group.id]));
+    const before = await service.get(first, group.id);
+    const auditCount = async () => Number((await db.transaction(first, tx => tx.query<{ count: number }>("SELECT count(*)::int AS count FROM audit_events WHERE resource_type='brokerage_trading_group' AND resource_id=$1", [group.id]))).rows[0].count);
+    const auditBefore = await auditCount();
+    await expect(service.update(first, group.id, { display_name: 'Changed', config_version: 2147483647 })).rejects.toMatchObject({ code: 'TRADING_GROUP_VERSION_EXHAUSTED', statusCode: 409 });
+    await expect(service.deactivate(first, group.id, { config_version: 2147483647 })).rejects.toMatchObject({ code: 'TRADING_GROUP_VERSION_EXHAUSTED', statusCode: 409 });
+    const noOp = await service.update(first, group.id, { display_name: before.display_name, config_version: 2147483647 });
+    expect(noOp).toEqual(before);
+    expect(await service.get(first, group.id)).toEqual(before);
+    expect(await auditCount()).toBe(auditBefore);
+  });
 });
