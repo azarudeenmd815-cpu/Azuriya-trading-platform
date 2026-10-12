@@ -74,11 +74,12 @@ describe('Brokerage trading-group commission configuration', () => {
     db = await createDatabase();
     await migrate(db);
     await seedCatalog(db);
-    await db.transaction({ core: true }, tx => tx.query('INSERT INTO users(id,email,password_hash,display_name,core_role) VALUES($1,$2,$3,$4,$5)', [actorId, '***@***', 'unused', 'Commission Test', 'super_admin']));
+    await db.transaction({ core: true }, tx => tx.query('INSERT INTO users(id,email,password_hash,display_name,core_role) VALUES($1,$2,$3,$4,$5)', [actorId, '***@***', 'unused', 'Commission Test', null]));
     const foundation = new FoundationService(db);
     const organization = await foundation.createOrganization(core, { name: 'Commission Test', slug: 'commission-test', business_type: 'brokerage', brand_name: 'Commission Test', environment_name: 'Production', environment_kind: 'production', products: ['brokerage-crm'], plan: 'test' });
     const instances = await foundation.coreList('product-instances', { limit: 100 }, core);
     const instance = instances.data.find(row => String(row.organization_id) === String(organization.id)) as Row;
+    await db.transaction({ core: true }, tx => tx.query('INSERT INTO staff_memberships(id,organization_id,user_id,role_id,environment_id,product_instance_id) VALUES($1,$2,$3,$4,$5,$6)', [randomUUID(), organization.id, actorId, organization.owner_role_id, instance.environment_id, instance.id]));
     scope = { userId: actorId, requestId: randomUUID(), core: false, organizationId: String(organization.id), brandId: String(instance.brand_id), environmentId: String(instance.environment_id), productInstanceId: String(instance.id), productSlug: 'brokerage-crm', permissions: [...permissions] };
     groupId = (await new BrokerageTradingGroupsService(db).create(scope, { group_code: 'COMM_TEST', display_name: 'Commission Test Group', max_leverage: 100 })).id;
     service = new BrokerageTradingGroupCommissionService(db);
@@ -153,7 +154,19 @@ describe('Brokerage trading-group commission configuration', () => {
 
   it('prevents cross-scope reads and direct excess precision writes', async () => {
     const foreign = { ...scope, organizationId: randomUUID(), brandId: randomUUID(), environmentId: randomUUID(), productInstanceId: randomUUID(), requestId: randomUUID() };
-    await expect(service.getGroupCommissionConfiguration(foreign, groupId)).rejects.toMatchObject({ code: 'TRADING_GROUP_NOT_FOUND' });
+    await expect(service.getGroupCommissionConfiguration(foreign, groupId)).rejects.toMatchObject({ code: 'TENANT_CONTEXT_INVALID', statusCode: 403 });
     await expect(db.transaction({ core: true }, tx => tx.query('UPDATE brokerage_trading_group_commissions SET open_commission_per_lot=$1::numeric WHERE id=(SELECT id FROM brokerage_trading_group_commissions WHERE trading_group_id=$2)', ['1.1234567', groupId]))).rejects.toMatchObject({ code: '23514' });
+  });
+
+  it('enforces service-level read and mutation permissions', async () => {
+    const readOnly = { ...scope, requestId: randomUUID(), permissions: ['settings.read'] };
+    const noRead = { ...scope, requestId: randomUUID(), permissions: [] };
+    const input = { open_commission_per_lot: '1', close_commission_per_lot: '1', commission_currency: 'USD', enabled: true, expected_version: 0 };
+    // Use a fresh group: groupId is configured by the preceding persistence tests.
+    const unconfiguredGroup = await new BrokerageTradingGroupsService(db).create(scope, { group_code: 'COMM_AUTH', display_name: 'Commission Authorization Group', max_leverage: 100 });
+    await expect(service.upsertGroupCommissionConfiguration(readOnly, unconfiguredGroup.id, input)).rejects.toMatchObject({ code: 'PERMISSION_DENIED', statusCode: 403 });
+    await expect(service.upsertGroupCommissionConfiguration({ ...scope, requestId: randomUUID(), supportGrantId: randomUUID() }, unconfiguredGroup.id, input)).rejects.toMatchObject({ code: 'BROKERAGE_SUPPORT_READ_ONLY', statusCode: 403 });
+    await expect(service.getGroupCommissionConfiguration(noRead, unconfiguredGroup.id)).rejects.toMatchObject({ code: 'PERMISSION_DENIED', statusCode: 403 });
+    expect(await service.getGroupCommissionConfiguration(scope, unconfiguredGroup.id)).toBeNull();
   });
 });

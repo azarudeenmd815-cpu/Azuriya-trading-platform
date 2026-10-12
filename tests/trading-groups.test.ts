@@ -22,12 +22,18 @@ describe('Brokerage trading-group administration', () => {
     await seedCatalog(db);
     await db.transaction({ core: true }, tx => tx.query(
       'INSERT INTO users(id,email,password_hash,display_name,core_role) VALUES($1,$2,$3,$4,$5)',
-      [actorId, '***@***', 'unused', 'Trading Groups Test', 'super_admin'],
+      [actorId, '***@***', 'unused', 'Trading Groups Test', null],
     ));
     const foundation = new FoundationService(db);
     const alpha = await foundation.createOrganization(core, { name: 'Trading Alpha', slug: 'trading-alpha', business_type: 'brokerage', brand_name: 'Trading Alpha', environment_name: 'Production', environment_kind: 'production', products: ['brokerage-crm'], plan: 'test' });
     const beta = await foundation.createOrganization(core, { name: 'Trading Beta', slug: 'trading-beta', business_type: 'brokerage', brand_name: 'Trading Beta', environment_name: 'Production', environment_kind: 'production', products: ['brokerage-crm'], plan: 'test' });
     const instances = await foundation.coreList('product-instances', { limit: 100 }, core);
+    await db.transaction({ core: true }, async tx => {
+      for (const organization of [alpha, beta]) {
+        const instance = instances.data.find(row => String(row.organization_id) === String(organization.id)) as Row;
+        await tx.query('INSERT INTO staff_memberships(id,organization_id,user_id,role_id,environment_id,product_instance_id) VALUES($1,$2,$3,$4,$5,$6)', [randomUUID(), organization.id, actorId, organization.owner_role_id, instance.environment_id, instance.id]);
+      }
+    });
     const makeScope = (organizationId: string): TenantContext => {
       const instance = instances.data.find(row => String(row.organization_id) === organizationId) as Row;
       return { userId: actorId, requestId: randomUUID(), core: false, organizationId, brandId: String(instance.brand_id), environmentId: String(instance.environment_id), productInstanceId: String(instance.id), productSlug: 'brokerage-crm', permissions: [...permissions] };
@@ -47,12 +53,17 @@ describe('Brokerage trading-group administration', () => {
   });
 
   it('enforces validation, boundaries, and scope uniqueness', async () => {
-    for (const groupCode of ['ab', 'bad-code', 'ééé']) await expect(service.create(first, { group_code: groupCode, display_name: 'Bad', max_leverage: 100 })).rejects.toThrow();
+    for (const groupCode of ['ab', 'bad-code']) await expect(service.create(first, { group_code: groupCode, display_name: 'Bad', max_leverage: 100 })).rejects.toThrow();
     await expect(service.create(first, { group_code: 'RAW_USD', display_name: 'Duplicate', max_leverage: 100 })).rejects.toMatchObject({ code: 'TRADING_GROUP_EXISTS' });
     await expect(service.create(first, { group_code: 'LOW', display_name: 'Low', max_leverage: 1 })).resolves.toMatchObject({ max_leverage: 1 });
     await expect(service.create(first, { group_code: 'HIGH', display_name: 'High', max_leverage: 1000 })).resolves.toMatchObject({ max_leverage: 1000 });
     for (const max_leverage of [0, 1001, 1.5, Number.POSITIVE_INFINITY]) await expect(service.create(first, { group_code: 'BADLEV', display_name: 'Bad', max_leverage })).rejects.toThrow();
     await expect(service.create(second, { group_code: 'RAW_USD', display_name: 'Independent Scope', max_leverage: 100 })).resolves.toMatchObject({ group_code: 'RAW_USD' });
+  });
+
+  it('rejects Unicode group codes from an ASCII-safe escaped fixture', async () => {
+    const unicodeGroupCode = '\u00e9\u00e9\u00e9';
+    await expect(service.create(first, { group_code: unicodeGroupCode, display_name: 'Bad Unicode', max_leverage: 100 })).rejects.toThrow();
   });
 
   it('increments versions, rejects stale writes, and preserves no-op behavior', async () => {
@@ -98,5 +109,16 @@ describe('Brokerage trading-group administration', () => {
     expect(noOp).toEqual(before);
     expect(await service.get(first, group.id)).toEqual(before);
     expect(await auditCount()).toBe(auditBefore);
+  });
+
+  it('enforces read and mutation permissions at the service boundary', async () => {
+    const readOnly = { ...first, requestId: randomUUID(), permissions: ['settings.read'] };
+    const noRead = { ...first, requestId: randomUUID(), permissions: [] };
+    await expect(service.create(readOnly, { group_code: 'NO_WRITE', display_name: 'No Write', max_leverage: 100 })).rejects.toMatchObject({ code: 'PERMISSION_DENIED', statusCode: 403 });
+    await expect(service.create({ ...first, requestId: randomUUID(), supportGrantId: randomUUID() }, { group_code: 'SUPPORT_WRITE', display_name: 'Support Write', max_leverage: 100 })).rejects.toMatchObject({ code: 'BROKERAGE_SUPPORT_READ_ONLY', statusCode: 403 });
+    const group = await service.create(first, { group_code: 'SERVICE_AUTH', display_name: 'Service Auth', max_leverage: 100 });
+    await expect(service.get(noRead, group.id)).rejects.toMatchObject({ code: 'PERMISSION_DENIED', statusCode: 403 });
+    await expect(service.update(readOnly, group.id, { max_leverage: 200, config_version: 1 })).rejects.toMatchObject({ code: 'PERMISSION_DENIED', statusCode: 403 });
+    expect((await service.get(first, group.id)).max_leverage).toBe(100);
   });
 });
