@@ -42,6 +42,29 @@ describe('Brokerage account registry, manual KYC and private connections',()=>{
   it('enforces ownership, tenant scope and server pagination',async()=>{expect((await service.listAccounts(customer,{limit:1},true)).data).toHaveLength(1);expect((await service.listAccounts(customer,{limit:1},true)).pagination.total).toBe(2);expect((await service.listAccounts(otherCustomer,{},true)).data).toHaveLength(0);expect((await service.listAccounts(b)).data).toHaveLength(0);await expect(service.getAccount(otherCustomer,accountId,true)).rejects.toMatchObject({code:'ACCOUNT_NOT_FOUND'});await expect(service.getAccount(b,accountId)).rejects.toMatchObject({code:'ACCOUNT_NOT_FOUND'});await expect(service.requestAccount(a,{offering_id:offeringId,currency:'USD',leverage:100},foreignClientId)).rejects.toMatchObject({code:'BROKERAGE_CLIENT_NOT_FOUND'});});
   it('fails closed at the service boundary for malformed IDs, missing tenant context and unauthorized staff',async()=>{await expect(service.getAccount(customer,'not-an-id',true)).rejects.toThrow();await expect(service.listAccounts({...customer,productSlug:'trading-hub'}, {}, true)).rejects.toMatchObject({code:'TENANT_CONTEXT_REQUIRED'});await expect(service.listAccounts({...a,permissions:[]}, {})).rejects.toMatchObject({code:'PERMISSION_DENIED'});await expect(service.listAccounts({...a,userId:foreignUser,permissions:[...permissions]}, {})).rejects.toMatchObject({code:'PERMISSION_DENIED'});await expect(service.listAccounts(a,{status:'invented'})).rejects.toMatchObject({code:'VALIDATION_ERROR'});});
   it('rejects a tenant context with no explicit non-Core authentication marker',async()=>{const missingCore={...a,core:undefined} as unknown as TenantContext;await expect(service.listAccounts(missingCore,{})).rejects.toMatchObject({statusCode:403,code:'TENANT_CONTEXT_REQUIRED'});});
+  it.each(['credentialId','supportGrantId'] as const)('does not reinterpret a %s context as a client portal session',async marker=>{
+    const markedClient={...customer,[marker]:randomUUID()};
+    const records=()=>db.transaction(a,async tx=>({
+      accounts:(await tx.query('SELECT id FROM brokerage_accounts ORDER BY id')).rows,
+      events:(await tx.query("SELECT id FROM audit_events WHERE action='brokerage.account.requested' ORDER BY id")).rows,
+    }));
+    const before=await records();
+    await expect(service.listAccounts(markedClient,{},true)).rejects.toMatchObject({statusCode:403,code:'CLIENT_ACCESS_DENIED'});
+    await expect(service.getAccount(markedClient,accountId,true)).rejects.toMatchObject({statusCode:403,code:'CLIENT_ACCESS_DENIED'});
+    await expect(service.requestAccount(markedClient,{offering_id:offeringId,currency:'USD',leverage:100})).rejects.toMatchObject({statusCode:403,code:'CLIENT_ACCESS_DENIED'});
+    expect(await records()).toEqual(before);
+    await expect(service.listAccounts(customer,{},true)).resolves.toMatchObject({pagination:{total:2}});
+    await expect(service.getAccount(customer,accountId,true)).resolves.toMatchObject({id:accountId,client_id:clientId});
+  });
+  it.each(['credentialId','supportGrantId'] as const)('fails closed on malformed %s without falling back to actor memberships',async marker=>{
+    for(const value of ['',null,false,0,'not-a-uuid']){
+      const markedStaff={...a,[marker]:value} as unknown as TenantContext;
+      const markedClient={...customer,[marker]:value} as unknown as TenantContext;
+      await expect(service.listAccounts(markedStaff)).rejects.toMatchObject({statusCode:403,code:'TENANT_CONTEXT_REQUIRED'});
+      await expect(service.listAccounts(markedClient,{},true)).rejects.toMatchObject({statusCode:403,code:'TENANT_CONTEXT_REQUIRED'});
+      await expect(service.requestAccount(markedClient,{offering_id:offeringId,currency:'USD',leverage:100})).rejects.toMatchObject({statusCode:403,code:'TENANT_CONTEXT_REQUIRED'});
+    }
+  });
   it('requires a canonical owner identity before provisioning',async()=>{const ownerless=randomUUID();await db.transaction({core:true},tx=>tx.query('INSERT INTO brokerage_clients(id,organization_id,brand_id,environment_id,product_instance_id,user_id,client_number,full_name,email,status,country,residence_country,birth_date,kyc_status) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,\'active\',\'IN\',\'IN\',\'1990-06-01\',\'approved\')',[ownerless,...scopeValues(a),null,`CLI-${ownerless.slice(0,8)}`,'Ownerless','***@***']));await expect(service.requestAccount(a,{offering_id:offeringId,currency:'USD',leverage:100},ownerless)).rejects.toMatchObject({code:'ACCOUNT_OWNER_REQUIRED'});});
   it('rejects inactive owner identities for self-service and staff provisioning',async()=>{
     try {
