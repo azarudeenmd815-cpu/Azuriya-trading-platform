@@ -91,6 +91,11 @@ The supplied product slug must also match the canonical product bound to the
 instance. Suspending any hierarchy member or presenting a mismatched product
 scope rejects the quote before normalization or snapshot mutation.
 
+Quote reads require exactly one selector: a single `instrument_id` or a
+comma-separated `instrument_ids` list. Supplying both selectors or an empty
+list is rejected before snapshot lookup, avoiding silent selector precedence or
+an ambiguous successful empty response.
+
 Database-backed validation also uncovered two defects in the integrated quote
 implementation: unused UPDATE parameters prevented newer snapshots from being
 stored, and numeric columns returned padded price strings. Both update paths
