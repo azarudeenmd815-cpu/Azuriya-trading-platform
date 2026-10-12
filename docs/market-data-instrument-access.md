@@ -59,7 +59,7 @@ There are no provider calls, subscription changes or trading actions.
 ## Interfaces and rollout
 
 `MarketDataService.listInstruments(scope, limit = 100)` returns id, symbol,
-displayName, priceScale, tickSize and zeroSpreadAllowed. Limits outside 1–100
+displayName, priceScale, tickSize and zeroSpreadAllowed. Limits outside 1-100
 are rejected. Existing `getLatest` and `listLatest` now enforce access too.
 
 Authenticated GET routes:
@@ -67,7 +67,7 @@ Authenticated GET routes:
 - `/api/v1/instances/:instanceId/brokerage/quotes/instruments`
 - `/api/v1/client/instances/:instanceId/brokerage/quotes/instruments`
 
-Migrations 061–066 create scoped access records, enable trusted Core catalog
+Migrations 061-066 create scoped access records, enable trusted Core catalog
 administration through the restricted runtime role, and add a restrictive
 snapshot SELECT policy. Migration 065 also snapshots source provenance on each
 quote; migration 066 enforces source/receipt ordering in the database. Runtime
@@ -95,6 +95,11 @@ Quote reads require exactly one selector: a single `instrument_id` or a
 comma-separated `instrument_ids` list. Supplying both selectors or an empty
 list is rejected before snapshot lookup, avoiding silent selector precedence or
 an ambiguous successful empty response.
+
+Direct market-data reads also require the complete active ownership hierarchy
+and a product slug matching the provisioned instance. Suspended organizations,
+brands, environments, products, subscriptions, or instances return no catalog
+or snapshot rows, even when an old tenant context or entitlement remains.
 
 Database-backed validation also uncovered two defects in the integrated quote
 implementation: unused UPDATE parameters prevented newer snapshots from being
