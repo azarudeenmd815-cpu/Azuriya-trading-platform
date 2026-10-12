@@ -88,6 +88,7 @@ interface ExternalPosition {
   stop_loss?: string;
   take_profit?: string;
   opened_at: string;
+  observed_at?: string;
 }
 
 export class ExternalApiService {
@@ -258,6 +259,7 @@ export class ExternalApiService {
     const snapshot = objectValue(row?.trading_observations);
     const providerAccountId = stringValue(row?.external_account_id);
     if (!providerAccountId) return [];
+    const observedAt = timestampValue(snapshot?.observed_at);
     const values = Array.isArray(snapshot?.positions) ? snapshot.positions : [];
     return values.flatMap(value => {
       const item = objectValue(value);
@@ -269,7 +271,7 @@ export class ExternalApiService {
       const openPrice = decimalValue(item?.open_price);
       const openedAt = timestampValue(item?.opened_at);
       if (!id || itemProviderAccountId !== providerAccountId || !instrument || !side || !volume || !openPrice || !openedAt) return [];
-      return [{ id, account_id: accountId, instrument, side, status: 'open' as const, volume, open_price: openPrice, current_price: decimalValue(item?.current_price), unrealized_pnl: decimalValue(item?.profit), stop_loss: decimalValue(item?.stop_loss), take_profit: decimalValue(item?.take_profit), opened_at: openedAt }];
+      return [{ id, account_id: accountId, instrument, side, status: 'open' as const, volume, open_price: openPrice, current_price: decimalValue(item?.current_price), unrealized_pnl: decimalValue(item?.profit), stop_loss: decimalValue(item?.stop_loss), take_profit: decimalValue(item?.take_profit), opened_at: openedAt, observed_at: observedAt }];
     }).sort((a, b) => {
       const timestampOrder = Date.parse(b.opened_at) - Date.parse(a.opened_at);
       return timestampOrder || b.id.localeCompare(a.id);

@@ -374,6 +374,30 @@ describe('W08 external developer API', () => {
     }
   });
 
+  it('exposes canonical snapshot freshness without allowing malformed metadata to poison positions', async () => {
+    const credential = await new ExternalApiService(db).createCredential(first, { name: 'Position freshness regression', scopes: ['positions:read'] });
+    const original = (await db.transaction({ core: true }, tx => tx.query<{ trading_observations: unknown }>('SELECT trading_observations FROM brokerage_accounts WHERE id=$1', [accountId]))).rows[0].trading_observations as { positions: unknown[]; observed_at: string; connector_version: string; limited: boolean };
+    const validObservations = { ...original, observed_at: '2026-10-11T04:00:00-05:00' };
+    await db.transaction({ core: true }, tx => tx.query('UPDATE brokerage_accounts SET trading_observations=$2::jsonb WHERE id=$1', [accountId, JSON.stringify(validObservations)]));
+    try {
+      const valid = await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions/${positionId}`, headers: { authorization: `Bearer ${credential.secret}` } });
+      expect(valid.statusCode, valid.body).toBe(200);
+      expect(valid.json().data).toMatchObject({ id: positionId, observed_at: '2026-10-11T04:00:00-05:00' });
+      const validList = await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions?limit=100`, headers: { authorization: `Bearer ${credential.secret}` } });
+      expect(validList.statusCode, validList.body).toBe(200);
+      expect(validList.json().data.find((item: { id: string }) => item.id === positionId)).toMatchObject({ observed_at: '2026-10-11T04:00:00-05:00' });
+
+      const malformedObservations = { ...validObservations, observed_at: 'not-a-timestamp' };
+      await db.transaction({ core: true }, tx => tx.query('UPDATE brokerage_accounts SET trading_observations=$2::jsonb WHERE id=$1', [accountId, JSON.stringify(malformedObservations)]));
+      const malformed = await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions/${positionId}`, headers: { authorization: `Bearer ${credential.secret}` } });
+      expect(malformed.statusCode, malformed.body).toBe(200);
+      expect(malformed.json().data).toMatchObject({ id: positionId, open_price: '1.12345678' });
+      expect(malformed.json().data).not.toHaveProperty('observed_at');
+    } finally {
+      await db.transaction({ core: true }, tx => tx.query('UPDATE brokerage_accounts SET trading_observations=$2::jsonb WHERE id=$1', [accountId, JSON.stringify(original)]));
+    }
+  });
+
   it('rejects invalid and expired credentials for each new resource without session fallback', async () => {
     const service = new ExternalApiService(db);
     const expired = await service.createCredential(first, { name: 'Expired orders', scopes: ['orders:read'] });
