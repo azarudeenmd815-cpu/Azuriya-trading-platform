@@ -7,11 +7,12 @@ import { dbCode } from '../domain/utils.js';
 import { recordEvent, scopeValues, scopeWhere } from './common.js';
 
 const uuid = z.uuid();
+const MAX_CONFIG_VERSION = 2147483647;
 const groupCode = z.string().trim().min(3).max(32).transform(value => value.toUpperCase()).refine(value => /^[A-Z0-9_]+$/.test(value), 'Group code must use uppercase ASCII letters, numbers, and underscores.');
 const displayName = z.string().trim().min(1).max(100);
 const description = z.string().trim().max(500).default('');
 const leverage = z.number().finite().int().min(1).max(1000);
-const version = z.number().finite().int().min(1);
+const version = z.number().finite().int().min(1).max(MAX_CONFIG_VERSION);
 
 export const tradingGroupCreateSchema = z.object({ group_code: groupCode, display_name: displayName, description, max_leverage: leverage }).strict();
 export const tradingGroupUpdateSchema = z.object({
@@ -38,6 +39,7 @@ function asGroup(row: Row | undefined): TradingGroup {
 function eventView(group: TradingGroup): Record<string, unknown> { return { id: group.id, group_code: group.group_code, display_name: group.display_name, description: group.description, max_leverage: group.max_leverage, status: group.status, config_version: group.config_version, created_at: group.created_at, updated_at: group.updated_at, created_by: group.created_by, updated_by: group.updated_by }; }
 function conflict(error: unknown, code: string, message: string): never { if (dbCode(error) === '23505') throw new AppError(409, code, message); throw error; }
 function stale(): never { throw new AppError(409, 'TRADING_GROUP_VERSION_CONFLICT', 'The trading group was changed by another administrator. Reload it and retry with the current config_version.'); }
+function versionExhausted(): never { throw new AppError(409, 'TRADING_GROUP_VERSION_EXHAUSTED', 'The trading group has reached its version limit and cannot be changed.'); }
 function expectedVersion(input: { config_version?: number; expected_config_version?: number }): number | undefined { return input.config_version ?? input.expected_config_version; }
 
 export class BrokerageTradingGroupsService {
@@ -81,6 +83,7 @@ export class BrokerageTradingGroupsService {
         if (before.config_version !== expected) stale();
         const next = { display_name: input.display_name ?? before.display_name, description: input.description ?? before.description, max_leverage: input.max_leverage ?? before.max_leverage };
         if (next.display_name === before.display_name && next.description === before.description && next.max_leverage === before.max_leverage) return before;
+        if (before.config_version >= MAX_CONFIG_VERSION) versionExhausted();
         const row = (await tx.query<Row>('UPDATE brokerage_trading_groups SET display_name=$6,description=$7,max_leverage=$8,config_version=config_version+1,updated_at=now(),updated_by=$9 WHERE ' + scopeWhere() + ' AND id=$5 AND config_version=$10 RETURNING ' + fields, [...scopeValues(scope), id, next.display_name, next.description, next.max_leverage, scope.userId, expected])).rows[0];
         if (!row) stale(); const after = asGroup(row);
         await recordEvent(tx, scope, 'brokerage.trading_group.updated', 'brokerage_trading_group', id, { config_version: { before: before.config_version, after: after.config_version }, before: eventView(before), after: eventView(after) });
@@ -94,6 +97,7 @@ export class BrokerageTradingGroupsService {
     return this.db.transaction(scope, async tx => {
       const before = await this.current(tx, scope, id, true); if (supplied !== undefined && before.config_version !== supplied) stale(); if (before.status === status) return before;
       const expected = supplied ?? before.config_version;
+      if (before.config_version >= MAX_CONFIG_VERSION) versionExhausted();
       const row = (await tx.query<Row>('UPDATE brokerage_trading_groups SET status=$6,config_version=config_version+1,updated_at=now(),updated_by=$7 WHERE ' + scopeWhere() + ' AND id=$5 AND config_version=$8 RETURNING ' + fields, [...scopeValues(scope), id, status, scope.userId, expected])).rows[0];
       if (!row) stale(); const after = asGroup(row); const action = status === 'active' ? 'brokerage.trading_group.activated' : 'brokerage.trading_group.deactivated';
       await recordEvent(tx, scope, action, 'brokerage_trading_group', id, { config_version: { before: before.config_version, after: after.config_version }, before: eventView(before), after: eventView(after) });
