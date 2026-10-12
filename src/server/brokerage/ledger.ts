@@ -35,7 +35,7 @@ function normalize(value: string): string { const negative = value.startsWith('-
 function validateScope(scope: TenantContext): void {
   const candidate = scope as Partial<TenantContext> | null | undefined;
   const uuidFields = [candidate?.userId, candidate?.organizationId, candidate?.brandId, candidate?.environmentId, candidate?.productInstanceId];
-  if (!candidate || candidate.core || candidate.productSlug !== 'brokerage-crm' || uuidFields.some(value => typeof value !== 'string' || !uuid.safeParse(value).success) || typeof candidate.requestId !== 'string' || candidate.requestId.length < 1 || candidate.requestId.length > 200 || !Array.isArray(candidate.permissions)) {
+  if (!candidate || candidate.core !== false || candidate.productSlug !== 'brokerage-crm' || uuidFields.some(value => typeof value !== 'string' || !uuid.safeParse(value).success) || typeof candidate.requestId !== 'string' || candidate.requestId.length < 1 || candidate.requestId.length > 200 || !Array.isArray(candidate.permissions)) {
     throw new AppError(403, 'TENANT_CONTEXT_REQUIRED', 'A complete authenticated brokerage tenant context is required.');
   }
 }
