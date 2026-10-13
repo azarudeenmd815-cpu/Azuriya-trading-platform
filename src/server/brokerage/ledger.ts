@@ -26,7 +26,7 @@ interface AccountSnapshot {
   difference: string | null;
 }
 
-function validCurrency(currency: string): void { if (!/^[A-Z]{3}$/.test(currency)) throw new AppError(422, 'LEDGER_CURRENCY_INVALID', 'Currency must be a three-letter uppercase code.'); }
+function validCurrency(currency: string): void { if (typeof currency !== 'string' || !/^[A-Z]{3}$/.test(currency)) throw new AppError(422, 'LEDGER_CURRENCY_INVALID', 'Currency must be a three-letter uppercase code.'); }
 function validAccountId(accountId: string): void { if (typeof accountId !== 'string' || !uuid.safeParse(accountId).success) throw new AppError(404, 'ACCOUNT_NOT_FOUND', 'The account does not exist in this scope.'); }
 function validAmount(amount: string): void { if (typeof amount !== 'string' || !amountPattern.test(amount) || /^-?0(?:\.0{1,8})?$/.test(amount)) throw new AppError(422, 'LEDGER_AMOUNT_INVALID', 'Ledger amounts must be non-zero exact decimals with at most eight fractional places.'); }
 function validIdempotency(key: string): void { if (typeof key !== 'string' || !idempotencyPattern.test(key)) throw new AppError(422, 'LEDGER_IDEMPOTENCY_INVALID', 'Ledger idempotency keys must contain 8-128 safe characters.'); }
