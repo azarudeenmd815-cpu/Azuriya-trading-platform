@@ -156,6 +156,8 @@ describe('Brokerage account registry, manual KYC and private connections',()=>{
       await expect(service.listAccounts(support)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
       await db.transaction({core:true},tx=>tx.query("UPDATE support_access_grants SET revoked_at=NULL,starts_at=now()-interval '1 hour',expires_at=now()-interval '1 second' WHERE id=$1",[grantId]));
       await expect(service.getAccount(support,accountId)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+      await db.transaction({core:true},tx=>tx.query("UPDATE support_access_grants SET starts_at=now()+interval '1 hour',expires_at=now()+interval '2 hours' WHERE id=$1",[grantId]));
+      await expect(service.listAccounts(support)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
       await expect(service.resolveAccountOwner(support,accountId)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
     } finally {
       await db.transaction({core:true},tx=>tx.query('DELETE FROM support_access_grants WHERE id=$1',[grantId]));
