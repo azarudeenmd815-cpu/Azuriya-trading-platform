@@ -33,10 +33,17 @@ describe('canonical quote binding for pretrade risk', () => {
     { name: 'invalid clock hour', quote: { receivedAt: '2026-01-01T24:00:00.000Z' } },
     { name: 'malformed bid decimal', quote: { bid: 'not-a-decimal' } },
     { name: 'crossed bid and ask', quote: { bid: '1.10003', ask: '1.10002' } },
+    { name: 'blank instrument identifier', quote: { instrumentId: '   ' }, instrumentId: '   ' },
     { name: 'blank instrument symbol', symbol: '   ' },
   ];
   it.each(malformedCases)('rejects $name before producing an executable quote', override => {
     expect(adaptCanonicalQuote({ scope, quote: { ...quote, ...(override.quote ?? {}) }, instrumentId: override.instrumentId ?? 'instrument-1', symbol: override.symbol ?? 'EURUSD' })).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
+  });
+
+  it.each(['organizationId', 'brandId', 'environmentId', 'productInstanceId'] as const)('rejects whitespace-only %s tenant identifiers', field => {
+    const whitespaceScope = { ...scope, [field]: '   ' };
+    const whitespaceQuote = { ...quote, [field]: '   ' };
+    expect(adaptCanonicalQuote({ scope: whitespaceScope, quote: whitespaceQuote, instrumentId: 'instrument-1', symbol: 'EURUSD' })).toMatchObject({ allowed: false, code: 'TRADING_SCOPE_MISMATCH' });
   });
 
   it('does not mutate the canonical snapshot', () => {
