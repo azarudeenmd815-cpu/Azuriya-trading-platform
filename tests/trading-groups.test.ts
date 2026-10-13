@@ -77,6 +77,30 @@ describe('Brokerage trading-group administration', () => {
     expect(auditCount).toBe(1);
   });
 
+  it('supports the expected_config_version alias across updates and lifecycle transitions', async () => {
+    const group = await service.create(first, { group_code: 'VERSION_ALIAS', display_name: 'Version Alias', max_leverage: 100 });
+    const updated = await service.update(first, group.id, { display_name: 'Version Alias Updated', expected_config_version: 1 });
+    expect(updated).toMatchObject({ display_name: 'Version Alias Updated', config_version: 2 });
+    await expect(service.update(first, group.id, { display_name: 'Stale Alias', expected_config_version: 1 })).rejects.toMatchObject({ code: 'TRADING_GROUP_VERSION_CONFLICT', statusCode: 409 });
+    await expect(service.deactivate(first, group.id, { expected_config_version: 1 })).rejects.toMatchObject({ code: 'TRADING_GROUP_VERSION_CONFLICT', statusCode: 409 });
+    expect(await service.get(first, group.id)).toEqual(updated);
+
+    const inactive = await service.deactivate(first, group.id, { expected_config_version: 2 });
+    expect(inactive).toMatchObject({ status: 'inactive', config_version: 3 });
+    await expect(service.activate(first, group.id, { expected_config_version: 2 })).rejects.toMatchObject({ code: 'TRADING_GROUP_VERSION_CONFLICT', statusCode: 409 });
+    expect(await service.get(first, group.id)).toEqual(inactive);
+    const active = await service.activate(first, group.id, { expected_config_version: 3 });
+    expect(active).toMatchObject({ status: 'active', config_version: 4 });
+    expect(await service.activate(first, group.id, { expected_config_version: 4 })).toEqual(active);
+    const events = (await db.transaction(first, tx => tx.query<{ action: string; metadata: Record<string, unknown> }>('SELECT action,metadata FROM audit_events WHERE resource_id=$1 ORDER BY action', [group.id]))).rows;
+    expect(events).toHaveLength(4);
+    for (const [action, before, after] of [
+      ['updated', 1, 2], ['deactivated', 2, 3], ['activated', 3, 4],
+    ] as const) {
+      expect(events.find(event => event.action === `brokerage.trading_group.${action}`)?.metadata).toMatchObject({ config_version: { before, after } });
+    }
+  });
+
   it('allows only mutable identity fields through the service and prevents competing writes', async () => {
     const group = (await service.list(first)).data.find(item => item.group_code === 'RAW_USD')!;
     await expect(service.update(first, group.id, { group_code: 'OTHER', config_version: 2 } as never)).rejects.toThrow();
