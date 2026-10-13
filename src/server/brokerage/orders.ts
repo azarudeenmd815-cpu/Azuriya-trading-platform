@@ -59,17 +59,18 @@ export class BrokerageOrdersService {
   }
 
   async list(scope: TenantContext, input: z.infer<typeof orderListSchema>, ownerUserId?: string) {
+    const validated = parseInput(orderListSchema.safeParse(input));
     return this.db.transaction(scope, async tx => {
       const values: unknown[] = [...scopeValues(scope)];
       const filters = [scopeWhere('o')];
-      if (input.status) { values.push(input.status); filters.push(`o.status=$${values.length}`); }
-      if (input.account_id) { values.push(input.account_id); filters.push(`o.account_id=$${values.length}`); }
+      if (validated.status) { values.push(validated.status); filters.push(`o.status=$${values.length}`); }
+      if (validated.account_id) { values.push(validated.account_id); filters.push(`o.account_id=$${values.length}`); }
       if (ownerUserId) { values.push(ownerUserId); filters.push(`EXISTS (SELECT 1 FROM brokerage_accounts a JOIN brokerage_clients c ON c.id=a.client_id AND a.organization_id=c.organization_id AND a.brand_id=c.brand_id AND a.environment_id=c.environment_id AND a.product_instance_id=c.product_instance_id WHERE a.id=o.account_id AND c.user_id=$${values.length})`); }
       const where = filters.join(' AND ');
       const total = Number((await tx.query<{ count: string }>(`SELECT count(*) FROM brokerage_orders o WHERE ${where}`, values)).rows[0].count);
-      values.push(input.limit, input.offset);
+      values.push(validated.limit, validated.offset);
       const data = (await tx.query<OrderRow>(`SELECT o.* FROM brokerage_orders o WHERE ${where} ORDER BY o.created_at DESC,o.id LIMIT $${values.length - 1} OFFSET $${values.length}`, values)).rows;
-      return { data: data.map(row), pagination: { total, limit: input.limit, offset: input.offset } };
+      return { data: data.map(row), pagination: { total, limit: validated.limit, offset: validated.offset } };
     });
   }
 
