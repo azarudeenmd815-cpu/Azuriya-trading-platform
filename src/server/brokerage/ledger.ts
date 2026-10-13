@@ -30,7 +30,7 @@ function validCurrency(currency: string): void { if (!/^[A-Z]{3}$/.test(currency
 function validAccountId(accountId: string): void { if (typeof accountId !== 'string' || !uuid.safeParse(accountId).success) throw new AppError(404, 'ACCOUNT_NOT_FOUND', 'The account does not exist in this scope.'); }
 function validAmount(amount: string): void { if (typeof amount !== 'string' || !amountPattern.test(amount) || /^-?0(?:\.0{1,8})?$/.test(amount)) throw new AppError(422, 'LEDGER_AMOUNT_INVALID', 'Ledger amounts must be non-zero exact decimals with at most eight fractional places.'); }
 function validIdempotency(key: string): void { if (typeof key !== 'string' || !idempotencyPattern.test(key)) throw new AppError(422, 'LEDGER_IDEMPOTENCY_INVALID', 'Ledger idempotency keys must contain 8-128 safe characters.'); }
-function validReference(reference?: string): void { if (reference !== undefined && (!reference.trim() || reference.length > 200)) throw new AppError(422, 'LEDGER_REFERENCE_INVALID', 'Ledger references must contain between 1 and 200 characters.'); }
+function validReference(reference?: string): void { if (reference !== undefined && (typeof reference !== 'string' || !reference.trim() || reference.length > 200)) throw new AppError(422, 'LEDGER_REFERENCE_INVALID', 'Ledger references must contain between 1 and 200 characters.'); }
 function validLedgerInput(input: unknown): asserts input is LedgerEntryInput {
   if (input === null || typeof input !== 'object' || Array.isArray(input)) throw new AppError(422, 'LEDGER_INPUT_INVALID', 'Ledger entry input must be an object.');
 }

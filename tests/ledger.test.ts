@@ -100,6 +100,13 @@ describe('authoritative account ledger replay and reconciliation', () => {
     await expect(service.postEntry(first, [] as never)).rejects.toMatchObject({ statusCode: 422, code: 'LEDGER_INPUT_INVALID' });
   });
 
+  it('rejects non-string references with a structured ledger error', async () => {
+    const accountId = await account();
+    const base = { account_id: accountId, currency: 'USD', amount: '1', kind: 'deposit' as const };
+    await expect(service.postEntry(first, { ...base, reference: null as never, idempotency_key: 'ledger-reference-null' })).rejects.toMatchObject({ statusCode: 422, code: 'LEDGER_REFERENCE_INVALID' });
+    await expect(service.postEntry(first, { ...base, reference: 42 as never, idempotency_key: 'ledger-reference-number' })).rejects.toMatchObject({ statusCode: 422, code: 'LEDGER_REFERENCE_INVALID' });
+  });
+
   it('fails closed for core and malformed service contexts', async () => {
     const accountId = await account();
     await expect(service.balance({ ...first, core: true }, accountId, 'USD')).rejects.toMatchObject({ code: 'TENANT_CONTEXT_REQUIRED' });
