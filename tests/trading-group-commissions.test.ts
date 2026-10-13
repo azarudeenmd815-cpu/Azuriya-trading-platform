@@ -1,5 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { randomUUID } from 'node:crypto';
+import Fastify from 'fastify';
 import type { Actor, Row, TenantContext } from '../src/shared/types.js';
 import { permissions } from '../src/shared/types.js';
 import { createDatabase, type Database } from '../src/server/db/database.js';
@@ -8,6 +9,9 @@ import { seedCatalog } from '../src/server/db/seed.js';
 import { FoundationService } from '../src/server/domain/service.js';
 import { BrokerageTradingGroupsService } from '../src/server/brokerage/trading-groups.js';
 import { BrokerageTradingGroupCommissionService, normalizeCommissionAmount, parseTradingGroupCommissionInput } from '../src/server/brokerage/trading-group-commissions.js';
+import type { BrokerageRouteContext } from '../src/server/brokerage/common.js';
+import { registerTradingGroupCommissionRoutes } from '../src/server/brokerage/trading-group-commissions-routes.js';
+import { AppError } from '../src/server/domain/errors.js';
 
 describe('Trading-group commission input hardening', () => {
   const valid = { open_commission_per_lot: '2.50', close_commission_per_lot: '3.125', commission_currency: 'USD', enabled: true, expected_version: 0 };
@@ -168,5 +172,46 @@ describe('Brokerage trading-group commission configuration', () => {
     await expect(service.upsertGroupCommissionConfiguration({ ...scope, requestId: randomUUID(), supportGrantId: randomUUID() }, unconfiguredGroup.id, input)).rejects.toMatchObject({ code: 'BROKERAGE_SUPPORT_READ_ONLY', statusCode: 403 });
     await expect(service.getGroupCommissionConfiguration(noRead, unconfiguredGroup.id)).rejects.toMatchObject({ code: 'PERMISSION_DENIED', statusCode: 403 });
     expect(await service.getGroupCommissionConfiguration(scope, unconfiguredGroup.id)).toBeNull();
+  });
+
+  it('enforces authenticated commission GET/PUT route contracts and stale conflicts', async () => {
+    const unconfiguredGroup = await new BrokerageTradingGroupsService(db).create(scope, { group_code: 'COMM_HTTP', display_name: 'Commission HTTP Group', max_leverage: 100 });
+    const app = Fastify({ logger: false });
+    const routeContext: BrokerageRouteContext = {
+      db,
+      auth: {} as BrokerageRouteContext['auth'],
+      tenancy: {} as BrokerageRouteContext['tenancy'],
+      staff: async (request, permission) => {
+        if (typeof request.headers.authorization !== 'string') throw new AppError(401, 'UNAUTHENTICATED', 'Authentication is required.');
+        if (request.headers['x-test-permission'] !== permission) throw new AppError(403, 'PERMISSION_DENIED', 'The requested permission is required.');
+        return { ...scope, requestId: request.id };
+      },
+      client: async () => scope,
+      atomic: async (_request, _reply, _actor, work) => work(db),
+      highRisk: async () => undefined,
+    };
+    app.setErrorHandler((error, _request, reply) => {
+      if (error instanceof AppError) return reply.code(error.statusCode).send({ error: { code: error.code } });
+      return reply.code(500).send({ error: { code: 'INTERNAL_ERROR' } });
+    });
+    registerTradingGroupCommissionRoutes(app, routeContext);
+    const base = `/api/v1/instances/${scope.productInstanceId}/brokerage/trading-groups/${unconfiguredGroup.id}/commission`;
+    try {
+      const unauthenticated = await app.inject({ method: 'GET', url: base });
+      expect(unauthenticated.statusCode).toBe(401);
+      const headers = { authorization: 'Bearer test-session', 'x-test-permission': 'settings.read' };
+      const initialRead = await app.inject({ method: 'GET', url: base, headers });
+      expect(initialRead.statusCode).toBe(200);
+      expect(initialRead.json()).toMatchObject({ data: null });
+      const writeHeaders = { authorization: 'Bearer test-session', 'x-test-permission': 'brokerage.settings.write' };
+      const created = await app.inject({ method: 'PUT', url: base, headers: writeHeaders, payload: { open_commission_per_lot: '1.250000', close_commission_per_lot: '2', commission_currency: ' usd ', enabled: true, expected_version: 0 } });
+      expect(created.statusCode).toBe(200);
+      expect(created.json().data).toMatchObject({ open_commission_per_lot: '1.25', close_commission_per_lot: '2', commission_currency: 'USD', config_version: 1 });
+      const stale = await app.inject({ method: 'PUT', url: base, headers: writeHeaders, payload: { open_commission_per_lot: '3', close_commission_per_lot: '2', commission_currency: 'USD', enabled: true, expected_version: 0 } });
+      expect(stale.statusCode).toBe(409);
+      expect(stale.json().error.code).toBe('TRADING_GROUP_COMMISSION_VERSION_CONFLICT');
+    } finally {
+      await app.close();
+    }
   });
 });
