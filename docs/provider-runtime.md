@@ -6,7 +6,7 @@
 
 `contracts.ts` defines canonical family IDs, typed capability declarations, exact-decimal value shapes, tenant-scoped instance identity, lifecycle methods, and safe provider error codes. A provider operation is available only when it is both present on `operations` and listed in the adapter descriptor's `capabilities`; there is no unrestricted dynamic `execute` method.
 
-`ProviderCapabilityRegistry` is dependency-injected. Register a `ProviderAdapterDefinition` once, then resolve its immutable descriptor or create a scoped adapter instance through its factory. Duplicate IDs and unknown IDs produce typed errors. Registry construction never contacts a provider.
+`ProviderCapabilityRegistry` is dependency-injected. Register a `ProviderAdapterDefinition` once, then resolve its immutable descriptor or create a scoped adapter instance through its factory. Duplicate IDs and unknown IDs produce typed errors. Registration rejects ambiguous capability metadata (duplicates, unknown operations, or an operation declared both supported and unavailable) with `INVALID_DESCRIPTOR`; this keeps capability discovery deterministic. Registry construction never contacts a provider.
 
 The built-in MetaTrader 5, MetaTrader 4, TradeLocker, and cTrader definitions are family descriptors only. Their `familyCapabilities` and `capabilities` arrays are empty, `unavailableCapabilities` lists every operation, `connectorAvailable` is false, and each operation returns `UNSUPPORTED_OPERATION`; they do not contain endpoints or credentials and never perform provider I/O. A family descriptor never counts as verified provider support.
 

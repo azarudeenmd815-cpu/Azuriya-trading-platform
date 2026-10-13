@@ -76,6 +76,38 @@ describe('provider adapter contracts and registry', () => {
     expect(() => registry.register(adapterDefinition({ provider: 'injected' }))).toThrowError(expect.objectContaining({ code: 'DUPLICATE_PROVIDER' }));
   });
 
+  it('rejects ambiguous or unknown capability metadata at registration', () => {
+    const registry = new ProviderCapabilityRegistry();
+    const definition = adapterDefinition({ provider: 'invalid-metadata' });
+    expect(() => registry.register({
+      ...definition,
+      descriptor: {
+        ...definition.descriptor,
+        capabilities: ['connection.health', 'connection.health'],
+        unavailableCapabilities: providerCapabilities,
+      },
+    })).toThrowError(expect.objectContaining({ code: 'INVALID_DESCRIPTOR', statusCode: 422 }));
+
+    expect(() => registry.register({
+      ...definition,
+      descriptor: {
+        ...definition.descriptor,
+        capabilities: ['connection.health', 'not-a-capability' as never],
+        unavailableCapabilities: providerCapabilities.filter((capability) => capability !== 'connection.health'),
+      },
+    })).toThrowError(expect.objectContaining({ code: 'INVALID_DESCRIPTOR' }));
+
+    expect(() => registry.register({
+      ...definition,
+      descriptor: {
+        ...definition.descriptor,
+        id: 'overlapping-metadata',
+        capabilities: ['connection.health'],
+        unavailableCapabilities: providerCapabilities,
+      },
+    })).toThrowError(expect.objectContaining({ code: 'INVALID_DESCRIPTOR' }));
+  });
+
   it('does not expose mutable capability metadata', () => {
     const registry = createBuiltInProviderRegistry();
     const descriptors = registry.descriptors();

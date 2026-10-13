@@ -168,6 +168,7 @@ export type ProviderErrorCode =
   | 'RATE_LIMITED'
   | 'PROVIDER_UNAVAILABLE'
   | 'DUPLICATE_PROVIDER'
+  | 'INVALID_DESCRIPTOR'
   | 'UNKNOWN_PROVIDER'
   | 'INSTANCE_ALREADY_REGISTERED'
   | 'UNKNOWN_INSTANCE'
@@ -184,7 +185,7 @@ export class ProviderAdapterError extends Error {
     readonly diagnostic?: string,
   ) {
     super(message);
-    this.statusCode = code === 'UNKNOWN_PROVIDER' || code === 'UNKNOWN_INSTANCE' ? 404 : code === 'DUPLICATE_PROVIDER' || code === 'INSTANCE_ALREADY_REGISTERED' ? 409 : ['CONFIGURATION_MISSING', 'UNSUPPORTED_OPERATION'].includes(code) ? 422 : 503;
+    this.statusCode = code === 'UNKNOWN_PROVIDER' || code === 'UNKNOWN_INSTANCE' ? 404 : code === 'DUPLICATE_PROVIDER' || code === 'INSTANCE_ALREADY_REGISTERED' ? 409 : ['CONFIGURATION_MISSING', 'UNSUPPORTED_OPERATION', 'INVALID_DESCRIPTOR'].includes(code) ? 422 : 503;
   }
 }
 
