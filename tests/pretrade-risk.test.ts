@@ -109,6 +109,14 @@ describe('deterministic pretrade risk admission', () => {
     expect(evaluatePretradeRisk({ ...base, freshness: { maxAgeMs: 60_000, nowMs: Date.now() } })).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
   });
 
+  it('rejects a quote fractionally in the future despite millisecond clock equality', () => {
+    const nowMs = Date.parse('2026-01-01T00:00:00.000Z');
+    expect(evaluatePretradeRisk(input({
+      quote: { ...base.quote!, observed_at: '2026-01-01T00:00:00.000001Z' },
+      freshness: { maxAgeMs: 0, nowMs },
+    }))).toMatchObject({ allowed: false, code: 'TRADING_QUOTE_INVALID' });
+  });
+
   it('defers pending margin and quote checks until execution, then checks them', () => {
     const pending = input({ order: { ...base.order, type: 'limit', price: '1.09000', stage: 'submit' }, quote: undefined });
     expect(evaluatePretradeRisk(pending)).toEqual({ allowed: true, deferred: true });
