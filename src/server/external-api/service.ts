@@ -66,6 +66,11 @@ function timestampValue(value: unknown): string | undefined {
   if (month < 1 || month > 12 || day < 1 || day > new Date(Date.UTC(year, month, 0)).getUTCDate()) return undefined;
   return value;
 }
+function timestampOrderKey(value: string): bigint {
+  const milliseconds = Date.parse(value);
+  const fraction = /\.(\d{1,9})/.exec(value)?.[1]?.padEnd(9, '0') ?? '000000000';
+  return BigInt(milliseconds) * 1_000_000n + BigInt(fraction.slice(3));
+}
 function positionIdValue(value: unknown): string | undefined {
   if (typeof value !== 'string' || value.length < 1 || value.length > 160 || !/^[A-Za-z0-9_.:-]+$/.test(value)) return undefined;
   return value;
@@ -273,8 +278,9 @@ export class ExternalApiService {
       if (!id || itemProviderAccountId !== providerAccountId || !instrument || !side || !volume || !openPrice || !openedAt) return [];
       return [{ id, account_id: accountId, instrument, side, status: 'open' as const, volume, open_price: openPrice, current_price: decimalValue(item?.current_price), unrealized_pnl: decimalValue(item?.profit), stop_loss: decimalValue(item?.stop_loss), take_profit: decimalValue(item?.take_profit), opened_at: openedAt, observed_at: observedAt }];
     }).sort((a, b) => {
-      const timestampOrder = Date.parse(b.opened_at) - Date.parse(a.opened_at);
-      if (timestampOrder) return timestampOrder;
+      const timestampOrder = timestampOrderKey(b.opened_at) - timestampOrderKey(a.opened_at);
+      if (timestampOrder < 0n) return -1;
+      if (timestampOrder > 0n) return 1;
       return a.id === b.id ? 0 : a.id < b.id ? 1 : -1;
     });
   }
