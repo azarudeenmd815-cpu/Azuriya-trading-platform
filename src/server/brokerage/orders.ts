@@ -29,22 +29,27 @@ function transitionError(status: string): AppError {
 function ensurePositive(value: unknown, label: string): void {
   if (typeof value !== 'string' || !decimalPattern.test(value) || /^0(?:\.0+)?$/.test(value)) throw new AppError(422, 'INVALID_INPUT', `${label} must be a positive decimal string.`);
 }
+function parseInput<T>(result: { success: boolean; data?: T }): T {
+  if (!result.success) throw new AppError(422, 'INVALID_INPUT', 'The order input is invalid.');
+  return result.data as T;
+}
 
 export class BrokerageOrdersService {
   constructor(private readonly db: Database) {}
 
   async create(scope: TenantContext, input: z.infer<typeof orderCreateSchema>, ownerUserId?: string) {
-    ensurePositive(input.quantity, 'quantity');
-    const priceField = input.order_type === 'limit' ? 'limit_price' : input.order_type === 'stop' ? 'stop_price' : undefined;
-    if (priceField && !positivePrice.safeParse(input[priceField]).success) throw new AppError(422, 'INVALID_INPUT', `${priceField} must be a positive decimal with at most 20 integer and 8 fractional digits, without whitespace.`);
+    const validated = parseInput(orderCreateSchema.safeParse(input));
+    ensurePositive(validated.quantity, 'quantity');
+    const priceField = validated.order_type === 'limit' ? 'limit_price' : validated.order_type === 'stop' ? 'stop_price' : undefined;
+    if (priceField && !positivePrice.safeParse(validated[priceField]).success) throw new AppError(422, 'INVALID_INPUT', `${priceField} must be a positive decimal with at most 20 integer and 8 fractional digits, without whitespace.`);
     return this.db.transaction(scope, async tx => {
-      const account = (await tx.query<{ id: string; client_id: string }>(`SELECT id,client_id FROM brokerage_accounts WHERE ${scopeWhere()} AND id=$5`, [...scopeValues(scope), input.account_id])).rows[0];
+      const account = (await tx.query<{ id: string; client_id: string }>(`SELECT id,client_id FROM brokerage_accounts WHERE ${scopeWhere()} AND id=$5`, [...scopeValues(scope), validated.account_id])).rows[0];
       if (!account) throw new AppError(404, 'ACCOUNT_NOT_FOUND', 'The trading account does not exist in this scope.');
       if (ownerUserId && !(await tx.query('SELECT 1 FROM brokerage_clients WHERE id=$1 AND user_id=$2', [account.client_id, ownerUserId])).rows[0]) throw new AppError(404, 'ACCOUNT_NOT_FOUND', 'The trading account does not exist in this scope.');
       const id = randomUUID();
-      const created = (await tx.query<OrderRow>(`INSERT INTO brokerage_orders(id,organization_id,brand_id,environment_id,product_instance_id,account_id,instrument,order_type,side,quantity,limit_price,stop_price,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`, [id, ...scopeValues(scope), input.account_id, input.instrument.trim(), input.order_type, input.side, input.quantity, input.limit_price ?? null, input.stop_price ?? null, scope.userId])).rows[0];
+      const created = (await tx.query<OrderRow>(`INSERT INTO brokerage_orders(id,organization_id,brand_id,environment_id,product_instance_id,account_id,instrument,order_type,side,quantity,limit_price,stop_price,created_by) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING *`, [id, ...scopeValues(scope), validated.account_id, validated.instrument.trim(), validated.order_type, validated.side, validated.quantity, validated.limit_price ?? null, validated.stop_price ?? null, scope.userId])).rows[0];
       await tx.query(`INSERT INTO brokerage_order_history(id,organization_id,brand_id,environment_id,product_instance_id,order_id,event_type,to_status,actor_id) VALUES($1,$2,$3,$4,$5,$6,'created','pending',$7)`, [randomUUID(), ...scopeValues(scope), id, scope.userId]);
-      await recordEvent(tx, scope, 'brokerage.order.created', 'brokerage_order', id, { status: 'pending', account_id: input.account_id });
+      await recordEvent(tx, scope, 'brokerage.order.created', 'brokerage_order', id, { status: 'pending', account_id: validated.account_id });
       return row(created);
     });
   }
@@ -91,15 +96,16 @@ export class BrokerageOrdersService {
 
   /** Canonical execution-side primitive: lock the order before appending a fill. */
   async recordFill(scope: TenantContext, id: string, input: z.infer<typeof fillSchema>) {
-    ensurePositive(input.quantity, 'quantity'); ensurePositive(input.price, 'price');
+    const validated = parseInput(fillSchema.safeParse(input));
+    ensurePositive(validated.quantity, 'quantity'); ensurePositive(validated.price, 'price');
     return this.db.transaction(scope, async tx => {
       const order = await this.load(tx, scope, id, undefined, true);
       if (['cancelled', 'rejected', 'expired', 'filled'].includes(order.status)) throw transitionError(order.status);
       // Keep quantity comparisons in PostgreSQL NUMERIC space. JavaScript Number
       // cannot represent all values permitted by numeric(28,8) exactly.
-      const next = (await tx.query<OrderRow>(`UPDATE brokerage_orders SET filled_quantity=filled_quantity+$6,status=CASE WHEN filled_quantity+$6>=quantity THEN 'filled' ELSE 'partially_filled' END,updated_at=now(),version=version+1 WHERE ${scopeWhere()} AND id=$5 AND $6::numeric<=quantity-filled_quantity RETURNING *`, [...scopeValues(scope), id, input.quantity])).rows[0];
+      const next = (await tx.query<OrderRow>(`UPDATE brokerage_orders SET filled_quantity=filled_quantity+$6,status=CASE WHEN filled_quantity+$6>=quantity THEN 'filled' ELSE 'partially_filled' END,updated_at=now(),version=version+1 WHERE ${scopeWhere()} AND id=$5 AND $6::numeric<=quantity-filled_quantity RETURNING *`, [...scopeValues(scope), id, validated.quantity])).rows[0];
       if (!next) throw new AppError(409, 'FILL_EXCEEDS_ORDER', 'The fill exceeds the remaining order quantity.');
-      await tx.query(`INSERT INTO brokerage_order_fills(id,organization_id,brand_id,environment_id,product_instance_id,order_id,account_id,quantity,price) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`, [randomUUID(), ...scopeValues(scope), id, order.account_id, input.quantity, input.price]);
+      await tx.query(`INSERT INTO brokerage_order_fills(id,organization_id,brand_id,environment_id,product_instance_id,order_id,account_id,quantity,price) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9)`, [randomUUID(), ...scopeValues(scope), id, order.account_id, validated.quantity, validated.price]);
       const event = next.status === 'filled' ? 'filled' : 'partially_filled';
       await tx.query(`INSERT INTO brokerage_order_history(id,organization_id,brand_id,environment_id,product_instance_id,order_id,event_type,from_status,to_status,actor_id) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) ON CONFLICT DO NOTHING`, [randomUUID(), ...scopeValues(scope), id, event, order.status, next.status, scope.userId]);
       return row(next);
