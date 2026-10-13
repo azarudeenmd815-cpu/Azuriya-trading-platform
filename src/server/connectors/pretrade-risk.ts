@@ -82,6 +82,13 @@ function validTimestamp(value: unknown): value is string {
   const zone = parts[7]; const zoneHour = zone === 'Z' ? 0 : Number(zone.slice(1, 3)); const zoneMinute = zone === 'Z' ? 0 : Number(zone.slice(4, 6));
   return year > 0 && month >= 1 && month <= 12 && day >= 1 && day <= daysInMonth && hour <= 23 && minute <= 59 && second <= 59 && zoneHour <= 23 && zoneMinute <= 59 && Number.isFinite(Date.parse(value));
 }
+function timestampNanoseconds(value: string): bigint | null {
+  const match = timestampPattern.exec(value); if (!match) return null;
+  const fractionMatch = /\.(\d{1,9})(?=Z|[+-]\d{2}:\d{2})/.exec(value);
+  const base = fractionMatch ? value.replace(fractionMatch[0], '') : value;
+  const milliseconds = Date.parse(base); if (!Number.isFinite(milliseconds)) return null;
+  return BigInt(milliseconds) * 1_000_000n + BigInt((fractionMatch?.[1] ?? '').padEnd(9, '0') || '0');
+}
 function validBoolean(value: unknown): value is boolean { return typeof value === 'boolean'; }
 
 function accountFailure(input: PretradeRiskInput): PretradeRejectedDecision | null {
@@ -107,8 +114,13 @@ function quoteFailure(input: PretradeRiskInput): PretradeRejectedDecision | null
   if (freshness && quote.observed_at === undefined) return reject('TRADING_QUOTE_INVALID', 'The executable quote timestamp is required for freshness validation.');
   if (quote.observed_at !== undefined) {
     if (!validTimestamp(quote.observed_at)) return reject('TRADING_QUOTE_INVALID', 'The executable quote timestamp is invalid.');
-    const observed = Date.parse(quote.observed_at);
-    if (freshness && (!Number.isFinite(freshness.maxAgeMs) || freshness.maxAgeMs < 0 || !Number.isFinite(freshness.nowMs) || observed > freshness.nowMs || freshness.nowMs - observed > freshness.maxAgeMs)) return reject('TRADING_QUOTE_INVALID', 'The executable quote is stale or its freshness information is invalid.');
+    const observed = timestampNanoseconds(quote.observed_at);
+    if (freshness && (!Number.isSafeInteger(freshness.maxAgeMs) || freshness.maxAgeMs < 0 || !Number.isSafeInteger(freshness.nowMs) || !observed)) return reject('TRADING_QUOTE_INVALID', 'The executable quote is stale or its freshness information is invalid.');
+    if (freshness) {
+      const now = BigInt(freshness.nowMs) * 1_000_000n;
+      const age = now - observed!;
+      if (age < 0n || age > BigInt(freshness.maxAgeMs) * 1_000_000n) return reject('TRADING_QUOTE_INVALID', 'The executable quote is stale or its freshness information is invalid.');
+    }
   }
   return null;
 }
