@@ -7,7 +7,10 @@ import { brokerageContext } from '../brokerage/common.js';
 import { MarketDataService } from './quotes.js';
 import { AppError } from '../domain/errors.js';
 
-const query = z.object({ instrument_id: z.string().uuid().optional(), instrument_ids: z.string().max(4000).optional(), source_id: z.string().uuid().optional() }).strict();
+const query = z.object({ instrument_id: z.string().uuid().optional(), instrument_ids: z.string().max(4000).optional(), source_id: z.string().uuid().optional() }).strict().superRefine((input, ctx) => {
+  if (input.instrument_id && input.instrument_ids !== undefined) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['instrument_id'], message: 'Specify instrument_id or instrument_ids, not both.' });
+  if (input.instrument_ids !== undefined && input.instrument_ids.split(',').some(value => value.length === 0)) ctx.addIssue({ code: z.ZodIssueCode.custom, path: ['instrument_ids'], message: 'instrument_ids must contain one or more comma-separated UUIDs.' });
+});
 const params = z.object({ instanceId: z.string().uuid() });
 
 /** Read-only quote surfaces. Ingestion deliberately has no HTTP route. */

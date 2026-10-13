@@ -197,4 +197,15 @@ describe('market-data instrument HTTP authorization', () => {
     expect((await app.inject({ url: clientUrl, headers: { cookie: ownerCookie } })).statusCode).toBe(403);
     expect((await app.inject({ url: staffUrl, headers: { cookie: clientCookie } })).statusCode).toBe(403);
   });
+
+  it('rejects ambiguous or empty quote selectors before reading snapshots', async () => {
+    const url = `/api/v1/client/instances/${instanceId}/brokerage/quotes`;
+    const instrumentId = randomUUID();
+    const ambiguous = await app.inject({ url: `${url}?instrument_id=${instrumentId}&instrument_ids=${instrumentId}`, headers: { cookie: clientCookie } });
+    expect(ambiguous.statusCode).toBe(400);
+    expect(ambiguous.json().error.code).toBe('VALIDATION_ERROR');
+    const empty = await app.inject({ url: `${url}?instrument_ids=,`, headers: { cookie: clientCookie } });
+    expect(empty.statusCode).toBe(400);
+    expect(empty.json().error.code).toBe('VALIDATION_ERROR');
+  });
 });

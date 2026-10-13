@@ -178,6 +178,22 @@ export function normalizeQuote(input: QuoteInput, instrument: Instrument, source
 export class MarketDataService {
   constructor(private readonly db: Database) {}
 
+  private async activeScope(tx: Executor, scope: TenantContext): Promise<boolean> {
+    if (scope.core || !scope.organizationId || !scope.brandId || !scope.environmentId || !scope.productInstanceId || !scope.productSlug) return false;
+    const row = (await tx.query<{ id: string }>(`SELECT i.id
+      FROM product_instances i
+      JOIN organizations o ON o.id=i.organization_id
+      JOIN brands b ON b.id=i.brand_id AND b.organization_id=i.organization_id
+      JOIN environments e ON e.id=i.environment_id AND e.organization_id=i.organization_id AND e.brand_id=i.brand_id
+      JOIN products p ON p.id=i.product_id
+      JOIN product_subscriptions s ON s.id=i.subscription_id AND s.organization_id=i.organization_id AND s.product_id=i.product_id
+      WHERE i.id=$1 AND i.organization_id=$2 AND i.brand_id=$3 AND i.environment_id=$4
+        AND p.slug=$5
+        AND i.status='active' AND o.status='active' AND b.status='active'
+        AND e.status='active' AND p.status='active' AND s.status='active'`, [scope.productInstanceId, scope.organizationId, scope.brandId, scope.environmentId, scope.productSlug])).rows[0];
+    return Boolean(row);
+  }
+
   async ingest(scope: TenantContext, input: QuoteInput, authority: string): Promise<QuoteIngestionResult> {
     if (authority !== INTERNAL_MARKET_DATA_AUTHORITY) throw new AppError(403, 'MARKET_DATA_AUTHORITY_REQUIRED', 'Only the internal market-data authority may ingest quotes.');
     return this.db.transaction({ core: true }, async tx => {
@@ -231,6 +247,7 @@ export class MarketDataService {
   async listInstruments(scope: TenantContext, limit = 100): Promise<Array<{ id: string; symbol: string; displayName: string; priceScale: number; tickSize: string; zeroSpreadAllowed: boolean }>> {
     if (!Number.isInteger(limit) || limit < 1 || limit > 100) throw new AppError(400, 'INSTRUMENT_QUERY_LIMIT', 'At most 100 instruments may be requested.');
     return this.db.transaction(scope, async tx => {
+      if (!await this.activeScope(tx, scope)) return [];
       const rows = (await tx.query<Instrument & { display_name: string }>('SELECT i.id,i.symbol,i.display_name,i.price_scale,i.tick_size::text,i.zero_spread_allowed FROM market_data_instruments i JOIN market_data_instrument_access a ON a.instrument_id=i.id AND a.organization_id=$1 AND a.brand_id=$2 AND a.environment_id=$3 AND a.product_instance_id=$4 AND a.enabled=true WHERE i.active=true ORDER BY i.symbol,i.id LIMIT $5', [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, limit])).rows;
       return rows.map(row => ({ id: row.id, symbol: row.symbol, displayName: row.display_name, priceScale: row.price_scale, tickSize: canonicalDecimal(row.tick_size, 'tickSize'), zeroSpreadAllowed: row.zero_spread_allowed }));
     });
@@ -238,6 +255,7 @@ export class MarketDataService {
 
   async getLatest(scope: TenantContext, instrumentId: string, sourceId?: string): Promise<QuoteSnapshot | null> {
     return this.db.transaction(scope, async tx => {
+      if (!await this.activeScope(tx, scope)) return null;
       const params: unknown[] = [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, instrumentId];
       const source = sourceId ? ' AND q.source_id=$6' : '';
       if (sourceId) params.push(sourceId);
@@ -250,6 +268,7 @@ export class MarketDataService {
     if (instrumentIds.length > 100) throw new AppError(400, 'QUOTE_QUERY_LIMIT', 'At most 100 instruments may be requested.');
     if (!instrumentIds.length) return [];
     return this.db.transaction(scope, async tx => {
+      if (!await this.activeScope(tx, scope)) return [];
       const params: unknown[] = [scope.organizationId, scope.brandId, scope.environmentId, scope.productInstanceId, instrumentIds];
       const source = sourceId ? ' AND q.source_id=$6' : '';
       if (sourceId) params.push(sourceId);

@@ -154,6 +154,22 @@ describe('market-data latest snapshots and tenant entitlements', () => {
     const mismatchedProduct = { ...scope, productSlug: 'prop-crm' as const };
     await expect(service.ingest(mismatchedProduct, { instrumentId, sourceId, bid: '1.20000', ask: '1.20002', sourceEventAt: event(1), eventId: 'mismatched-product' }, 'internal-market-data')).rejects.toMatchObject({ code: 'TENANT_SCOPE_INVALID' });
   });
+
+  it('hides quote reads for an inactive hierarchy or mismatched product scope', async () => {
+    await service.ingest(scope, { instrumentId, sourceId, bid: '1.30000', ask: '1.30002', sourceEventAt: event(1), sourceSequence: '4', eventId: 'read-scope-quote' }, 'internal-market-data');
+    await db.transaction({ core: true }, tx => tx.query("UPDATE product_subscriptions SET status='suspended' WHERE organization_id=$1", [scope.organizationId]));
+    try {
+      expect(await service.listInstruments(scope)).toEqual([]);
+      expect(await service.getLatest(scope, instrumentId)).toBeNull();
+      expect(await service.listLatest(scope, [instrumentId])).toEqual([]);
+    } finally {
+      await db.transaction({ core: true }, tx => tx.query("UPDATE product_subscriptions SET status='active' WHERE organization_id=$1", [scope.organizationId]));
+    }
+    const mismatchedProduct = { ...scope, productSlug: 'prop-crm' as const };
+    expect(await service.listInstruments(mismatchedProduct)).toEqual([]);
+    expect(await service.getLatest(mismatchedProduct, instrumentId)).toBeNull();
+    expect(await service.listLatest(mismatchedProduct, [instrumentId])).toEqual([]);
+  });
 });
 
 const instruments: Instrument[] = [
