@@ -142,6 +142,19 @@ describe('native order cancellation lifecycle', () => {
     expect(await service.get(scope, order.id)).toMatchObject({ status: 'pending', filled_quantity: '0.00000000' });
   });
 
+  it('rejects malformed direct list inputs with a sanitized domain error', async () => {
+    for (const input of [
+      { limit: 0 },
+      { limit: 101 },
+      { offset: -1 },
+      { status: 'not-a-status' },
+      { account_id: 'not-a-uuid' },
+      { limit: 'not-a-number' },
+    ] as const) {
+      await expect(service.list(scope, input as never)).rejects.toMatchObject({ statusCode: 422, code: 'INVALID_INPUT' });
+    }
+  });
+
   it('rejects market, filled, partially filled, rejected, and expired orders', async () => {
     const market = await service.create(scope, { account_id: accountId, instrument: 'EURUSD', order_type: 'market', side: 'buy', quantity: '1' });
     await expect(service.cancel(scope, String(market.id))).rejects.toMatchObject({ code: 'ORDER_NOT_CANCELLABLE' });
