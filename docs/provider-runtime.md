@@ -8,7 +8,7 @@
 
 `ProviderCapabilityRegistry` is dependency-injected. Register a `ProviderAdapterDefinition` once, then resolve its immutable descriptor or create a scoped adapter instance through its factory. Duplicate IDs and unknown IDs produce typed errors. Registry construction never contacts a provider.
 
-The built-in MetaTrader 5, MetaTrader 4, TradeLocker, and cTrader definitions are family descriptors only. Their `capabilities` arrays are empty, `connectorAvailable` is false, and each operation returns `UNSUPPORTED_OPERATION`; they do not contain endpoints or credentials and never perform provider I/O.
+The built-in MetaTrader 5, MetaTrader 4, TradeLocker, and cTrader definitions are family descriptors only. Their `familyCapabilities` and `capabilities` arrays are empty, `unavailableCapabilities` lists every operation, `connectorAvailable` is false, and each operation returns `UNSUPPORTED_OPERATION`; they do not contain endpoints or credentials and never perform provider I/O. A family descriptor never counts as verified provider support.
 
 ## Lifecycle and health
 

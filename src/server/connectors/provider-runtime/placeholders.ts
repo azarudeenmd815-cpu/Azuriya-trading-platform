@@ -48,7 +48,9 @@ function placeholder(family: ProviderFamily, name: string): ProviderAdapterDefin
       name,
       category: 'trading_platform' as const,
       knownFamily: true,
-      familyCapabilities: Object.freeze(unavailable),
+      // A known family is catalog metadata only. Until a verified adapter is
+      // implemented, it must not advertise any operational family capability.
+      familyCapabilities: Object.freeze([] as ProviderCapability[]),
       capabilities: Object.freeze([] as ProviderCapability[]),
       unavailableCapabilities: Object.freeze(unavailable),
       connectorAvailable: false,
