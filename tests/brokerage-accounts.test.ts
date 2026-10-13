@@ -147,6 +147,20 @@ describe('Brokerage account registry, manual KYC and private connections',()=>{
       await db.transaction({core:true},tx=>tx.query('DELETE FROM support_access_grants WHERE id=$1',[grantId]));
     }
   });
+  it('fails closed for revoked and expired support grants',async()=>{
+    const grantId=randomUUID();
+    await db.transaction({core:true},tx=>tx.query('INSERT INTO support_access_grants(id,organization_id,brand_id,environment_id,product_instance_id,user_id,granted_by,reason,scopes,expires_at) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb,now()+interval \'1 hour\')',[grantId,...scopeValues(a),core.userId,ownerId,'Stale support grant regression',JSON.stringify(['brokerage.accounts.read'])]));
+    const support={...a,userId:core.userId,supportGrantId:grantId,permissions:['brokerage.accounts.read']};
+    try {
+      await db.transaction({core:true},tx=>tx.query('UPDATE support_access_grants SET revoked_at=now() WHERE id=$1',[grantId]));
+      await expect(service.listAccounts(support)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+      await db.transaction({core:true},tx=>tx.query("UPDATE support_access_grants SET revoked_at=NULL,starts_at=now()-interval '1 hour',expires_at=now()-interval '1 second' WHERE id=$1",[grantId]));
+      await expect(service.getAccount(support,accountId)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+      await expect(service.resolveAccountOwner(support,accountId)).rejects.toMatchObject({statusCode:403,code:'PERMISSION_DENIED'});
+    } finally {
+      await db.transaction({core:true},tx=>tx.query('DELETE FROM support_access_grants WHERE id=$1',[grantId]));
+    }
+  });
   it('does not treat a Core identity with a tenant membership as business staff',async()=>{
     const membershipId=randomUUID();
     const staffScope={...a,userId:core.userId,permissions:[...permissions]};
