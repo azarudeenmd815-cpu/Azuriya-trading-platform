@@ -401,6 +401,31 @@ describe('W08 external developer API', () => {
     }
   });
 
+  it('uses a locale-independent identifier tie-breaker for equal position timestamps', async () => {
+    const credential = await new ExternalApiService(db).createCredential(first, { name: 'Position tie-break regression', scopes: ['positions:read'] });
+    const uppercaseId = 'position-cycle6-tie-A';
+    const lowercaseId = 'position-cycle6-tie-a';
+    const original = (await db.transaction({ core: true }, tx => tx.query<{ trading_observations: unknown }>('SELECT trading_observations FROM brokerage_accounts WHERE id=$1', [accountId]))).rows[0].trading_observations as { positions: unknown[]; observed_at: string; connector_version: string; limited: boolean };
+    const tied = { opened_at: '2026-10-12T00:00:00.000Z', provider_account_id: 'provider-cycle2', symbol: 'EURUSD', side: 'buy', volume: '1.00000000', open_price: '1.20000000' };
+    const observations = {
+      ...original,
+      positions: [
+        ...original.positions,
+        { ...tied, provider_position_id: uppercaseId },
+        { ...tied, provider_position_id: lowercaseId },
+      ],
+    };
+    await db.transaction({ core: true }, tx => tx.query('UPDATE brokerage_accounts SET trading_observations=$2::jsonb WHERE id=$1', [accountId, JSON.stringify(observations)]));
+    try {
+      const response = await app.inject({ url: `/api/external/v1/accounts/${accountId}/positions?limit=100`, headers: { authorization: `Bearer ${credential.secret}` } });
+      expect(response.statusCode, response.body).toBe(200);
+      const ids = (response.json().data as Array<{ id: string }>).map(item => item.id);
+      expect(ids.indexOf(lowercaseId)).toBeLessThan(ids.indexOf(uppercaseId));
+    } finally {
+      await db.transaction({ core: true }, tx => tx.query('UPDATE brokerage_accounts SET trading_observations=$2::jsonb WHERE id=$1', [accountId, JSON.stringify(original)]));
+    }
+  });
+
   it('rejects invalid and expired credentials for each new resource without session fallback', async () => {
     const service = new ExternalApiService(db);
     const expired = await service.createCredential(first, { name: 'Expired orders', scopes: ['orders:read'] });
